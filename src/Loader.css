@@ -1,0 +1,114 @@
+
+.spiritual-loader {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+}
+
+.loader-wrapper {
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Glowing Mandala-like aura */
+.loader-aura {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  /* background: conic-gradient(from 0deg,
+      var(--main-color) 0%,
+      transparent 30%,
+      var(--main-color) 60%,
+      transparent 100%);
+  animation: spin 3s linear infinite; */
+  filter: blur(6px) brightness(1.2);
+  opacity: 0.8;
+}
+
+/* ॐ in the center */
+.loader-om {
+  font-family: "Noto Sans Devanagari", sans-serif;
+  font-weight: 900;
+  font-size: 72px;
+  color: #a52444;
+  text-shadow:
+    0 0 12px var(--glow),
+    0 0 28px var(--glow),
+    0 0 50px var(--glow);
+  z-index: 2;
+  animation: om-pulse 2s ease-in-out infinite;
+}
+
+/* Loader text */
+.loader-text {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #e97806;
+  text-align: center;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.cursor {
+  display: inline-block;
+  margin-left: 2px;
+  width: 2px;
+  background: currentColor;
+  animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+
+/* Blinking cursor */
+@keyframes blink {
+  50% { border-color: transparent }
+}
+
+
+/* Blinking cursor */
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}
+
+
+/* Animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes om-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    text-shadow: 0 0 20px var(--glow);
+  }
+
+  50% {
+    transform: scale(1.1);
+    text-shadow: 0 0 35px var(--glow);
+  }
+}

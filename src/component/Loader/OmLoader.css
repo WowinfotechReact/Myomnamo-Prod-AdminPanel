@@ -1,0 +1,14 @@
+@keyframes zoomInOut {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+  }
+
+  .zoom-loader {
+    animation: zoomInOut 1.5s ease-in-out infinite;
+    width: 100px;
+    height: 100px;
+  }

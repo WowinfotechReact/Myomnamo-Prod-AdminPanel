@@ -1,0 +1,24 @@
+.expand-card {
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.expand-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.expand-card h6 {
+      font-weight: 600;
+      border-left: 4px solid #0d6efd;
+      padding-left: 8px;
+}
+
+.expand-badge {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 4px 8px;
+      border-radius: 8px;
+}
