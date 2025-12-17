@@ -82,7 +82,7 @@ const AddShopModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) =>
             isValid = false
         }
         const ApiParam = {
-            adminID: user?.admiN_ID,
+            adminID: user?.adminID,
             shopID: modelRequestData?.shopID,
             shopName: shopForm?.shopName,
             shopCode: shopForm?.shopCode,
@@ -153,7 +153,7 @@ const AddShopModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) =>
                                 </label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className="form-control small"
                                     id="shopName"
                                     value={shopForm?.shopName || ''}
                                     placeholder="Enter Shop Name"
@@ -173,7 +173,7 @@ const AddShopModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) =>
                                 </label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className="form-control small"
                                     id="contactPerson"
                                     placeholder="Enter Shop Code"
                                     value={shopForm?.shopCode}
@@ -192,7 +192,7 @@ const AddShopModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) =>
                                 <label htmlFor="ownerName" className="form-label">Owner Name<span className='text-danger'>*</span></label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className="form-control small"
                                     id="ownerName"
                                     placeholder="Enter Owner Name"
                                     maxLength={150}
@@ -212,7 +212,7 @@ const AddShopModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) =>
                                 </label>
                                 <input
                                     type='text'
-                                    className="form-control " // reserve space for icon
+                                    className="form-control small " // reserve space for icon
                                     id="contactNumber"
                                     maxLength={10}
                                     placeholder="Enter Contact Number"
@@ -234,7 +234,7 @@ const AddShopModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) =>
                                 <label htmlFor="emailID" className="form-label">Email ID<span className='text-danger'>*</span></label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className="form-control small"
                                     id="emailID"
                                     placeholder="Enter Valid Email ID"
                                     maxLength={150}
@@ -252,7 +252,7 @@ const AddShopModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) =>
                             <div className="col-md-6 mb-1">
                                 <label htmlFor="address" className="form-label">Address<span className='text-danger'>*</span></label>
                                 <textarea
-                                    className="form-control"
+                                    className="form-control small"
                                     id="address"
                                     placeholder="Enter Address"
                                     maxLength={150}

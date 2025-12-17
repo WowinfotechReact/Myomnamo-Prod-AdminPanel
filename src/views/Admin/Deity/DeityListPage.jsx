@@ -48,6 +48,7 @@ const DeityListPage = () => {
         if (isAddUpdateDone) {
             GetDeityListData(currentPage, null)
             setIsAddUpdateDone(false)
+
         }
     }, [isAddUpdateDone])
 
@@ -85,6 +86,7 @@ const DeityListPage = () => {
                         setTotalPages(Math.ceil(totalCount / pageSize));
                         setDeityList(List);
                         setTotalRecords(List?.length);
+
                     }
                 } else {
                     console.error(response?.data?.errorMessage);

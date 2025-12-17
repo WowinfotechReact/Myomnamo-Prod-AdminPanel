@@ -85,7 +85,7 @@ const AddUpdateBenefitModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
         }
 
         const apiParam = {
-            adminID: user?.admiN_ID,
+            adminID: user?.adminID,
             benefitKeyID: modelRequestData?.benefitKeyID,
             benefitName: benefitFormObj?.benefitName,
             appLangID: modelRequestData?.moduleName === "LanguageWiseList" ? benefitFormObj?.appLangID : null,

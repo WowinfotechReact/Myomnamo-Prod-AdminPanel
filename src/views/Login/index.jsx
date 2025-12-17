@@ -117,7 +117,7 @@ const Login = () => {
             <div className="card-body" style={{ height: 'auto' }}>
               <div className="d-flex align-items-center mb-3">
                 <div className="flex-grow-1 border-bottom border-secondary"></div>
-                <span className="mx-2 text-muted fw-semibold" style={{ fontSize: '20px' }}>Inventory Panel</span>
+                <span className="mx-2 text-muted fw-semibold" style={{ fontSize: '20px' }}>Log In</span>
                 <div className="flex-grow-1 border-bottom border-secondary"></div>
               </div>
 

@@ -14,7 +14,7 @@ import { Button, Table } from 'react-bootstrap'
 import { useLocation, useNavigate } from 'react-router'
 import AddUpdatePackageModal from './AddUpdatePackageModal'
 import StatusChangeModal from 'component/StatusChangeModal'
-import { GetPujaSubscriptionPackageList } from 'services/Admin/SubscriptionPackage/SubscriptionPackageApi'
+import { ChangeSubsPackageStatus, GetPujaSubscriptionPackageList } from 'services/Admin/SubscriptionPackage/SubscriptionPackageApi'
 
 const LanguageWisePackage = () => {
     const { setLoader, user } = useContext(ConfigContext);
@@ -59,7 +59,7 @@ const LanguageWisePackage = () => {
         setLoader(true);
         try {
             const response = await GetPujaSubscriptionPackageList({
-                adminID: user?.admiN_ID,
+                adminID: user?.adminID,
                 pageSize: pageSize,
                 pageNo: pageNumber - 1,
                 sortingDirection: sortingType ? sortingType : null,
@@ -92,6 +92,29 @@ const LanguageWisePackage = () => {
             console.log(error);
         }
     }
+
+    const confirmStatusChange = async (item, user) => {
+        try {
+
+            const response = await ChangeSubsPackageStatus(item?.tempPujaSubPackageKeyID, item?.appLangID);
+
+            if (response && response.data.statusCode === 200) {
+                setShowStatusChangeModal(false);
+                setStateChangeStatus(null);
+                GetStateListData(currentPage, null);
+                setShowSuccessModal(true);
+                // setModelAction('State status changed successfully.');
+            } else {
+                console.error(response?.data?.errorMessage);
+                setShowSuccessModal(true);
+                // setModelAction('Failed to change state status.');
+            }
+        } catch (error) {
+            console.error('Error changing state status:', error);
+            setShowSuccessModal(true);
+            // setModelAction('An error occurred while changing the employee status.');
+        }
+    };
 
     const AddBtnClicked = () => {
 
@@ -132,7 +155,10 @@ const LanguageWisePackage = () => {
         setShowSuccessModal(false)
         setIsAddUpdateDone(true)
     }
-
+    const handleStatusChange = (item) => {
+        setModelRequestData((prev) => ({ ...prev, changeStatusData: item })); // You can set only relevant data if needed
+        setShowStatusChangeModal(true);
+    };
 
     return (
         <>
@@ -217,9 +243,9 @@ const LanguageWisePackage = () => {
 
 
 
-                                        {/* <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
+                                        <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                                             Status
-                                        </th> */}
+                                        </th>
 
                                         <th className="text-center actionSticky" style={{ whiteSpace: 'nowrap' }}>
                                             Action
@@ -248,15 +274,15 @@ const LanguageWisePackage = () => {
                                             </td>
 
 
-                                            {/* <td className="text-center text-nowrap"
-                                                onClick={() => ChangeStatusData(item)}
+                                            <td className="text-center text-nowrap"
+                                                onClick={() => handleStatusChange(item)}
                                             >
                                                 <Tooltip title={item.status === true ? 'Enable' : 'Disable'}>
                                                     {item.status === true ? 'Enable' : 'Disable'}
                                                     <Android12Switch
                                                         style={{ padding: '8px' }} checked={item.status === true} />
                                                 </Tooltip>
-                                            </td> */}
+                                            </td>
 
                                             <td className="text-center actionColSticky" style={{ zIndex: 4 }}>
                                                 <div className="d-flex justify-content-center gap-2">
@@ -289,7 +315,7 @@ const LanguageWisePackage = () => {
             <StatusChangeModal
                 open={showStatusChangeModal}
                 onClose={() => setShowStatusChangeModal(false)}
-                onConfirm={() => ChangeStatusData(modelRequestData?.changeStatusData)} // Pass the required arguments
+                onConfirm={() => confirmStatusChange(modelRequestData?.changeStatusData)} // Pass the required arguments
             />
         </>
     )

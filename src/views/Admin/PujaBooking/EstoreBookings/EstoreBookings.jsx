@@ -243,7 +243,6 @@ const EstoreBookingList = () => {
     setShowAssignPanditModal(true);
   };
 
-  console.log('modelRequestData.selectedPujas', modelRequestData.selectedPujas);
 
   const handleMultiAssignPandit = () => {
     if (selectedBookings.length === 0) {

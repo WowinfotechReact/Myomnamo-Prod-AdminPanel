@@ -27,3 +27,12 @@ export const GetPujaTypeLookupList = async (params) => {
   const res = await postApiWithAuthenticated(url, params);
   return res;
 };
+
+export const GetModuleTypeLookupList = async (PujaServiceID, PujaSubServiceID) => {
+  let url = '';
+
+  url = `${Base_Url}/api/Banner/GetBannerModuleLookupList?PujaServiceID=${PujaServiceID}&PujaSubServiceID=${PujaSubServiceID}`;
+
+  const res = await getListWithAuthenticated(url);
+  return res;
+};

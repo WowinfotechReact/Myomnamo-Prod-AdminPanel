@@ -82,6 +82,10 @@ export const InstallationTypeOption = [
 // export default { MisOptions, MisTrackinOptions };
 export const CalenderFilter = [
   {
+    value: 12,
+    label: 'Today'
+  },
+  {
     value: 0,
     label: 'All'
   },
@@ -169,3 +173,4 @@ export const MonthWiseUtilList = [
   { value: 11, label: 'November' },
   { value: 12, label: 'December' }
 ];
+

@@ -51,7 +51,8 @@ const AddUpdateProductCatModal = ({ show, onHide, modelRequestData, setIsAddUpda
 
   const [formObj, setFormObj] = useState({
     productCategory: null,
-    appLangID: null
+    appLangID: null,
+    isSubscriptionProductCategory: false
   });
 
   useEffect(() => {
@@ -95,7 +96,8 @@ const AddUpdateProductCatModal = ({ show, onHide, modelRequestData, setIsAddUpda
             setFormObj((prev) => ({
               ...prev,
               productCategory: List.productCategoryName,
-              appLangID: List.appLangID
+              appLangID: List.appLangID,
+              isSubscriptionProductCategory: List?.isSubscriptionProductCategory
             }));
           }
         } else {
@@ -190,7 +192,9 @@ const AddUpdateProductCatModal = ({ show, onHide, modelRequestData, setIsAddUpda
 
   const SubmitBtnClicked = () => {
     let isValid = true;
-    if (formObj.productCategory === null || formObj.productCategory === undefined || formObj.productCategory === '') {
+    if (formObj.productCategory === null || formObj.productCategory === undefined || formObj.productCategory === '' ||
+      formObj.isSubscriptionProductCategory === null || formObj.isSubscriptionProductCategory === undefined || formObj.isSubscriptionProductCategory === ''
+    ) {
       setError(true);
       isValid = false;
     }
@@ -203,11 +207,12 @@ const AddUpdateProductCatModal = ({ show, onHide, modelRequestData, setIsAddUpda
     }
 
     const apiParam = {
-      adminID: user?.admiN_ID,
+      adminID: user?.adminID,
       productCatKeyID: modelRequestData.productCatKeyID ? modelRequestData.productCatKeyID : null, // for add pass null and update pass id
       prodCatByLangKeyID: modelRequestData.prodCatByLangKeyID ? modelRequestData.prodCatByLangKeyID : null,
       appLangID: formObj.appLangID ? formObj.appLangID : null,
-      productCategoryName: formObj.productCategory
+      productCategoryName: formObj.productCategory,
+      isSubscriptionProductCategory: formObj.isSubscriptionProductCategory,
     };
 
     if (isValid) {
@@ -245,6 +250,7 @@ const AddUpdateProductCatModal = ({ show, onHide, modelRequestData, setIsAddUpda
   };
 
   const handleChange = (e) => {
+
     let { id, value } = e.target;
     if (id === 'pujaName') {
       // Remove leading spaces
@@ -298,6 +304,12 @@ const AddUpdateProductCatModal = ({ show, onHide, modelRequestData, setIsAddUpda
     }
     if (id === 'metaTitle' || id === 'metaDescription' || id === 'canonicalTag' || id === 'extraMetaTag' || id === 'openGraphTag') {
       value = value.replace(/^\s+/, '');
+    } if (id === "isSubscriptionProductCategory") {
+      if (value === "false") {
+        value = false
+      } else {
+        value = true
+      }
     }
 
     setFormObj((prev) => ({
@@ -448,7 +460,7 @@ const AddUpdateProductCatModal = ({ show, onHide, modelRequestData, setIsAddUpda
                 )}
               </div>
               {/* Language Selection */}
-              {modelRequestData?.moduleName === 'LanguageWiseList' && (
+              {modelRequestData?.moduleName === 'LanguageWiseList' ? (
                 <>
                   <div className="col-md-12 mb-3">
                     <label htmlFor="stateID" className="form-label">
@@ -466,9 +478,47 @@ const AddUpdateProductCatModal = ({ show, onHide, modelRequestData, setIsAddUpda
                       menuPlacement="auto"
                       menuPosition="fixed"
                     />
-                    {error && !formObj?.appLangID && <span className="text-danger">{ERROR_MESSAGES}</span>}
+                    {error && !formObj?.appLangID && <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>}
                   </div>
                 </>
+              ) : (
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="canonicalTag" className="form-label">
+                    Is Puja Kit Category <span className="text-danger">*</span>
+                  </label>
+                  <div classNsame="flex flex-col sm:flex-row sm:items-center sm:gap-4 gap-2">
+                    <label className="inline-flex items-center mx-1">
+                      <input
+                        type="radio"
+                        id='isSubscriptionProductCategory'
+                        name="isSubscriptionProductCategory"
+                        value={true}
+                        checked={formObj?.isSubscriptionProductCategory}
+                        onChange={handleChange}
+                        className="form-radio h-4 w-4 text-blue-600"
+                      />
+                      <span className="ml-2 mx-2 text-sm text-gray-700">Yes</span>
+                    </label>
+
+                    <label className="inline-flex items-center mx-1">
+                      <input
+                        type="radio"
+                        name="isSubscriptionProductCategory"
+                        id='isSubscriptionProductCategory'
+                        value={false}
+                        checked={formObj?.isSubscriptionProductCategory === false}
+                        onChange={handleChange}
+                        className="form-radio h-4 w-4 text-blue-600"
+                      />
+                      <span className="ml-2 mx-2 text-sm text-gray-700">No</span>
+                    </label>
+                  </div>
+
+                  {/* Validation */}
+                  {error && (!formObj?.isSubscriptionProductCategory || formObj?.isSubscriptionProductCategory === "") && (
+                    <span style={{ color: "red" }}>{ERROR_MESSAGES}</span>
+                  )}
+                </div>
               )}
             </div>
           </div>

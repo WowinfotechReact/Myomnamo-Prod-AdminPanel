@@ -82,7 +82,7 @@ const PujaSubCategoryModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                   isValid = false
             }
             const ApiParam = {
-                  adminID: user?.admiN_ID,
+                  adminID: user?.adminID,
                   // shopID: modelRequestData?.shopID,
                   poojaImg: pujaSubCatObj?.poojaImg,
                   subPujaCatName: pujaSubCatObj?.subPujaCatName,

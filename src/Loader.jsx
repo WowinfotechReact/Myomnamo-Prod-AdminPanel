@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Backdrop } from "@mui/material";
 import "./Loader.css";
+import loaderImage from "../src/assets/images/loder.png"
+
 
 const Loader = () => {
   const texts = ["Blessings are on the way…", "Loading....."]; // cycle texts
@@ -51,7 +53,9 @@ const Loader = () => {
       <div className="spiritual-loader">
         <div className="loader-wrapper">
           <div className="loader-aura"></div>
-          <span className="loader-om">ॐ</span>
+          <span className="loader-om">
+            <img src={loaderImage} alt="Loading" />
+          </span>
         </div>
         <p className="loader-text">
           {displayText}

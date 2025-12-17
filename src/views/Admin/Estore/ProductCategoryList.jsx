@@ -14,6 +14,7 @@ import { useLocation, useNavigate } from 'react-router';
 import AddUpdateProductCatModal from './AddUpdateProductCat';
 import { ChangeStatus, GetProductCatList } from 'services/Admin/EStoreAPI/ProductCatAPI';
 import ProductCategoryLanguageWiseList from './ProductCategoryLanguageWiseList';
+import StatusChangeModal from 'component/StatusChangeModal';
 // import AddUpdatePujaModal from './AddUpdatePujaModal';
 
 const ProductCatList = () => {
@@ -43,6 +44,7 @@ const ProductCatList = () => {
   const [showAssignPanditSuccessModal, setShowAssignPanditSuccessModal] = useState(false);
   const [showAssignPanditModal, setShowAssignPanditModal] = useState(false);
   const [showBookingOrderDetailsModal, setShowBookingOrderDetailsModal] = useState(false);
+  const [showStatusChangeModal, setShowStatusChangeModal] = useState(false);
 
   const [productList, setProductList] = useState([]);
   const [toDate, setToDate] = useState(null);
@@ -127,6 +129,7 @@ const ProductCatList = () => {
   };
 
   const ChangeStatusData = async (value) => {
+    setShowStatusChangeModal(false)
     setLoader(true);
     try {
       const response = await ChangeStatus(value?.productCatKeyID, value?.appLangID);
@@ -279,6 +282,12 @@ const ProductCatList = () => {
     });
   };
 
+  const handleStatusChange = (item) => {
+    setModelRequestData((prev) => ({ ...prev, changeStatusData: item })); // You can set only relevant data if needed
+    setShowStatusChangeModal(true);
+  };
+
+
   return (
     <>
       <div className="card">
@@ -303,10 +312,10 @@ const ProductCatList = () => {
 
             {/* Action Buttons */}
             <div className="d-flex gap-2 align-items-center">
-              <Tooltip title="Add Product Cat">
+              <Tooltip title="Add Product Category">
                 <button onClick={handleAddModal} className="btn btn-primary btn-sm" style={{ cursor: 'pointer' }}>
                   <i className="fa-solid fa-plus me-1" style={{ fontSize: '11px' }}></i>
-                  <span className="d-none d-sm-inline">Add Product Cat</span>
+                  <span className="d-none d-sm-inline">Add Product Category</span>
                 </button>
               </Tooltip>
             </div>
@@ -347,16 +356,8 @@ const ProductCatList = () => {
 
                 <tbody>
                   {productList?.map((item, idx) => (
-                    <tr className="text-nowrap text-center" key={item.pujaBookingID}>
-                      {/* ✅ Row checkbox */}
-                      {/* <td className="text-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedBookings.includes(item.pujaBookingID)}
-                          onChange={() => handleSelectRow(item.pujaBookingID)}
-                          disabled={item.panditName !== null}
-                        />
-                      </td> */}
+                    <tr key={item.idx} className="text-center align-middle">
+
 
                       <td style={{ whiteSpace: 'nowrap' }} className="text-center">
                         {(currentPage - 1) * pageSize + idx + 1}
@@ -402,7 +403,7 @@ const ProductCatList = () => {
                         <td style={{ whiteSpace: 'nowrap' }}>{item?.offlinePujaPrice === null ? '-' : item?.offlinePujaPrice}</td>
                       )} */}
 
-                      <td className="text-center text-nowrap" onClick={() => ChangeStatusData(item)}>
+                      <td className="text-center text-nowrap" onClick={() => handleStatusChange(item)}>
                         <Tooltip title={item.status === true ? 'Enable' : 'Disable'}>
                           {item.status === true ? 'Enable' : 'Disable'}
                           <Android12Switch style={{ padding: '8px' }} checked={item.status === true} />
@@ -443,11 +444,11 @@ const ProductCatList = () => {
       />
       <SuccessPopupModal show={showSuccessModal} onHide={() => onSuccessClose()} successMassage={ChangeStatusMassage} />
 
-      {/* <SuccessPopupModal
-        show={showAssignPanditSuccessModal}
-        onHide={() => setShowAssignPanditSuccessModal(false)}
-        successMassage="Pandit assigned successfully "
-      /> */}
+      <StatusChangeModal
+        open={showStatusChangeModal}
+        onClose={() => setShowStatusChangeModal(false)}
+        onConfirm={() => ChangeStatusData(modelRequestData?.changeStatusData)} // Pass the required arguments
+      />
     </>
   );
 };

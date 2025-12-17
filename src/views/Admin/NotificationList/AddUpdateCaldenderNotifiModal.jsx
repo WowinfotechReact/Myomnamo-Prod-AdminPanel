@@ -197,7 +197,7 @@ const AddUpdateCalenderNotifiModal = ({ show, onHide, modelRequestData, setIsAdd
     }
 
     const apiParam = {
-      adminID: user?.admiN_ID,
+      adminID: user?.adminID,
       festNotiTemplateKeyID: modelRequestData.festNotiTemplateKeyID,
       notiTemplateID: formObj.templateID,
       title: formObj.title,
@@ -246,9 +246,9 @@ const AddUpdateCalenderNotifiModal = ({ show, onHide, modelRequestData, setIsAdd
       return;
     }
 
-    // Size check (10 MB)
-    if (file.size > 10 * 1024 * 1024) {
-      setSizeError('File size must be less than 10 MB.');
+    // Size check (2 MB)
+    if (file.size > 2 * 1024 * 1024) {
+      setSizeError('File size must be less than 2 MB.');
       return;
     }
 
@@ -489,7 +489,9 @@ const AddUpdateCalenderNotifiModal = ({ show, onHide, modelRequestData, setIsAdd
                   )}
 
                   {error && (selectedFile === null || selectedFile === '' || selectedFile === undefined) && (
-                    <span className="text-danger small mx-3">{ERROR_MESSAGES}</span>
+                    <span className="error-msg" style={{ color: 'red' }}>
+                      {ERROR_MESSAGES}
+                    </span>
                   )}
                 </div>
               </div>

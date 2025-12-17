@@ -90,7 +90,7 @@ const AddNewVendorModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
             isValid = false
         }
         const ApiParam = {
-            adminID: user?.admiN_ID,
+            adminID: user?.adminID,
             vendorID: modelRequestData?.vendorID,
             vendorName: vendorForm?.vendorName,
             contactPersonName: vendorForm?.contactPerson,
@@ -171,7 +171,7 @@ const AddNewVendorModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
                                 </label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className="form-control small"
                                     id="vendorName"
                                     value={vendorForm?.vendorName || ''}
                                     onChange={(e) => {
@@ -193,7 +193,7 @@ const AddNewVendorModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
                                 </label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className="form-control small"
                                     id="contactPerson"
                                     placeholder="Enter Contact Person"
                                     value={vendorForm?.contactPerson || ''}
@@ -213,7 +213,7 @@ const AddNewVendorModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
                                 <label htmlFor="emailID" className="form-label">Email ID<span className='text-danger'>*</span></label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className="form-control small"
                                     id="emailID"
                                     placeholder="Enter Valid Email ID"
                                     maxLength={150}
@@ -236,7 +236,7 @@ const AddNewVendorModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
                                 </label>
                                 <input
                                     type='text'
-                                    className="form-control " // reserve space for icon
+                                    className="form-control small" // reserve space for icon
                                     id="contactNumber"
                                     maxLength={10}
                                     placeholder="Enter Contact Number"
@@ -261,7 +261,7 @@ const AddNewVendorModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
                                 </label>
                                 <input
                                     type='text'
-                                    className="form-control " // reserve space for icon
+                                    className="form-control small " // reserve space for icon
                                     id="PAN"
                                     maxLength={10}
                                     placeholder="Enter PAN Number"
@@ -284,7 +284,7 @@ const AddNewVendorModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
                                 </label>
                                 <input
                                     type='text'
-                                    className="form-control " // reserve space for icon
+                                    className="form-control small " // reserve space for icon
                                     id="GST"
                                     placeholder="Enter GST Number"
                                     value={vendorForm?.GSTNumber || ''}
@@ -305,7 +305,7 @@ const AddNewVendorModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
                             <div className="col-md-12 mb-1">
                                 <label htmlFor="address" className="form-label">Address<span className='text-danger'>*</span></label>
                                 <textarea
-                                    className="form-control"
+                                    className="form-control small"
                                     id="address"
                                     placeholder="Enter Address"
                                     maxLength={150}

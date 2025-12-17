@@ -17,7 +17,7 @@ import dayjs from 'dayjs';
 
 
 const LanguageWiseDeityList = () => {
-    const { setLoader } = useContext(ConfigContext);
+    const { setLoader, truncateText } = useContext(ConfigContext);
     const navigate = useNavigate()
     const location = useLocation()
 
@@ -177,7 +177,7 @@ const LanguageWiseDeityList = () => {
                         </button>
 
                         {/* Title – centered */}
-                        <h5 className="m-0 text-center flex-grow-1">  Language Deity List</h5>
+                        <h5 className="m-0 text-center flex-grow-1">  {truncateText(location?.state?.data?.deityName, 30)} List</h5>
 
                         {/* Add Button – visible only on mobile (<576px) */}
                         <button

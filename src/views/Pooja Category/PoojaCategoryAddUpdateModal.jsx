@@ -199,7 +199,7 @@ const PoojaCategoryAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddU
             let ApiParam = {}
             if (modelRequestData?.moduleName === "CategoryList") {
                   ApiParam = {
-                        adminID: user?.admiN_ID,
+                        adminID: user?.adminID,
                         pujaCatKeyID: modelRequestData?.pujaCatKeyID,
                         pujaCatByLangKeyID: modelRequestData?.pujaCatByLangKeyID,
                         appLangID: poojaCatObj?.appLangID,
@@ -210,7 +210,7 @@ const PoojaCategoryAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddU
                   }
             } else {
                   ApiParam = {
-                        adminID: user?.admiN_ID,
+                        adminID: user?.adminID,
                         pujaCatKeyID: modelRequestData?.pujaCatKeyID,
                         pujaCatByLangKeyID: modelRequestData?.pujaCatByLangKeyID,
                         appLangID: poojaCatObj?.appLangID,
@@ -231,7 +231,7 @@ const PoojaCategoryAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddU
                         setLoader(false);
                         setShowSuccessModal(true)
                         setIsAddUpdateDone(true)
-                        onHide()
+                        // onHide()
                   } else {
                         console.error(response?.data?.errorMessage);
                         setCustomError(response?.response?.data?.errorMessage)

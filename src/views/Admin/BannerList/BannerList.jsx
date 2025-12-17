@@ -180,7 +180,7 @@ const BannerList = () => {
     setCurrentPage(1);
     const value = e.target.value;
     setSearchKeyword(value);
-    debouncedSearch(value);
+    GetBannerListData(currentPage, value);
   };
 
   const handlePageChange = (pageNumber) => {
@@ -267,13 +267,18 @@ const BannerList = () => {
   //   };
 
   const AddLangBtnClicked = (value) => {
-    navigate('/product-category-language-wise', {
+    navigate('/banner-language-wise', {
       state: {
         data: value
       }
     });
   };
 
+  const stripHtml = (html) => {
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+    return tempDiv.innerText || tempDiv.textContent || "";
+  };
   return (
     <>
       <div className="card">
@@ -290,6 +295,7 @@ const BannerList = () => {
             {/* Search Box */}
             <input
               type="text"
+              value={searchKeyword}
               className="form-control"
               placeholder="Search..."
               style={{ maxWidth: '350px' }}
@@ -393,38 +399,26 @@ const BannerList = () => {
                       </td>
 
                       {/* Heading */}
-                      <td style={{ whiteSpace: 'nowrap' }}>
-                        {item?.header1 ? (
-                          item.header1.length > 25 ? (
-                            <Tooltip title={item.header1}>{item.header1.substring(0, 25) + '...'}</Tooltip>
-                          ) : (
-                            item.header1
-                          )
-                        ) : (
-                          '-'
-                        )}
+                      <td style={{ whiteSpace: 'nowrap' }} align='left'>
+                        {stripHtml(item.header1).length > 40
+                          ? `${stripHtml(item.header1).substring(0, 40)}...`
+                          : stripHtml(item.header1)}
                       </td>
 
                       {/* Sub-heading */}
-                      <td style={{ whiteSpace: 'nowrap' }}>
-                        {item?.header2 ? (
-                          item.header2.length > 25 ? (
-                            <Tooltip title={item.header2}>{item.header2.substring(0, 25) + '...'}</Tooltip>
-                          ) : (
-                            item.header2
-                          )
-                        ) : (
-                          '-'
-                        )}
+                      <td style={{ whiteSpace: 'nowrap' }} align='left'>
+                        {stripHtml(item.header2).length > 50
+                          ? `${stripHtml(item.header2).substring(0, 50)}...`
+                          : stripHtml(item.header2)}
                       </td>
 
                       {/* CTA */}
                       <td style={{ whiteSpace: 'nowrap' }}>
-                        {item?.bannerName ? (
-                          item.bannerName.length > 25 ? (
-                            <Tooltip title={item.bannerName}>{item.bannerName.substring(0, 25) + '...'}</Tooltip>
+                        {item?.ctaName ? (
+                          item.ctaName.length > 25 ? (
+                            <Tooltip title={item.ctaName}>{item.ctaName.substring(0, 25) + '...'}</Tooltip>
                           ) : (
-                            item.bannerName
+                            item.ctaName
                           )
                         ) : (
                           '-'
@@ -475,11 +469,11 @@ const BannerList = () => {
                               <i class="fas fa-edit"></i>
                             </Button>
                           </Tooltip>
-                          {/* <Tooltip title="Add Language">
+                          <Tooltip title="Add Language">
                             <Button style={{ marginRight: '5px' }} className="btn-sm" onClick={() => AddLangBtnClicked(item)}>
                               <i class="fas fa-language"></i>
                             </Button>
-                          </Tooltip> */}
+                          </Tooltip>
                         </div>
                       </td>
                     </tr>

@@ -114,11 +114,13 @@ const TempleListPage = () => {
 
     // ----------Other Functions------------------
     const AddBtnClicked = () => {
+        setSearchKeyword("")
         setModelRequestData((prev) => ({ ...prev, Action: null, templeKeyID: null }))
         setShowAddTempleModal(true)
     }
 
     const updateBtnClicked = (value) => {
+        setSearchKeyword("")
         setModelRequestData((prev) => ({
             ...prev, Action: 'update',
             templeKeyID: value?.templeKeyID
@@ -250,7 +252,7 @@ const TempleListPage = () => {
                                 </thead>
                                 <tbody>
                                     {templeList?.map((item, idx) => (
-                                        <tr className='text-nowrap  text-center' key={item.idx}>
+                                        <tr className='text-nowrap text-center align-middle ' key={item.idx}>
 
                                             <td style={{ whiteSpace: 'nowrap' }} className="text-center">
                                                 {(currentPage - 1) * pageSize + idx + 1}

@@ -17,10 +17,11 @@ import AddUpdateTempleModal from 'views/Admin Temple/Temple/AddUpdateTempleModal
 import PujaBookingOrderDetails from './PujaBookingOrderDetails';
 import AssignPanditModal from './AssignPanditModal';
 import Select from 'react-select';
-// import AddUpdatePujaModal from './AddUpdatePujaModal';
+import 'react-calendar/dist/Calendar.css';
+import DatePicker from 'react-date-picker';
 
 const PujaBookingList = () => {
-  const { setLoader } = useContext(ConfigContext);
+  const { setLoader, setToDate, toDate, fromDate, setFromDate } = useContext(ConfigContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,7 +42,7 @@ const PujaBookingList = () => {
     selectedPujas: null
   });
   const [showAddTempleModal, setShowAddTempleModal] = useState(false);
-  const [showVendorDetailsModal, setShowVendorDetailsModal] = useState(false);
+
   const [isAddUpdateDone, setIsAddUpdateDone] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showAssignPanditSuccessModal, setShowAssignPanditSuccessModal] = useState(false);
@@ -51,8 +52,7 @@ const PujaBookingList = () => {
   const [pujaList, setPujaList] = useState([]);
   const [successMessage, setSuccessMessage] = useState('');
   const [pujaOrderStatusMap, setPujaOrderStatusMap] = useState({});
-  const [toDate, setToDate] = useState(null);
-  const [fromDate, setFromDate] = useState(null);
+
   const [selectedBookings, setSelectedBookings] = useState([]);
   const [pujaOrderStatusID, setPujaOrderStatusID] = useState(null);
 
@@ -61,9 +61,10 @@ const PujaBookingList = () => {
   // const allSelected = pujaList?.length > 0 && selectedBookings.length === pujaList.length;
   const allSelected = selectableRows.length > 0 && selectableRows.every((item) => selectedBookings.includes(item.pujaBookingID));
 
-  console.log('selectedBookings', selectedBookings);
 
   useEffect(() => {
+    // debugger;
+    setCurrentPage(1);
     if (location?.pathname === '/pandit-puja-booking') {
       setPageHeading('Pandit Puja Booking List');
       GetPujaBookingListData(1, null, pujaServiceID?.PanditPuja, pujaSubServiceID?.PanditPuja);
@@ -106,14 +107,20 @@ const PujaBookingList = () => {
       }));
     } else if (location?.pathname === '/puja-at-temple-booking') {
       setPageHeading('Puja At Temple Booking List');
-      //   GetPujaBookingListData(1, null, pujaServiceID?.Puja, pujaSubServiceID?.HomamPuja);
-      setModelRequestData((prev) => ({ ...prev, pujaServiceID: pujaServiceID?.Puja, pujaSubServiceID: pujaSubServiceID?.HomamPuja }));
+      GetPujaBookingListData(1, null, pujaServiceID?.PujaAtTemple, pujaSubServiceID?.PujaAtTemple);
+      setModelRequestData((prev) => ({ ...prev, pujaServiceID: pujaServiceID?.PujaAtTemple, pujaSubServiceID: pujaSubServiceID?.PujaAtTemple }));
     }
-  }, [location]);
+  }, [location.pathname]);
+
   useEffect(() => {
+
     if (isAddUpdateDone) {
-      setShowAssignPanditModal(false);
-      setShowAssignPanditSuccessModal(true);
+      // debugger;
+      if (showAssignPanditModal) {
+        setShowAssignPanditModal(false);
+        setShowAssignPanditSuccessModal(true);
+
+      }
       setSelectedBookings([]);
       GetPujaBookingListData(currentPage, null, modelRequestData?.pujaServiceID, modelRequestData?.pujaSubServiceID);
       setIsAddUpdateDone(false);
@@ -122,6 +129,7 @@ const PujaBookingList = () => {
 
   // ------------API Callings--------------------
   const GetPujaBookingListData = async (pageNumber, searchKeywordValue, pujaServiceID, pujaSubServiceID) => {
+
     setLoader(true);
     try {
       const response = await GetPujaBookingList({
@@ -159,29 +167,7 @@ const PujaBookingList = () => {
     }
   };
 
-  const ChangeStatusData = async (value) => {
-    setLoader(true);
-    try {
-      const response = await ChangePujaStatus(value?.pujakeyID);
 
-      if (response) {
-        if (response?.data?.statusCode === 200) {
-          setLoader(false);
-          if (response?.data?.responseData?.data) {
-            // setIsAddUpdateDone(true)
-            setSuccessMessage('Pandit assigned successfully ');
-            setShowSuccessModal(true);
-          }
-        } else {
-          console.error(response?.data?.errorMessage);
-          setLoader(false);
-        }
-      }
-    } catch (error) {
-      setLoader(false);
-      console.log(error);
-    }
-  };
 
   // ----------Other Functions------------------
   const AddBtnClicked = () => {
@@ -189,24 +175,21 @@ const PujaBookingList = () => {
     setShowAddTempleModal(true);
   };
 
-  const updateBtnClicked = (value) => {
-    setModelRequestData((prev) => ({
-      ...prev,
-      Action: 'update',
-      pujaKeyID: value?.pujakeyID
-    }));
-    setShowAddTempleModal(true);
-  };
+
   const fetchSearchResults = (searchValue) => {
-    GetPujaListData(currentPage, searchValue, modelRequestData?.pujaServiceID, modelRequestData?.pujaSubServiceID);
+
+    GetPujaBookingListData(currentPage, searchValue, modelRequestData?.pujaServiceID, modelRequestData?.pujaSubServiceID);
+
   };
   const debouncedSearch = useCallback(debounce(fetchSearchResults, 500), []);
 
   const handleSearchChange = (e) => {
+
     setCurrentPage(1);
     const value = e.target.value;
     setSearchKeyword(value);
-    debouncedSearch(value);
+    // debouncedSearch(value);
+    GetPujaBookingListData(1, value, modelRequestData?.pujaServiceID, modelRequestData?.pujaSubServiceID);
   };
 
   const handlePageChange = (pageNumber) => {
@@ -268,7 +251,7 @@ const PujaBookingList = () => {
     }));
     setShowBookingOrderDetailsModal(true);
   };
-  console.log('data', modelRequestData);
+
 
   const handleAssignPandit = (value) => {
     setModelRequestData((prev) => ({
@@ -278,7 +261,7 @@ const PujaBookingList = () => {
     setShowAssignPanditModal(true);
   };
 
-  console.log('modelRequestData.selectedPujas', modelRequestData.selectedPujas);
+
 
   const handleMultiAssignPandit = () => {
     if (selectedBookings.length === 0) {
@@ -315,6 +298,44 @@ const PujaBookingList = () => {
     }
   };
 
+
+  const handleToDateChange = (newValue) => {
+    if (newValue && dayjs(newValue).isValid()) {
+      const newToDate = dayjs(newValue);
+      setToDate(newToDate);
+
+      if (fromDate && newToDate.isBefore(fromDate)) {
+        setFromDate(newToDate.subtract(1, 'day'));
+      }
+
+    } else {
+      setToDate(null);
+
+    }
+    setIsAddUpdateDone(true)
+  };
+
+  const handleFromDateChange = (newValue) => {
+    if (newValue && dayjs(newValue).isValid()) {
+      const newFromDate = dayjs(newValue);
+      setFromDate(newFromDate);
+
+      if (toDate && newFromDate.isAfter(toDate)) {
+        setToDate(newFromDate.add(1, 'day'));
+      } // Fixed: Pass fromDate first, then toDate to DashboardCountData
+
+    } else {
+      setFromDate(null);
+
+    }
+    setIsAddUpdateDone(true)
+  };
+
+  const handleClearDates = () => {
+    setFromDate(null);
+    setToDate(null);
+    setIsAddUpdateDone(true)
+  };
   return (
     <>
       <div className="card">
@@ -334,8 +355,42 @@ const PujaBookingList = () => {
               className="form-control"
               placeholder="Search..."
               style={{ maxWidth: '350px' }}
+              value={searchKeyword}
               onChange={handleSearchChange}
             />
+            <div
+              style={{
+                display: 'flex',
+                gap: '10px',
+                justifyContent: 'center',
+                alignItems: 'center',
+                // flexWrap: 'wrap',
+
+              }}
+            >
+              <DatePicker
+                className="date-picker-input text-nowrap  "
+                label="From Date"
+                value={fromDate ? fromDate.toDate() : null}
+                onChange={handleFromDateChange}
+                clearIcon={null}
+                maxDate={toDate ? dayjs(toDate).toDate() : null}
+                format='dd/MM/yyyy'
+              />
+              {/* DatePicker - To */}
+              <DatePicker
+                minDate={fromDate ? dayjs(fromDate).toDate() : null}
+                className="date-picker-input text-nowrap"
+                label="To Date"
+                value={toDate ? toDate.toDate() : null}
+                onChange={handleToDateChange}
+                clearIcon={null}
+                format='dd/MM/yyyy'
+              />
+              <button className="btn btn-primary customBtn" onClick={handleClearDates}>
+                Clear
+              </button>
+            </div>
 
             {/* Action Buttons */}
             <div className="d-flex gap-2 align-items-center">
@@ -373,16 +428,25 @@ const PujaBookingList = () => {
                     <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                       Customer Name
                     </th>
+
+
+                    <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
+                      Total Price (₹)
+                    </th>
+                    <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
+                      Booking Date
+                    </th>
                     {(location?.pathname === '/pandit-puja-booking' || location?.pathname === '/daily-pandit-puja-booking') && (
                       <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                         Pandit Name
                       </th>
                     )}
+                    {(location?.pathname === '/daily-pandit-puja-booking') && (
 
-                    <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
-                      Total Price (₹)
-                    </th>
-
+                      <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
+                        Mobile Number
+                      </th>
+                    )}
                     <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                       Order Status
                     </th>
@@ -441,6 +505,22 @@ const PujaBookingList = () => {
                         )}
                       </td>
 
+                      <td>
+                        {/* {new Intl.NumberFormat('en-IN', {
+                          style: 'currency',
+                          currency: 'INR',
+                          minimumFractionDigits: 2
+                        }).format(item.totalAmount)} */}
+                        {item.totalAmount}
+                      </td>
+
+
+                      {/* booking date */}
+                      <td className="text-center" style={{ whiteSpace: 'nowrap' }}>
+                        {item.bookingDate ? item.bookingDate : "-"
+                        }
+                      </td>
+
                       {(location?.pathname === '/pandit-puja-booking' || location?.pathname === '/daily-pandit-puja-booking') && (
                         <td className="text-center" style={{ whiteSpace: 'nowrap' }}>
                           {item.panditName === null ? (
@@ -452,14 +532,11 @@ const PujaBookingList = () => {
                           )}
                         </td>
                       )}
-
-                      <td>
-                        {new Intl.NumberFormat('en-IN', {
-                          style: 'currency',
-                          currency: 'INR',
-                          minimumFractionDigits: 2
-                        }).format(item.totalAmount)}
-                      </td>
+                      {(location?.pathname === '/daily-pandit-puja-booking') && (
+                        <td style={{ width: '150px' }}>
+                          {item.mobileNo}
+                        </td>
+                      )}
 
                       <td style={{ width: '150px' }}>
                         <Select

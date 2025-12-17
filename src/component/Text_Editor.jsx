@@ -19,6 +19,11 @@ const editorConfig = {
     'superscript,subscript,classSpan,file,image,video,speechRecognize,spellcheck,' +
     'table,source,fullsize,about,outdent,indent,print,cut,selectall',
 
+  defaultStyle: {
+    fontFamily: '"Bricolage Grotesque", sans-serif',
+    fontSize: '16px',
+    lineHeight: '1.5',
+  },
   // ✅ keep this INSIDE the config object
   defaultStyle: {
     table: 'border:1px solid #000;border-collapse:collapse;'

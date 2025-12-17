@@ -52,3 +52,38 @@ export const ChangeStatus = async (id, AppLangID) => {
 //   const res = await getListWithAuthenticated(url);
 //   return res;
 // };
+
+export const GetProductImageListAPI = async (params, ProductKeyID) => {
+  let url = '';
+
+  url = `${Base_Url}/api/Product/GetProductImageList?ProductKeyID=${ProductKeyID}`;
+
+  const res = await postApiWithAuthenticated(url, params);
+  return res;
+};
+
+export const ChangeProductImageStatus = async (id) => {
+  let url = '';
+
+  url = `${Base_Url}/api/Product/ChangeProductImageStatus?PIID=${id}`;
+
+  const res = await getListWithAuthenticated(url);
+  return res;
+};
+
+export const AddUpdateProductImageAPI = async (params) => {
+  let url = '';
+  url = `${Base_Url}/api/Product/AddUpdateProductImage`;
+
+  const res = await postApiWithAuthenticated(url, params);
+  return res;
+};
+
+export const GetProductImageModalAPI = async (KeyID) => {
+  let url = '';
+
+  url = `${Base_Url}/api/Product/GetProductImagesModel?PIID=${KeyID}`;
+
+  const res = await getListWithAuthenticated(url);
+  return res;
+};

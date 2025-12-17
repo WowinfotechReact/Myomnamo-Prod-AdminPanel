@@ -14,11 +14,12 @@ import { GetAppLanguageLookupList } from 'services/Admin/AppLangauge/AppLanguage
 import { GetStateLookupList } from 'services/Master Api/MasterStateApi';
 import { GetDistrictLookupList } from 'services/Master Api/MasterDistrictApi';
 import { GetTempleByLanguageModel } from 'services/Admin/LanguageWiseTemple/LanguageWiseListApi';
+import { googleMapKey } from 'component/Base-Url/BaseUrl';
 
 
 const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) => {
     const debounceTimer = useRef(null);
-    const { setLoader, isValidEmail, isValidGST, isValidPAN, user } = useContext(ConfigContext);
+    const { setLoader, isValidEmail, isValidGST, isValidPAN, user, generateSlug, formatSlugOnChange, cleanSlugOnBlur } = useContext(ConfigContext);
 
     const [isAllDaySelected, setAllDaySelected] = useState(false)
     const [error, setError] = useState(false)
@@ -36,7 +37,7 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
 
     const [templeData, setTempleData] = useState({
         templeName: null, templeRules: null, stateID: null, districtID: null, templeAddress: null, seatingCapacity: null, latitude: null, longitude: null, bestSeason: null, templeTimings: null, trend: 2, dayID: [],
-        liveOnlineURL: null, isWhitePageLabel: 2, templeDetails: null, byAir: null, byTrain: null, byRoad: null, significanceOfTheTemple: null,
+        liveDarshanURL: null, isWhitePageLabel: 2, templeDetails: null, byAir: null, byTrain: null, byRoad: null, significanceOfTheTemple: null,
         architectureOfTheTemple: null, templeSlug: null, metaTitle: null, metaDescription: null, openGraphTag: null, canonicalTag: null, extraMetaTag: null, benefitID: [], deityID: [], templeID: null, appLangID: 1
     })
 
@@ -87,7 +88,7 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                             templeName: List?.templeName, templeRules: List?.templeRules, stateID: List?.stateID, districtID: List?.districtID,
                             templeAddress: List?.templeAddress, seatingCapacity: List?.seatingCapacity, latitude: List?.latitude, longitude: List?.longitude,
                             bestSeason: List?.bestSeason, templeTimings: List?.templeTimings, trend: List?.trend === true ? 1 : 2, dayID: List?.dayID,
-                            liveOnlineURL: List?.liveOnlineURL, isWhitePageLabel: List?.isWhitePageLable === true ? 1 : 2, templeDetails: List?.templeDetails,
+                            liveDarshanURL: List?.liveDarshanURL, isWhitePageLabel: List?.isWhitePageLable === true ? 1 : 2, templeDetails: List?.templeDetails,
                             byAir: List?.byAir, byTrain: List?.byTrain, byRoad: List?.byRoad, significanceOfTheTemple: List?.significanceOfTheTemple,
                             architectureOfTheTemple: List?.architectureOfTheTemple, templeSlug: List?.templeSlug, metaTitle: List?.metaTitle,
                             metaDescription: List?.metaDescription, openGraphTag: List?.openGraphTag, canonicalTag: List?.canonicalTag, extraMetaTag: List?.extraMetaTag, deityID: List?.deityID, benefitID: List?.benefitID, appLangID: List?.appLangID
@@ -123,7 +124,7 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                             templeName: List?.templeName, templeRules: List?.templeRules, stateID: List?.stateID, districtID: List?.districtID,
                             templeAddress: List?.templeAddress, seatingCapacity: List?.seatingCapacity, latitude: List?.latitude, longitude: List?.longitude,
                             bestSeason: List?.bestSeason, templeTimings: List?.templeTimings, trend: List?.trend === true ? 1 : 2, dayID: List?.dayID,
-                            liveOnlineURL: List?.liveOnlineURL, isWhitePageLabel: List?.isWhitePageLable === "Yes" ? 1 : 2, templeDetails: List?.templeDetails,
+                            liveDarshanURL: List?.liveDarshanURL, isWhitePageLabel: List?.isWhitePageLable === "Yes" ? 1 : 2, templeDetails: List?.templeDetails,
                             byAir: List?.byAir, byTrain: List?.byTrain, byRoad: List?.byRoad, significanceOfTheTemple: List?.significanceOfTheTemple,
                             architectureOfTheTemple: List?.architectureOfTheTemple, templeSlug: List?.templeSlug, metaTitle: List?.metaTitle,
                             metaDescription: List?.metaDescription, openGraphTag: List?.openGraphTag, canonicalTag: List?.canonicalTag, extraMetaTag: List?.extraMetaTag, deityID: List?.deityID, benefitID: List?.benefitID, appLangID: List?.appLangID, templeID: List?.templeID, appLangID: List?.appLangID
@@ -462,7 +463,7 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
     };
 
     const SubmitBtnClicked = () => {
-
+        debugger
         let isValid = true
         if (modelRequestData?.moduleName === "TempleList" && (templeData?.templeName === null || templeData?.templeName === undefined || templeData?.templeName === "" ||
             templeData?.templeAddress === null || templeData?.templeAddress === undefined || templeData?.templeAddress === "" ||
@@ -495,7 +496,7 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                 templeData?.bestSeason === null || templeData?.bestSeason === undefined || templeData?.bestSeason === "" ||
                 templeData?.templeTimings === null || templeData?.templeTimings === undefined || templeData?.templeTimings === "" ||
                 templeData?.templeRules === null || templeData?.templeRules === undefined || templeData?.templeRules === "" ||
-                templeData?.templeAddress === null || templeData?.templeAddress === undefined || templeData?.templeAddress === "" ||
+                // templeData?.templeAddress === null || templeData?.templeAddress === undefined || templeData?.templeAddress === "" ||
                 templeData?.byAir === null || templeData?.byAir === undefined || templeData?.byAir === "" ||
                 templeData?.byTrain === null || templeData?.byTrain === undefined || templeData?.byTrain === "" ||
                 templeData?.byRoad === null || templeData?.byRoad === undefined || templeData?.byRoad === "" ||
@@ -510,17 +511,17 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
         let apiParam = {}
         if (modelRequestData?.moduleName === "TempleList") {
             apiParam = {
-                adminID: user?.admiN_ID, templeKeyID: modelRequestData?.templeKeyID, appLangID: null, templeName: templeData?.templeName, templeRules: templeData?.templeRules, stateID: templeData?.stateID, districtID: templeData?.districtID,
+                adminID: user?.adminID, templeKeyID: modelRequestData?.templeKeyID, appLangID: null, templeName: templeData?.templeName, templeRules: templeData?.templeRules, stateID: templeData?.stateID, districtID: templeData?.districtID,
                 templeAddress: templeData?.templeAddress, seatingCapacity: (templeData?.seatingCapacity === "" || templeData?.seatingCapacity === undefined || templeData?.seatingCapacity === null) ? null : templeData?.seatingCapacity, latitude: templeData?.latitude, longitude: templeData?.longitude,
                 bestSeason: templeData?.bestSeason, templeTimings: templeData?.templeTimings, trend: templeData?.trend === 1 ? true : false, dayID: templeData?.dayID,
-                liveOnlineURL: templeData?.liveOnlineURL, isWhitePageLable: templeData?.isWhitePageLabel === 1 ? true : false, templeDetails: templeData?.templeDetails,
+                liveDarshanURL: templeData?.liveDarshanURL, isWhitePageLable: templeData?.isWhitePageLabel === 1 ? true : false, templeDetails: templeData?.templeDetails,
                 byAir: templeData?.byAir, byTrain: templeData?.byTrain, byRoad: templeData?.byRoad, significanceOfTheTemple: templeData?.significanceOfTheTemple,
                 architectureOfTheTemple: templeData?.architectureOfTheTemple, templeSlug: templeData?.templeSlug, metaTitle: templeData?.metaTitle,
                 metaDescription: templeData?.metaDescription, openGraphTag: templeData?.openGraphTag, canonicalTag: templeData?.canonicalTag, extraMetaTag: templeData?.extraMetaTag, deityID: templeData?.deityID, benefitID: templeData?.benefitID
             }
         } else {
             apiParam = {
-                adminID: user?.admiN_ID,
+                adminID: user?.adminID,
                 templeKeyID: modelRequestData?.templeKeyID,
                 appLangID: templeData?.appLangID,
                 templeLanKeyID: modelRequestData?.templeLanKeyID,
@@ -570,13 +571,13 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
 
     const handleSearch = async () => {
         try {
-            const apiKey = "AIzaSyA5rVW7DkyryqQM-cDhsSrHb4soE2iXIJ8"; // Replace with your key
+            s
             const response = await axios.get(
                 `https://maps.googleapis.com/maps/api/geocode/json`,
                 {
                     params: {
                         address: templeData?.templeAddress,
-                        key: apiKey,
+                        key: googleMapKey,
                     },
                 }
             );
@@ -600,7 +601,7 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
     const SetDataInitial = () => {
         setTempleData((prev) => ({
             ...prev, templeName: null, templeRules: null, stateID: null, districtID: null, templeAddress: null, seatingCapacity: null, latitude: null, longitude: null, bestSeason: null, templeTimings: null, trend: null, dayID: [],
-            liveOnlineURL: null, isWhitePageLabel: null, templeDetails: null, byAir: null, byTrain: null, byRoad: null, significanceOfTheTemple: null,
+            liveDarshanURL: null, isWhitePageLabel: null, templeDetails: null, byAir: null, byTrain: null, byRoad: null, significanceOfTheTemple: null,
             architectureOfTheTemple: null, templeSlug: null, metaTitle: null, metaDescription: null, openGraphTag: null, canonicalTag: null, extraMetaTag: null, benefitID: [], deityID: []
         }))
         setAllDaySelected(false)
@@ -615,7 +616,6 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
 
     }
 
-    console.log('deityList', deityList, "benefitList", benefitList)
     return (
         <>
             <Modal style={{ zIndex: 1300 }} size='lg' show={show} backdrop="static" keyboard={false} centered>
@@ -688,13 +688,30 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                                                 className="form-control my-box"
                                                 id="templeName"
                                                 value={templeData?.templeName || ''}
-                                                onChange={handleChange}
                                                 placeholder="Enter Temple Name"
                                                 maxLength={150}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    // Prevent leading space
+                                                    if (value.startsWith(" ")) return;
+                                                    setTempleData({
+                                                        ...templeData,
+                                                        templeName: value,
+                                                    });
+                                                }}
+
+                                                onBlur={(e) => {
+                                                    const slugValue = generateSlug(e.target.value);
+                                                    setTempleData({
+                                                        ...templeData,
+                                                        templeSlug: slugValue,
+                                                    });
+                                                }}
                                             />
                                             {error && (!templeData?.templeName) && (
                                                 <span className="text-danger">{ERROR_MESSAGES}</span>
-                                            )}
+                                            )
+                                            }
                                         </div>
 
                                         {/* Seating Capacity */}
@@ -707,7 +724,7 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                                                 type="text"
                                                 className="form-control"
                                                 id="seatingCapacity"
-                                                placeholder="Enter seating Capacity"
+                                                placeholder="Enter Seating Capacity"
                                                 value={templeData?.seatingCapacity}
                                                 onChange={handleChange}
                                             />
@@ -718,41 +735,27 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                                     </>
                                 }
 
-                                {/* Rules */}
+                                {/* Darshan URL */}
                                 <div className="col-md-6 mb-3">
-                                    <label htmlFor="templeRules" className="form-label">
-                                        Rules <span className="text-danger">*</span>
+                                    <label htmlFor="liveDarshanURL" className="form-label">
+                                        Live Darshan URL
+                                        {/* <span className="text-danger">*</span> */}
                                     </label>
-                                    <textarea
+                                    <input
                                         type="text"
                                         className="form-control"
-                                        id="templeRules"
-                                        placeholder="Enter Temple Rules"
-                                        value={templeData?.templeRules || ''}
+                                        id="liveDarshanURL"
+                                        placeholder="Enter Live Darshan URL"
+                                        value={templeData?.liveDarshanURL}
                                         onChange={handleChange}
                                     />
-                                    {error && (!templeData?.templeRules) && (
-                                        <span className="text-danger">{ERROR_MESSAGES}</span>
-                                    )}
+                                    {/* {error && (!templeData?.liveDarshanURL) && (
+                                    <span className="text-danger">{ERROR_MESSAGES}</span>
+                                )} */}
+
                                 </div>
 
-                                {/* Address */}
-                                <div className="col-md-6 mb-3">
-                                    <label htmlFor="templeAddress" className="form-label">
-                                        Address <span className="text-danger">*</span>
-                                    </label>
-                                    <textarea
-                                        className="form-control"
-                                        id="templeAddress"
-                                        placeholder="Enter Address"
-                                        maxLength={150}
-                                        value={templeData?.templeAddress}
-                                        onChange={handleAddressChange}
-                                    />
-                                    {error && (!templeData?.templeAddress) && (
-                                        <span className="text-danger">{ERROR_MESSAGES}</span>
-                                    )}
-                                </div>
+
 
                                 {/* Best Season */}
                                 <div className="col-md-6 mb-3">
@@ -817,26 +820,6 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                                             </>
                                         )}
 
-                                        {/* Darshan URL */}
-                                        <div className="col-md-6 mb-3">
-                                            <label htmlFor="liveOnlineURL" className="form-label">
-                                                Live Darshan URL
-                                                {/* <span className="text-danger">*</span> */}
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                id="liveOnlineURL"
-                                                placeholder="Enter Live Darshan URL"
-                                                value={templeData?.liveOnlineURL}
-                                                onChange={handleChange}
-                                            />
-                                            {/* {error && (!templeData?.liveOnlineURL) && (
-                                    <span className="text-danger">{ERROR_MESSAGES}</span>
-                                )} */}
-
-                                        </div>
-
                                         {/* State */}
                                         <div className="col-md-6 mb-3">
                                             <label htmlFor="stateID" className="form-label">
@@ -864,6 +847,7 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                                             )}
                                         </div>
 
+
                                         {/* District */}
                                         <div className="col-md-6 mb-3">
                                             <label htmlFor="districtID" className="form-label">
@@ -884,6 +868,26 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                                                 <span className="text-danger">{ERROR_MESSAGES}</span>
                                             )}
                                         </div>
+
+
+
+                                        {/* Address */}
+                                        {/* <div className="col-md-6 mb-3">
+                                            <label htmlFor="templeAddress" className="form-label">
+                                                Address <span className="text-danger">*</span>
+                                            </label>
+                                            <textarea
+                                                className="form-control"
+                                                id="templeAddress"
+                                                placeholder="Enter Address"
+                                                maxLength={150}
+                                                value={templeData?.templeAddress}
+                                                onChange={handleAddressChange}
+                                            />
+                                            {error && (!templeData?.templeAddress) && (
+                                                <span className="text-danger">{ERROR_MESSAGES}</span>
+                                            )}
+                                        </div> */}
 
 
 
@@ -1030,9 +1034,25 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
 
                                     </>
                                 )}
-
-                                {/* Temple Timings */}
+                                {/* Address */}
                                 <div className="col-md-6 mb-3">
+                                    <label htmlFor="templeAddress" className="form-label">
+                                        Address <span className="text-danger">*</span>
+                                    </label>
+                                    <textarea
+                                        className="form-control"
+                                        id="templeAddress"
+                                        placeholder="Enter Address"
+                                        maxLength={150}
+                                        value={templeData?.templeAddress}
+                                        onChange={handleAddressChange}
+                                    />
+                                    {error && (!templeData?.templeAddress) && (
+                                        <span className="text-danger">{ERROR_MESSAGES}</span>
+                                    )}
+                                </div>
+                                {/* Temple Timings */}
+                                <div className="col-md-12 mb-3">
                                     <label htmlFor="templeTimings" className="form-label">
                                         Temple Timings <span className="text-danger">*</span>
                                     </label>
@@ -1083,6 +1103,39 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                                         handleContentChange={handleByRoadDescriptionChange}
                                     />
                                     {error && (!templeData?.byRoad) && (
+                                        <span className="text-danger">{ERROR_MESSAGES}</span>
+                                    )}
+                                </div>
+
+                                {/* Rules */}
+                                <div className="col-md-6 mb-3">
+                                    <label htmlFor="templeRules" className="form-label">
+                                        Rules <span className="text-danger">*</span>
+                                    </label>
+
+                                    <Text_Editor
+                                        editorState={templeData?.templeRules}
+                                        handleContentChange={(htmlContent) => {
+                                            // handleByRoadDescriptionChange
+                                            // Strip HTML tags and check if anything meaningful remains
+                                            const strippedContent = htmlContent.replace(/<[^>]+>/g, '').trim();
+
+                                            setTempleData((obj) => ({
+                                                ...obj,
+                                                templeRules: strippedContent === '' ? null : htmlContent,
+                                            }));
+
+                                        }}
+                                    />
+                                    {/* <textarea
+                                        type="text"
+                                        className="form-control"
+                                        id="templeRules"
+                                        placeholder="Enter Temple Rules"
+                                        value={templeData?.templeRules || ''}
+                                        onChange={handleChange}
+                                    /> */}
+                                    {error && (!templeData?.templeRules) && (
                                         <span className="text-danger">{ERROR_MESSAGES}</span>
                                     )}
                                 </div>
@@ -1150,9 +1203,24 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                                             className="form-control"
                                             id="templeSlug"
                                             placeholder="Enter Temple Slug"
-                                            value={templeData?.templeSlug}
-                                            onChange={handleChange}
+                                            value={templeData?.templeSlug || ''}
+                                            onChange={(e) => {
+                                                const formattedSlug = formatSlugOnChange(e.target.value);
+                                                setTempleData({
+                                                    ...templeData,
+                                                    templeSlug: formattedSlug,
+                                                });
+                                            }}
+                                            onBlur={(e) => {
+
+                                                const cleanedSlug = cleanSlugOnBlur(e.target.value);
+                                                setTempleData((prev) => ({
+                                                    ...prev,
+                                                    templeSlug: cleanedSlug,
+                                                }));
+                                            }}
                                         />
+
                                         {error && (!templeData?.templeSlug) && (
                                             <span className="text-danger">{ERROR_MESSAGES}</span>
                                         )}

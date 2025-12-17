@@ -48,7 +48,7 @@ const AddUpdateImageModal = ({ show, onHide, modelRequestData, setIsAddUpdateDon
         }
 
         const apiParam = {
-            adminID: user?.admiN_ID,
+            adminID: user?.adminID,
             templeKeyID: modelRequestData?.templeKeyID,
             tempImgID: modelRequestData?.tempImgID,
 

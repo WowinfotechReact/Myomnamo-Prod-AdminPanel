@@ -60,7 +60,7 @@ const DistrictLanguageWiseAddUpdateModal = ({ show, onHide, modelRequestData, se
             }
 
             const apiParam = {
-                  adminID: user?.admiN_ID,
+                  adminID: user?.adminID,
                   districtName: blogCatObj?.districtName,
                   appLangID: blogCatObj?.appLangID,
                   districtKeyID: modelRequestData?.districtKeyID,

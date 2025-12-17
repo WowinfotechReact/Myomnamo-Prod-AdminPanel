@@ -1,7 +1,7 @@
 import { Tooltip } from '@mui/material'
 import NoResultFoundModel from 'component/NoResultFoundModal'
 import PaginationComponent from 'component/Pagination'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 import Android12Switch from 'component/Android12Switch'
@@ -14,9 +14,10 @@ import AddMaterialModal from './AddMaterialModal'
 import { GetPoList } from 'services/PurchaseManagement/PurchaseManagementApi'
 import { ConfigContext } from 'context/ConfigContext'
 import dayjs from 'dayjs'
+import { debounce } from 'Middleware/Utils'
 const PurchaseManagement = () => {
     const navigate = useNavigate()
-    const { setLoader } = useContext(ConfigContext);
+    const { setLoader, formatToIndianCurrency } = useContext(ConfigContext);
 
     const [toDate, setToDate] = useState(null);
     const [fromDate, setFromDate] = useState(null);
@@ -25,14 +26,9 @@ const PurchaseManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalCount, setTotalCount] = useState(null);
     const [totalPages, setTotalPages] = useState(1);
-    const [POList, setPOList] = useState([
-        { PONumber: 'PO-1', vendorName: 'Dhoop', PODate: '12/07/2025', rawMaterialItems: 'Items', qty: '100', orderStatus: 'Pending', paymentStatus: 'Paid' },
-        { PONumber: 'PO-2', vendorName: 'Puja Kit', PODate: '12/07/2025', rawMaterialItems: 'Items', qty: '100', orderStatus: 'Approved', paymentStatus: 'Paid' },
-        { PONumber: 'PO-3', vendorName: 'Wooden Temple', PODate: '02/07/2025', rawMaterialItems: 'Items', qty: '100', orderStatus: 'Delivered', paymentStatus: 'Paid' },
-        { PONumber: 'PO-4', vendorName: 'Kapoor', PODate: '12/07/2025', rawMaterialItems: 'Items', qty: '100', orderStatus: 'Cancelled', paymentStatus: 'Unpaid' },
-    ]);
-    const [totalRecords, setTotalRecords] = useState(10);
-    const [pageSize, setPageSize] = useState(30);
+    const [POList, setPOList] = useState([]);
+    const [totalRecords, setTotalRecords] = useState(-1);
+    const [pageSize, setPageSize] = useState(10);
     const [modelRequestData, setModelRequestData] = useState({ Action: null, })
     const [showAddUpdateModal, setShowAddUpdateModal] = useState(false)
     const [isAddUpdateDone, setIsAddUpdateDone] = useState(false)
@@ -102,7 +98,7 @@ const PurchaseManagement = () => {
     const PurchaseDetailsBtnClicked = (value) => {
         setModelRequestData((prev) => ({
             ...prev, Action: 'View',
-            data: { PONumber: value?.PONumber, vendorName: value?.vendorName, PODate: value?.PODate, rawMaterialItems: value?.rawMaterialItems, qty: value?.qty, orderStatus: value?.orderStatus, paymentStatus: value?.paymentStatus }
+            data: { PONumber: value?.poNumber, vendorName: value?.vendorName, PODate: dayjs(value?.poDate).format('DD/MM/YYYY'), rawMaterialItems: value?.rawMaterialItems, qty: value?.quantity, orderStatus: value?.orderStatus, paymentStatus: value?.paymentStatus }
         }))
         setShowDetailsModal(true)
     }
@@ -110,6 +106,23 @@ const PurchaseManagement = () => {
         navigate('/material', { state: { value } });
     };
 
+    const fetchSearchResults = (searchValue) => {
+        GetPoListData(1, searchValue);
+    };
+    const debouncedSearch = useCallback(debounce(fetchSearchResults, 500), []);
+
+    const handleSearchChange = (e) => {
+        setCurrentPage(1)
+        const value = e.target.value;
+        setSearchKeyword(value);
+        debouncedSearch(value);
+    };
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        setPOList([])
+        GetPoListData(pageNumber, searchKeyword)
+    }
     return (
         <>
             <div className="card">
@@ -129,7 +142,8 @@ const PurchaseManagement = () => {
                             className="form-control"
                             placeholder="Search..."
                             style={{ maxWidth: '200px' }}
-
+                            value={searchKeyword}
+                            onChange={handleSearchChange}
                         />
 
                         {/* Action Buttons */}
@@ -172,6 +186,9 @@ const PurchaseManagement = () => {
                                         <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                                             PO Date
                                         </th>
+                                        <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
+                                            PO Amount
+                                        </th>
 
                                         <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                                             Raw Material Items
@@ -208,6 +225,7 @@ const PurchaseManagement = () => {
                                                 <td className='text-start'>{item.vendorName}</td>
                                             )}
                                             <td style={{ whiteSpace: 'nowrap' }}>{dayjs(item?.poDate).format('DD/MM/YYYY')}</td>
+                                            <td style={{ whiteSpace: 'nowrap' }}>{item?.poAmount === null ? 0 : formatToIndianCurrency(item?.poAmount)}</td>
                                             <td style={{ whiteSpace: 'nowrap' }}>{item?.rawMaterialItems}</td>
                                             <td style={{ whiteSpace: 'nowrap' }}>{item?.quantity}</td>
                                             <td style={{ whiteSpace: 'nowrap' }}>{item?.orderStatus}</td>
@@ -239,7 +257,7 @@ const PurchaseManagement = () => {
                             {totalRecords <= 0 && <NoResultFoundModel totalRecords={totalRecords} />}
                         </div>
                         {totalCount > pageSize && (
-                            <PaginationComponent totalPages={totalPages} currentPage={currentPage} onPageChange={handleLeadPageChange} />
+                            <PaginationComponent totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
                         )}
                     </div>
                 </div>

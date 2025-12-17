@@ -5,17 +5,13 @@ import NoResultFoundModel from 'component/NoResultFoundModal';
 import PaginationComponent from 'component/Pagination';
 import SuccessPopupModal from 'component/SuccessPopupModal';
 import { ConfigContext } from 'context/ConfigContext';
-import dayjs from 'dayjs';
-import { pujaServiceID, pujaSubServiceID } from 'Middleware/Enum';
 import { debounce } from 'Middleware/Utils';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router';
 import { ChangeStatus, GetProductListAPI } from 'services/Admin/EStoreAPI/ProductAPI';
-import { ChangePujaStatus, GetPujaList } from 'services/Admin/Puja/PujaApi';
-import { GetPujaBookingList } from 'services/Admin/PujaBookingAPI/PujaBookingAPI';
 import AddUpdateProductModal from './AddUpdateProduct';
-// import AddUpdatePujaModal from './AddUpdatePujaModal';
+import StatusChangeModal from 'component/StatusChangeModal';
 
 const ProductList = () => {
   const { setLoader } = useContext(ConfigContext);
@@ -44,6 +40,7 @@ const ProductList = () => {
   const [showAssignPanditSuccessModal, setShowAssignPanditSuccessModal] = useState(false);
   const [showAssignPanditModal, setShowAssignPanditModal] = useState(false);
   const [showBookingOrderDetailsModal, setShowBookingOrderDetailsModal] = useState(false);
+  const [showStatusChangeModal, setShowStatusChangeModal] = useState(false);
 
   const [productList, setProductList] = useState([]);
   const [toDate, setToDate] = useState(null);
@@ -61,18 +58,19 @@ const ProductList = () => {
   useEffect(() => {
     if (location?.pathname === '/estore-product') {
       setPageHeading('Product');
-      GetProductListData();
+      GetProductListData(1, null);
     } else if (location?.pathname === '/prasad-master') {
       setPageHeading('Prasad');
-      GetProductListData();
+      GetProductListData(1, null);
     }
   }, [location]);
   useEffect(() => {
     if (isAddUpdateDone) {
+      setSearchKeyword("")
       setShowAssignPanditModal(false);
       setShowAssignPanditSuccessModal(true);
       setSelectedBookings([]);
-      GetProductListData();
+      GetProductListData(1, null);
       setIsAddUpdateDone(false);
     }
   }, [isAddUpdateDone]);
@@ -127,6 +125,7 @@ const ProductList = () => {
   };
 
   const ChangeStatusData = async (value) => {
+    setShowStatusChangeModal(false)
     setLoader(true);
     try {
       const response = await ChangeStatus(value?.productKeyID, value?.appLangID);
@@ -137,6 +136,7 @@ const ProductList = () => {
           if (response?.data?.responseData?.data) {
             setIsAddUpdateDone(true);
             setShowSuccessModal(true);
+
           }
         } else {
           console.error(response?.data?.errorMessage);
@@ -155,7 +155,7 @@ const ProductList = () => {
       ...prev,
       Action: null,
       moduleName: location.pathname === '/estore-product' ? 'ProductModal' : 'PrasadModal',
-      keyID: null
+      productKeyID: null
     }));
     setShowAddModal(true);
   };
@@ -164,6 +164,7 @@ const ProductList = () => {
     setModelRequestData((prev) => ({
       ...prev,
       Action: 'update',
+      moduleName: location.pathname === '/estore-product' ? 'ProductModal' : 'PrasadModal',
       productKeyID: value?.productKeyID,
       appLangID: null
     }));
@@ -240,7 +241,6 @@ const ProductList = () => {
     }));
     setShowBookingOrderDetailsModal(true);
   };
-  console.log('data', modelRequestData);
 
   const handleAssignPandit = (value) => {
     setModelRequestData((prev) => ({
@@ -250,7 +250,6 @@ const ProductList = () => {
     setShowAssignPanditModal(true);
   };
 
-  console.log('modelRequestData.selectedPujas', modelRequestData.selectedPujas);
 
   const handleMultiAssignPandit = () => {
     if (selectedBookings.length === 0) {
@@ -280,17 +279,40 @@ const ProductList = () => {
     }
   };
 
+  const AddImageClicked = (value) => {
+    navigate('/add-image', {
+      state: {
+        data: value,
+        moduleName: location.pathname === '/prasad-master' ? 'Prasad' : 'Product'
+      }
+    });
+  };
+  const handleStatusChange = (item) => {
+    setModelRequestData((prev) => ({ ...prev, changeStatusData: item })); // You can set only relevant data if needed
+    setShowStatusChangeModal(true);
+  };
+
+  const AddPackageClick = (value) => {
+
+    navigate('/product-subscription-package', {
+      state: {
+        data: value,
+        productKeyID: value?.productKeyID,
+
+      },
+    })
+  }
   return (
     <>
       <div className="card">
         <div className="card-body p-2 bg-white shadow-md rounded-lg" style={{ borderRadius: '10px' }}>
-          {/* <div className="d-flex justify-content-between align-items-center mb-1">
+          <div className="d-flex justify-content-between align-items-center mb-1">
             <h5 className="m-0">{pageHeading}</h5>
-            <button onClick={() => AddBtnClicked()} className="btn btn-primary btn-sm d-inline d-sm-none">
+            {/* <button onClick={() => AddBtnClicked()} className="btn btn-primary btn-sm d-inline d-sm-none">
               <i className="fa-solid fa-plus" style={{ fontSize: '11px' }}></i>
               <span className="d-inline d-sm-none"> Add</span>
-            </button>
-          </div> */}
+            </button> */}
+          </div>
 
           <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
             {/* Search Box */}
@@ -299,6 +321,7 @@ const ProductList = () => {
               className="form-control"
               placeholder="Search..."
               style={{ maxWidth: '350px' }}
+              value={searchKeyword}
               onChange={handleSearchChange}
             />
 
@@ -349,9 +372,9 @@ const ProductList = () => {
 
                     <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                       {location.pathname === '/estore-product'
-                        ? 'Product Price'
+                        ? 'Product Price (₹)'
                         : location.pathname === '/prasad-master'
-                          ? 'Prasad Price'
+                          ? 'Prasad Price (₹)'
                           : ''}
                     </th>
 
@@ -370,100 +393,138 @@ const ProductList = () => {
 
                 <tbody>
                   {productList?.map((item, idx) => (
-                    <tr className="text-nowrap text-center" key={item.pujaBookingID}>
-                      {/* ✅ Row checkbox */}
-                      {/* <td className="text-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedBookings.includes(item.pujaBookingID)}
-                          onChange={() => handleSelectRow(item.pujaBookingID)}
-                          disabled={item.panditName !== null}
-                        />
-                      </td> */}
-
-                      <td style={{ whiteSpace: 'nowrap' }} className="text-center">
+                    <tr className="text-center align-middle" key={item.pujaBookingID}>
+                      <td className="align-middle">
                         {(currentPage - 1) * pageSize + idx + 1}
                       </td>
-                      <td style={{ whiteSpace: 'nowrap' }}>
+
+                      <td className="align-middle text-center py-2" style={{ whiteSpace: "nowrap" }}>
                         {item?.productName ? (
                           item.productName.length > 25 ? (
-                            <Tooltip title={item.productName}>{item.productName.substring(0, 25) + '...'}</Tooltip>
+                            <Tooltip title={item.productName}>
+                              {item.productName.substring(0, 25) + "..."}
+                            </Tooltip>
                           ) : (
                             item.productName
                           )
                         ) : (
-                          '-'
+                          "-"
                         )}
                       </td>
 
-                      {location.pathname === '/prasad-master' ? (
-                        <td style={{ whiteSpace: 'nowrap' }}>{item.templeName === null ? '-' : item?.templeName}</td>
-                      ) : (
-                        ''
+                      {location.pathname === "/prasad-master" && (
+                        <td className="align-middle text-center py-2" style={{ whiteSpace: "nowrap" }}>
+                          {item.templeName ?? "-"}
+                        </td>
                       )}
 
-                      {location.pathname === '/estore-product' ? (
-                        <td style={{ whiteSpace: 'nowrap' }}>
+                      {location.pathname === "/estore-product" && (
+                        <td className="align-middle text-center py-2" style={{ whiteSpace: "nowrap" }}>
                           {item?.productCategoryName ? (
                             item.productCategoryName.length > 25 ? (
-                              <Tooltip title={item.productCategoryName}>{item.productCategoryName.substring(0, 25) + '...'}</Tooltip>
+                              <Tooltip title={item.productCategoryName}>
+                                {item.productCategoryName.substring(0, 25) + "..."}
+                              </Tooltip>
                             ) : (
                               item.productCategoryName
                             )
                           ) : (
-                            '-'
+                            "-"
                           )}
                         </td>
-                      ) : (
-                        ''
                       )}
 
-                      {/* price */}
-                      <td>
-                        {new Intl.NumberFormat('en-IN', {
-                          style: 'currency',
-                          currency: 'INR',
-                          minimumFractionDigits: 2
+                      {/* Price */}
+                      <td className="align-middle text-center py-2">
+                        {new Intl.NumberFormat("en-IN", {
+                          currency: "INR",
                         }).format(item.productPrice)}
                       </td>
 
-                      {/* trend/discount */}
-                      {location.pathname === '/estore-product' ? (
-                        <td style={{ whiteSpace: 'nowrap' }}>{item.trend}</td>
+                      {/* Trend / Discount */}
+                      {location.pathname === "/estore-product" ? (
+                        <td className="align-middle text-center py-2" style={{ whiteSpace: "nowrap" }}>
+                          {item.trend}
+                        </td>
                       ) : (
-                        <td>
-                          {new Intl.NumberFormat('en-IN', {
-                            style: 'currency',
-                            currency: 'INR',
-                            minimumFractionDigits: 2
-                          }).format(item.discount)}
+                        <td className="align-middle text-center py-2">
+                          {item.discount}
                         </td>
                       )}
 
-                      <td className="text-center text-nowrap" onClick={() => ChangeStatusData(item)}>
-                        <Tooltip title={item.status === '1' ? 'Enable' : 'Disable'}>
-                          {item.status === '1' ? 'Enable' : 'Disable'}
-                          <Android12Switch style={{ padding: '8px' }} checked={item.status === '1'} />
-                        </Tooltip>
+                      {/* Status */}
+                      <td
+                        className="align-middle text-center"
+                        onClick={() => handleStatusChange(item)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <div className="d-flex justify-content-center align-items-center gap-2">
+                          <Tooltip title={item.status ? "Enable" : "Disable"}>
+                            <span>{item.status ? "Enable" : "Disable"}</span>
+                          </Tooltip>
+                          <Android12Switch
+                            style={{ padding: "8px" }}
+                            checked={item.status}
+                          />
+                        </div>
                       </td>
 
-                      <td className="text-center actionColSticky" style={{ zIndex: 4 }}>
-                        <div className="d-flex justify-content-center gap-2">
+                      {/* Actions */}
+                      <td className="align-middle text-center actionColSticky" style={{ zIndex: 4 }}>
+                        <div className="d-flex justify-content-center align-items-center gap-2">
                           <Tooltip title={`Update ${pageHeading}`}>
-                            <Button style={{ marginRight: '5px' }} className="btn-sm" onClick={() => updateBtnClicked(item)}>
-                              <i class="fas fa-edit"></i>
+                            <Button
+                              size="sm"
+                              className="btn-sm"
+                              onClick={() => updateBtnClicked(item)}
+                            >
+                              <i className="fas fa-edit"></i>
                             </Button>
                           </Tooltip>
+
                           <Tooltip title="Add Language">
-                            <Button style={{ marginRight: '5px' }} className="btn-sm" onClick={() => AddLangBtnClicked(item)}>
-                              <i class="fas fa-language"></i>
+                            <Button
+                              size="sm"
+                              className="btn-sm"
+                              onClick={() => AddLangBtnClicked(item)}
+                            >
+                              <i className="fas fa-language"></i>
                             </Button>
                           </Tooltip>
+
+                          <Tooltip
+                            title={
+                              location.pathname === "/prasad-master"
+                                ? "Add Prasad Image"
+                                : "Add Product Image"
+                            }
+                          >
+                            <Button
+                              size="sm"
+                              className="btn-sm"
+                              onClick={() => AddImageClicked(item)}
+                            >
+                              <i className="fas fa-file-image"></i>
+                            </Button>
+                          </Tooltip>
+
+                          {item?.isSubscriptionProductCategory && (
+                            <Tooltip title="Add Package">
+                              <Button
+                                size="sm"
+                                className="btn-sm"
+                                onClick={() => AddPackageClick(item)}
+                              >
+                                + Packages
+                              </Button>
+                            </Tooltip>
+                          )}
                         </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
+
               </Table>
               {totalRecords <= 0 && <NoResultFoundModel totalRecords={totalRecords} />}
             </div>
@@ -481,11 +542,11 @@ const ProductList = () => {
       />
       <SuccessPopupModal show={showSuccessModal} onHide={() => onSuccessClose()} successMassage={ChangeStatusMassage} />
 
-      {/* <SuccessPopupModal
-        show={showAssignPanditSuccessModal}
-        onHide={() => setShowAssignPanditSuccessModal(false)}
-        successMassage="Pandit assigned successfully "
-      /> */}
+      <StatusChangeModal
+        open={showStatusChangeModal}
+        onClose={() => setShowStatusChangeModal(false)}
+        onConfirm={() => ChangeStatusData(modelRequestData?.changeStatusData)} // Pass the required arguments
+      />
     </>
   );
 };

@@ -62,13 +62,15 @@ const routeTitles = {
   '/prasad-master': 'Prasad Master  - Myomnamo',
   '/darshan-booking': 'Darshan Booking  - Myomnamo',
   '/unit': 'Unit - Myomnamo',
+  '/add-image': 'Add Product Image - Myomnamo',
 
   // banner
   '/banner': 'Banner - Myomnamo',
+  '/banner-language-wise': 'Banner Language List - Myomnamo',
 
   // thought-master
-  '/thought-master': 'Thought Master - Myomnamo',
-  '/thought-language-wise': 'Thought Language Wise - Myomnamo',
+  '/thought-master': 'Spiritual Thought Master - Myomnamo',
+  '/thought-language-wise': 'Spiritual Thought Language Wise - Myomnamo',
 
   // user wallet
   '/user-wallet': 'User Wallet - Myomnamo',
@@ -134,7 +136,14 @@ const routeTitles = {
   '/darshan-booking-language-wise': 'Language wise Darshan Booking - Myomnamo',
   '/time-slot': 'Time Slot - Myomnamo',
   '/language-wise-time-slot': 'Language wise Time Slot - Myomnamo',
-  '/packages-List': 'Sankalp Packages - Myomnamo'
+  '/packages-List': 'Sankalp Packages - Myomnamo',
+  '/users': 'Users - Myomnamo',
+  '/admin-profile': 'Profile - Myomnamo',
+  '/admin-master': 'Admin Master - Myomnamo',
+  '/pandit-master': 'Pandit Management - Myomnamo',
+  '/product-subscription-package': 'Product Subscription  - Myomnamo',
+  '/product-subscription-language': 'Product Subscription Langauge - Myomnamo',
+  '/puja-kit-bookings': 'Puja Kit Subscription Orders - Myomnamo',
 };
 
 const MainLayout = () => {

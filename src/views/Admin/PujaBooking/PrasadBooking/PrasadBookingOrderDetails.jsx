@@ -40,7 +40,6 @@ const PrasadBookingOrderDetails = ({ show, onHide, modelRequestData }) => {
     }
   };
 
-  console.log(location.pathname);
 
   return (
     <Modal style={{ zIndex: 1300 }} show={show} backdrop="static" keyboard={false} centered size="lg">

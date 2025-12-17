@@ -212,7 +212,7 @@ const AddUpdateThoughtModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
     }
 
     const apiParam = {
-      adminID: user?.admiN_ID,
+      adminID: user?.adminID,
       thoughtKeyID: modelRequestData.thoughtKeyID ? modelRequestData.thoughtKeyID : null,
       thoughtByLangKeyID: modelRequestData.thoughtByLangKeyID ? modelRequestData.thoughtByLangKeyID : null,
       appLangID: formObj?.appLangID,
@@ -230,7 +230,7 @@ const AddUpdateThoughtModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
       const response = await AddUpdateThoughtAPI(ApiParam);
       if (response?.data?.statusCode === 200) {
         setLoader(false);
-        setActionMassage(modelRequestData.Action === null ? `Thought added successfully.` : `Thought updated successfully.`);
+        setActionMassage(modelRequestData.Action === null ? `Spiritual Thought added successfully.` : `Spiritual Thought updated successfully.`);
         setShowSuccessModal(true);
         setIsAddUpdateDone(true);
         onHide();
@@ -277,7 +277,7 @@ const AddUpdateThoughtModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
     <>
       <Modal style={{ zIndex: 1300 }} size="md" show={show} backdrop="static" keyboard={false} centered>
         <Modal.Header>
-          <h4 className="text-center">{modelRequestData?.Action === null ? `Add Thought` : `Update Thought`}</h4>
+          <h4 className="text-center">{modelRequestData?.Action === null ? `Add Spiritual Thought` : `Update Spiritual Thought`}</h4>
         </Modal.Header>
         <Modal.Body style={{ maxHeight: '60vh', overflow: 'auto' }}>
           <div className="container-fluid ">
@@ -285,14 +285,14 @@ const AddUpdateThoughtModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
               {/* Puja Name */}
               <div className="col-md-12 mb-3">
                 <label htmlFor="pujaName" className="form-label">
-                  Thought <span className="text-danger">*</span>
+                  Spiritual Thought <span className="text-danger">*</span>
                 </label>
                 <input
                   maxLength={90}
                   type="text"
                   className="form-control"
                   id="catName"
-                  placeholder="Enter Thought"
+                  placeholder="Enter Spiritual Thought"
                   aria-describedby="Employee"
                   value={formObj.thought}
                   onChange={(e) => {

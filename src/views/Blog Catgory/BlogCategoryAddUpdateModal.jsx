@@ -76,7 +76,7 @@ const BlogCategoryAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUp
             }
 
             const apiParam = {
-                  adminID: user?.admiN_ID, templePujaID: modelRequestData?.templePujaID,
+                  adminID: user?.adminID, templePujaID: modelRequestData?.templePujaID,
                   blogCatName: blogCatObj?.blogCatName,
                   blogCategoryKeyID: blogCatObj?.blogCategoryKeyID,
 

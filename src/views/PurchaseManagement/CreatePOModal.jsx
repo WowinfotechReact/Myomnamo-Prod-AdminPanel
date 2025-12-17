@@ -64,7 +64,7 @@ const CreatePOModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) =
         }
 
         const apiParam = {
-            adminID: user?.admiN_ID,
+            adminID: user?.adminID,
             purchaseID: modelRequestData?.purchaseID,
             vendorID: poFormData?.vendorNameID,
             poDate: poFormData?.poDate,

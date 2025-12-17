@@ -236,7 +236,6 @@ const PrasadBookingList = () => {
     }));
     setShowBookingOrderDetailsModal(true);
   };
-  console.log('data', modelRequestData);
 
   const handleStatusChange = async (PujaBookingKeyID, newStatus) => {
     setPujaOrderStatusMap((prev) => ({

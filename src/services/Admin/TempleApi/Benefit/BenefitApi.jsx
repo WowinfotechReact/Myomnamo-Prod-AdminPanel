@@ -32,8 +32,14 @@ export const GetBenefitModel = async (id, AppLangID) => {
     const res = await getListWithAuthenticated(url);
     return res;
 };
-export const GetBenefitLookupList = async () => {
-    let url = `${BaseURL}/GetBenefitLookupList`;
+export const GetBenefitLookupList = async (TempleID) => {
+    let url = `${BaseURL}`;
+    if (TempleID === null || TempleID === undefined || TempleID === "") {
+        url = `${BaseURL}/GetBenefitLookupList`;
+    } else {
+        url = `${BaseURL}/GetBenefitLookupList?TempleID=${TempleID}`;
+    }
+
     const res = await getListWithAuthenticated(url);
     return res;
 };

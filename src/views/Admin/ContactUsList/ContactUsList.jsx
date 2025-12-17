@@ -16,7 +16,7 @@ import { GetContactUsList } from 'services/Admin/ContactUsAPI/ContactUsAPI';
 // import AddUpdatePujaModal from './AddUpdatePujaModal';
 
 const ContactUsList = () => {
-  const { setLoader } = useContext(ConfigContext);
+  const { setLoader, user } = useContext(ConfigContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
@@ -81,9 +81,11 @@ const ContactUsList = () => {
 
   // ------------API Callings--------------------
   const GetContactUsListData = async (pageNo, searchValue) => {
+    // debugger;
     setLoader(true);
     try {
       const response = await GetContactUsList({
+        adminID: user?.adminID,
         pageSize: pageSize,
         pageNo: pageNo - 1,
         sortingDirection: null,
@@ -276,24 +278,55 @@ const ContactUsList = () => {
                         {(currentPage - 1) * pageSize + idx + 1}
                       </td>
                       <td style={{ whiteSpace: 'nowrap' }}>
-                        {item?.productCategoryName ? (
-                          item.productCategoryName.length > 25 ? (
-                            <Tooltip title={item.productCategoryName}>{item.productCategoryName.substring(0, 25) + '...'}</Tooltip>
+                        {item?.firstName ? (
+                          item.firstName.length > 25 ? (
+                            <Tooltip title={item.firstName}>{item.firstName.substring(0, 25) + '...'}</Tooltip>
                           ) : (
-                            item.productCategoryName
+                            item.firstName
+                          )
+                        ) : (
+                          '-'
+                        )}
+                      </td>
+                      <td style={{ whiteSpace: 'nowrap' }}>
+                        {item?.lasteName ? (
+                          item.lasteName.length > 25 ? (
+                            <Tooltip title={item.lasteName}>{item.lasteName.substring(0, 25) + '...'}</Tooltip>
+                          ) : (
+                            item.lasteName
+                          )
+                        ) : (
+                          '-'
+                        )}
+                      </td>
+                      <td style={{ whiteSpace: 'nowrap' }}>
+                        {item?.email ? (
+                          item.email.length > 25 ? (
+                            <Tooltip title={item.email}>{item.email.substring(0, 25) + '...'}</Tooltip>
+                          ) : (
+                            item.email
                           )
                         ) : (
                           '-'
                         )}
                       </td>
 
+                      <td style={{ whteSpace: 'nowrap' }}>{item.phoneNo}</td>
+
+                      <td style={{ whiteSpace: 'nowrap' }}>
+                        {item?.message ? (
+                          item.message.length > 25 ? (
+                            <Tooltip title={item.message}>{item.message.substring(0, 25) + '...'}</Tooltip>
+                          ) : (
+                            item.message
+                          )
+                        ) : (
+                          '-'
+                        )}
+                      </td>
                       {/* <td style={{ whiteSpace: 'nowrap' }}>{item.userName === null ? '-' : item?.userName}</td> */}
 
-                      <td style={{ whiteSpace: 'nowrap' }}>{item.createdOnDate}</td>
-                      <td style={{ whiteSpace: 'nowrap' }}>{item.createdOnDate}</td>
-                      <td style={{ whteSpace: 'nowrap' }}>{item.createdOnDate}</td>
-                      <td style={{ whteSpace: 'nowrap' }}>{item.createdOnDate}</td>
-                      <td style={{ whteSpace: 'nowrap' }}>{item.createdOnDate}</td>
+                      <td style={{ whteSpace: 'nowrap' }}>{item.regDate}</td>
 
                       {/* <td className="text-center text-nowrap" onClick={() => ChangeStatusData(item)}>
                         <Tooltip title={item.status === true ? 'Enable' : 'Disable'}>

@@ -1,55 +1,31 @@
-import axios from 'axios';
 import { ERROR_MESSAGES } from 'component/GlobalMassage';
 import Text_Editor from 'component/Text_Editor';
 import { ConfigContext } from 'context/ConfigContext';
-import DatePicker from 'react-date-picker';
 import 'react-calendar/dist/Calendar.css';
 import 'react-date-picker/dist/DatePicker.css';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import Select from 'react-select';
-import { CityLookupList } from 'services/AddressLookupList/AddressLookupListApi';
-import { GetTempleLookupList } from 'services/Admin/TempleApi/TemplesApi';
 import dayjs from 'dayjs';
 import SuccessPopupModal from 'component/SuccessPopupModal';
 import ErrorModal from 'component/ErrorModal';
-import { PujaTypeIDOption } from 'Middleware/Utils';
-import { GetPujaCategoryLookupList } from 'services/Pooja Category/PoojaCategoryApi';
 import { GetAppLanguageLookupList } from 'services/Admin/AppLangauge/AppLanguageApi';
-import { AddUpdatePuja, GetPujaModel } from 'services/Admin/Puja/PujaApi';
 import CustomUploadImg from '../../../assets/images/upload_img.jpg';
 import { UploadImage } from 'services/Upload Cloud-flare Image/UploadCloudflareImageApi';
-import { AddUpdateProductCatAPI, GetProductCatModalAPI } from 'services/Admin/EStoreAPI/ProductCatAPI';
-import { AddUpdateBannerAPI, GetBannerModalAPI } from 'services/Admin/BannerAPI/BannerAPI';
 import { AddUpdateNotificationAPI, GetNotificationModalAPI } from 'services/Admin/NotificationAPI/RegularNotificationAPI';
 
 const AddUpdateRegularNotification = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) => {
   const { setLoader, user } = useContext(ConfigContext);
-  const [pujaCategoryOption, setPujaCategoryOption] = useState([]);
-  const [templeOption, setTempleOption] = useState([]);
-  const [districtOption, setDistrictOption] = useState([]);
-  const [stateOption, setStateOption] = useState([]);
-  const [templePujaSubCatOption, setTemplePujaSubCatOption] = useState([]);
-  const [isAllDaySelected, setAllDaySelected] = useState(false);
-  const [error, setError] = useState(false);
   const [customError, setCustomError] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const [isAddressChanged, setIsAddressChanged] = useState(false);
+  const [error, setError] = useState(false)
   const [languageList, setLanguageList] = useState([]);
-  const [templeList, setTempleList] = useState([]);
-
   const [filePreview, setFilePreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [sizeError, setSizeError] = useState('');
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
   const [actionMassage, setActionMassage] = useState(null);
 
-  const [districtList, setDistrictList] = useState([]);
-  const [benefitList, setBenefitList] = useState([]);
-  const [deityList, setDeityList] = useState([]);
-  const [heading, setHeading] = useState('Puja');
 
   const [formObj, setFormObj] = useState({
     title: null,
@@ -58,31 +34,15 @@ const AddUpdateRegularNotification = ({ show, onHide, modelRequestData, setIsAdd
 
   useEffect(() => {
     if (show) {
-      //   isPageRender();
-      //   GetPujaCategoryLookupListData();
+
       GetAppLanguageLookupListData();
-      //   GetTempleLookupListData();
-      if (modelRequestData?.Action === 'update' && modelRequestData?.bannerKeyID !== null && modelRequestData?.bannerKeyID !== '') {
+      if (modelRequestData?.Action === 'update' && modelRequestData?.notificationKeyID !== null && modelRequestData?.notificationKeyID !== '') {
         GetModelData();
       }
     }
   }, [show]);
 
-  //   const isPageRender = () => {
-  //     if (modelRequestData?.pujaSubServiceID === 5) {
-  //       setHeading('Pandit Puja');
-  //     } else if (modelRequestData?.pujaSubServiceID === 6) {
-  //       setHeading('Daily Pandit Puja');
-  //     } else if (modelRequestData?.pujaSubServiceID === 1) {
-  //       setHeading('Remedy Puja');
-  //     } else if (modelRequestData?.pujaSubServiceID === 2) {
-  //       setHeading('Homam Puja');
-  //     } else if (modelRequestData?.pujaSubServiceID === 3) {
-  //       setHeading('Subscription Remedy Puja');
-  //     } else if (modelRequestData?.pujaSubServiceID === 4) {
-  //       setHeading('Subscription Homam Puja');
-  //     }
-  //   };
+
 
   const GetModelData = async () => {
     setLoader(true);
@@ -113,26 +73,7 @@ const AddUpdateRegularNotification = ({ show, onHide, modelRequestData, setIsAdd
     }
   };
 
-  //   const GetPujaCategoryLookupListData = async () => {
-  //     try {
-  //       const response = await GetPujaCategoryLookupList(); // Ensure it's correctly imported
 
-  //       if (response?.data?.statusCode === 200) {
-  //         const languageLookupList = response.data.responseData.data || [];
-
-  //         const formattedLangList = languageLookupList.map((Lang) => ({
-  //           value: Lang.pujaCategoryID,
-  //           label: Lang.pujaCategoryName
-  //         }));
-
-  //         setPujaCategoryOption(formattedLangList);
-  //       } else {
-  //         console.error('Failed to fetch sim Type lookup list:', response?.data?.statusMessage || 'Unknown error');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching sim Type lookup list:', error);
-  //     }
-  //   };
 
   const GetAppLanguageLookupListData = async () => {
     try {
@@ -155,26 +96,7 @@ const AddUpdateRegularNotification = ({ show, onHide, modelRequestData, setIsAdd
       console.error('Error fetching sim Type lookup list:', error);
     }
   };
-  //   const GetTempleLookupListData = async () => {
-  //     try {
-  //       const response = await GetTempleLookupList(modelRequestData?.appLangID); // Ensure it's correctly imported
 
-  //       if (response?.data?.statusCode === 200) {
-  //         const list = response?.data?.responseData?.data || [];
-
-  //         const formattedLangList = list.map((Lang) => ({
-  //           value: Lang.templeID,
-  //           label: Lang.templeName
-  //         }));
-
-  //         setTempleList(formattedLangList);
-  //       } else {
-  //         console.error('Failed to fetch sim Type lookup list:', response?.data?.statusMessage || 'Unknown error');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching sim Type lookup list:', error);
-  //     }
-  //   };
 
   const setDataInitial = () => {
     setSelectedFile(null);
@@ -212,7 +134,7 @@ const AddUpdateRegularNotification = ({ show, onHide, modelRequestData, setIsAdd
     }
 
     const apiParam = {
-      adminID: user?.admiN_ID,
+      adminID: user?.adminID,
       notificationKeyID: modelRequestData.notificationKeyID,
       title: formObj.title,
       message: formObj.message,
@@ -324,7 +246,7 @@ const AddUpdateRegularNotification = ({ show, onHide, modelRequestData, setIsAdd
         <Modal.Body style={{ maxHeight: '60vh', overflow: 'auto' }}>
           <div className="container-fluid ">
             <div className="row">
-              <div className="col-md-6 mb-3">
+              <div className="col-md-12 mb-3">
                 <label htmlFor="pujaName" className="form-label">
                   Notification Title <span className="text-danger">*</span>
                 </label>
@@ -354,36 +276,30 @@ const AddUpdateRegularNotification = ({ show, onHide, modelRequestData, setIsAdd
                   ''
                 )}
               </div>
-              <div className="col-md-6 mb-3">
-                <label htmlFor="pujaName" className="form-label">
+
+              <div className="col-md-12 mb-3">
+                <label htmlFor="canonicalTag" className="form-label">
                   Notification Message <span className="text-danger">*</span>
                 </label>
-                <textarea
-                  maxLength={90}
-                  type="text"
-                  className="form-control"
-                  id="catName"
-                  placeholder="Enter Notification Message"
-                  aria-describedby="Employee"
-                  value={formObj.message}
-                  onChange={(e) => {
-                    let input = e.target.value;
-                    if (input.startsWith(' ')) {
-                      input = input.trimStart();
-                    }
+                <Text_Editor
+                  editorState={formObj?.message}
+                  handleContentChange={(htmlContent) => {
+                    // Strip HTML tags and check if anything meaningful remains
+                    const strippedContent = htmlContent.replace(/<[^>]+>/g, '').trim();
 
-                    setFormObj((prev) => ({
-                      ...prev,
-                      message: input
+                    setFormObj((obj) => ({
+                      ...obj,
+                      message: strippedContent === '' ? null : htmlContent,
                     }));
                   }}
                 />
-                {error && (formObj.message === null || formObj.message === undefined || formObj.message === '') ? (
+                {error && (formObj?.message === null || formObj?.message === undefined || formObj?.message === '') ? (
                   <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
                 ) : (
                   ''
                 )}
               </div>
+
               <div className="col-md-12 mb-3">
                 <div className="mb-3 position-relative">
                   <div className="d-flex justify-content-between align-items-center mb-1">
@@ -458,7 +374,7 @@ const AddUpdateRegularNotification = ({ show, onHide, modelRequestData, setIsAdd
                   )}
 
                   {error && (selectedFile === null || selectedFile === '' || selectedFile === undefined) && (
-                    <span className="text-danger small mx-3">{ERROR_MESSAGES}</span>
+                    <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
                   )}
                 </div>
               </div>

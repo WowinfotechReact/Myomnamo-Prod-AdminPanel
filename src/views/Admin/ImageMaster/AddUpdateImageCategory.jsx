@@ -51,7 +51,7 @@ const AddUpdateImageCatModal = ({ show, onHide, modelRequestData, setIsAddUpdate
   const [heading, setHeading] = useState('Puja');
 
   const [formObj, setFormObj] = useState({
-    imageCategory: null
+    productCategoryName: null
   });
 
   useEffect(() => {
@@ -109,26 +109,6 @@ const AddUpdateImageCatModal = ({ show, onHide, modelRequestData, setIsAddUpdate
     }
   };
 
-  //   const GetPujaCategoryLookupListData = async () => {
-  //     try {
-  //       const response = await GetPujaCategoryLookupList(); // Ensure it's correctly imported
-
-  //       if (response?.data?.statusCode === 200) {
-  //         const languageLookupList = response.data.responseData.data || [];
-
-  //         const formattedLangList = languageLookupList.map((Lang) => ({
-  //           value: Lang.pujaCategoryID,
-  //           label: Lang.pujaCategoryName
-  //         }));
-
-  //         setPujaCategoryOption(formattedLangList);
-  //       } else {
-  //         console.error('Failed to fetch sim Type lookup list:', response?.data?.statusMessage || 'Unknown error');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching sim Type lookup list:', error);
-  //     }
-  //   };
 
   const GetAppLanguageLookupListData = async () => {
     try {
@@ -151,26 +131,6 @@ const AddUpdateImageCatModal = ({ show, onHide, modelRequestData, setIsAddUpdate
       console.error('Error fetching sim Type lookup list:', error);
     }
   };
-  //   const GetTempleLookupListData = async () => {
-  //     try {
-  //       const response = await GetTempleLookupList(modelRequestData?.appLangID); // Ensure it's correctly imported
-
-  //       if (response?.data?.statusCode === 200) {
-  //         const list = response?.data?.responseData?.data || [];
-
-  //         const formattedLangList = list.map((Lang) => ({
-  //           value: Lang.templeID,
-  //           label: Lang.templeName
-  //         }));
-
-  //         setTempleList(formattedLangList);
-  //       } else {
-  //         console.error('Failed to fetch sim Type lookup list:', response?.data?.statusMessage || 'Unknown error');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching sim Type lookup list:', error);
-  //     }
-  //   };
 
   const setDataInitial = () => {
     setFormObj((prev) => ({
@@ -190,17 +150,17 @@ const AddUpdateImageCatModal = ({ show, onHide, modelRequestData, setIsAddUpdate
 
   const SubmitBtnClicked = () => {
     let isValid = true;
-    if (formObj.imageCategory === null || formObj.imageCategory === undefined || formObj.imageCategory === '') {
+    if (formObj.productCategoryName === null || formObj.productCategoryName === undefined || formObj.productCategoryName === '') {
       setError(true);
       isValid = false;
     }
 
     const apiParam = {
-      adminID: user?.admiN_ID,
+      adminID: user?.adminID,
       productCatKeyID: modelRequestData.productCatKeyID ? modelRequestData.productCatKeyID : null, // for add pass null and update pass id
       prodCatByLangKeyID: modelRequestData.prodCatByLangKeyID ? modelRequestData.prodCatByLangKeyID : null,
       appLangID: formObj.appLangID ? formObj.appLangID : null,
-      productCategoryName: formObj.productCategory
+      productCategoryName: formObj.productCategoryName
     };
 
     if (isValid) {
@@ -419,7 +379,7 @@ const AddUpdateImageCatModal = ({ show, onHide, modelRequestData, setIsAddUpdate
                   id="catName"
                   placeholder="Enter Image Category Name"
                   aria-describedby="Employee"
-                  value={formObj.imageCategory}
+                  value={formObj.productCategoryName}
                   onChange={(e) => {
                     let input = e.target.value;
                     if (input.startsWith(' ')) {
@@ -428,11 +388,11 @@ const AddUpdateImageCatModal = ({ show, onHide, modelRequestData, setIsAddUpdate
 
                     setFormObj((prev) => ({
                       ...prev,
-                      imageCategory: input
+                      productCategoryName: input
                     }));
                   }}
                 />
-                {error && (formObj.imageCategory === null || formObj.imageCategory === undefined || formObj.imageCategory === '') ? (
+                {error && (formObj.productCategoryName === null || formObj.productCategoryName === undefined || formObj.productCategoryName === '') ? (
                   <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
                 ) : (
                   ''

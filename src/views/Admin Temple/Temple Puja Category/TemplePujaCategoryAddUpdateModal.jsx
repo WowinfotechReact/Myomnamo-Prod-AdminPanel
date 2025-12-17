@@ -95,7 +95,7 @@ const TemplePujaCategoryAddUpdateModal = ({ show, onHide, modelRequestData, setI
             }
 
             const apiParam = {
-                  adminID: user?.admiN_ID,
+                  adminID: user?.adminID,
                   tempPujaCatID: templePujaCatObj?.tempPujaCatID,
                   tempPujaCatName: templePujaCatObj?.tempPujaCatName,
 

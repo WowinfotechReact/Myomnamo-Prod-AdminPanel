@@ -43,14 +43,14 @@ const StateLanguageWiseAddUpdateModal = ({ show, onHide, modelRequestData, setIs
                   setError(true)
                   isValid = false
             }
+
             const apiParam = {
-                  adminID: user?.admiN_ID,
+                  adminID: user?.adminID,
                   stateName: blogCatObj?.stateName,
                   appLangID: blogCatObj?.appLangID,
                   stateKeyID: modelRequestData?.stateKeyID,
                   stateByLangKeyID: blogCatObj?.stateByLangKeyID,
             }
-
             if (isValid) {
                   AddUpdateStateData(apiParam)
             }
@@ -126,6 +126,7 @@ const StateLanguageWiseAddUpdateModal = ({ show, onHide, modelRequestData, setIs
       }
 
       const GetStateModelData = async (id) => {
+
             if (!id) {
                   return
             }
@@ -137,6 +138,7 @@ const StateLanguageWiseAddUpdateModal = ({ show, onHide, modelRequestData, setIs
                               setLoader(false);
                               if (response?.data?.responseData?.data) {
                                     const List = response.data.responseData.data;
+
                                     setBlogCatObj((prev) => ({
                                           ...prev,
                                           stateKeyID: List.stateKeyID, // Provide Key ID For Update

@@ -5,7 +5,6 @@ import NoResultFoundModel from 'component/NoResultFoundModal';
 import PaginationComponent from 'component/Pagination';
 import SuccessPopupModal from 'component/SuccessPopupModal';
 import { ConfigContext } from 'context/ConfigContext';
-import dayjs from 'dayjs';
 import { pujaServiceID, pujaSubServiceID } from 'Middleware/Enum';
 import { debounce } from 'Middleware/Utils';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
@@ -16,7 +15,6 @@ import { ChangePujaStatus, GetPujaList } from 'services/Admin/Puja/PujaApi';
 import { GetPujaBookingList } from 'services/Admin/PujaBookingAPI/PujaBookingAPI';
 import AddUpdateDarshanBookingModal from './AddUpdateDarshanBookingModal';
 import { ChangeStatus, GetDarshanBookingListAPI } from 'services/Admin/DarshanBookingAPI/DarshanBookingAPI';
-// import AddUpdatePujaModal from './AddUpdatePujaModal';
 
 const DarshanBookingList = () => {
   const { setLoader, user } = useContext(ConfigContext);
@@ -48,8 +46,6 @@ const DarshanBookingList = () => {
   const [showBookingOrderDetailsModal, setShowBookingOrderDetailsModal] = useState(false);
 
   const [darshanBookingList, setDarshanBookingList] = useState([]);
-  const [toDate, setToDate] = useState(null);
-  const [fromDate, setFromDate] = useState(null);
   const [selectedBookings, setSelectedBookings] = useState([]);
 
   // ✅ Check if all rows are selected
@@ -59,7 +55,7 @@ const DarshanBookingList = () => {
 
   useEffect(() => {
     if (location?.pathname === '/darshan-booking') {
-      setPageHeading('Product Category List');
+      setPageHeading('Darshan Booking List');
       GetDarshanBookingListData();
       setModelRequestData((prev) => ({
         ...prev,
@@ -82,7 +78,7 @@ const DarshanBookingList = () => {
   }, [isAddUpdateDone]);
 
   // ------------API Callings--------------------
-  const GetDarshanBookingListData = async () => {
+  const GetDarshanBookingListData = async (pageNumber, searchKeywordValue) => {
     setLoader(true);
     try {
       const response = await GetDarshanBookingListAPI({
@@ -100,10 +96,10 @@ const DarshanBookingList = () => {
         pageNo: 0,
         sortingDirection: null,
         sortingColumnName: null,
-        searchKeyword: null,
+        searchKeyword: searchKeywordValue === undefined || searchKeywordValue === null ? searchKeyword : searchKeywordValue,
         fromDate: null,
         toDate: null,
-        adminID: user?.admiN_ID
+        adminID: user?.adminID
       });
 
       if (response) {
@@ -175,7 +171,7 @@ const DarshanBookingList = () => {
     setShowAddModal(true);
   };
   const fetchSearchResults = (searchValue) => {
-    GetDarshanBookingListData();
+    GetDarshanBookingListData(currentPage, searchValue);
   };
   const debouncedSearch = useCallback(debounce(fetchSearchResults, 500), []);
 
@@ -245,7 +241,6 @@ const DarshanBookingList = () => {
     }));
     setShowBookingOrderDetailsModal(true);
   };
-  console.log('data', modelRequestData);
 
   const handleAssignPandit = (value) => {
     setModelRequestData((prev) => ({
@@ -255,7 +250,6 @@ const DarshanBookingList = () => {
     setShowAssignPanditModal(true);
   };
 
-  console.log('modelRequestData.selectedPujas', modelRequestData.selectedPujas);
 
   const handleMultiAssignPandit = () => {
     if (selectedBookings.length === 0) {
@@ -281,13 +275,13 @@ const DarshanBookingList = () => {
     <>
       <div className="card">
         <div className="card-body p-2 bg-white shadow-md rounded-lg" style={{ borderRadius: '10px' }}>
-          {/* <div className="d-flex justify-content-between align-items-center mb-1">
+          <div className="d-flex justify-content-between align-items-center mb-1">
             <h5 className="m-0">{pageHeading}</h5>
             <button onClick={() => AddBtnClicked()} className="btn btn-primary btn-sm d-inline d-sm-none">
               <i className="fa-solid fa-plus" style={{ fontSize: '11px' }}></i>
               <span className="d-inline d-sm-none"> Add</span>
             </button>
-          </div> */}
+          </div>
 
           <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
             {/* Search Box */}
@@ -407,7 +401,7 @@ const DarshanBookingList = () => {
 
                       <td className="text-center actionColSticky" style={{ zIndex: 4 }}>
                         <div className="d-flex justify-content-center gap-2">
-                          <Tooltip title={`Update ${pageHeading}`}>
+                          <Tooltip title={`Update Darshan Booking`}>
                             <Button style={{ marginRight: '5px' }} className="btn-sm" onClick={() => updateBtnClicked(item)}>
                               <i class="fas fa-edit"></i>
                             </Button>

@@ -9,3 +9,9 @@ export const GetDashboardCounts = async (params) => {
     return res;
 };
 
+export const AdminDashboardCounts = async (params) => {
+    let url = `${BaseURL}/AdminDashboardCounts`;
+    const res = await postApiWithAuthenticated(url, params);
+    return res;
+};
+

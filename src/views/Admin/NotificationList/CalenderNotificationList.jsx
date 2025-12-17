@@ -94,18 +94,11 @@ const CalenderNotificationList = () => {
 
   // ------------API Callings--------------------
   const GetCalenderNotifiListData = async (pageNo, searchValue, notificationTimeSlotID, selectedMonthFilterID) => {
+
     setLoader(true);
     try {
       const response = await GetCalenderNotifiList({
-        // pageSize: pageSize,
-        // pageNo: pageNumber - 1,
-        // sortingDirection: sortingType ? sortingType : null,
-        // sortingColumnName: sortValueName ? sortValueName : null,
-        // searchKeyword: searchKeywordValue === undefined || searchKeywordValue === null ? searchKeyword : searchKeywordValue,
-        // fromDate: fromDate ? dayjs(fromDate).format('YYYY-MM-DD') : null,
-        // toDate: toDate ? dayjs(toDate).format('YYYY-MM-DD') : null,
-        // pujaServiceID: pujaServiceID,
-        // pujaSubServiceID: pujaSubServiceID
+
         pageSize: pageSize,
         pageNo: pageNo - 1,
         sortingDirection: null,
@@ -204,7 +197,7 @@ const CalenderNotificationList = () => {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
     setCalenderNotifiList([]);
-    GetCalenderNotifiListData(pageNumber, searchValue, notificationTimeSlotID, selectedMonthFilterID);
+    GetCalenderNotifiListData(pageNumber, searchKeyword, notificationTimeSlotID, selectedMonthFilterID);
   };
 
   // // ✅ Toggle select all
@@ -316,78 +309,95 @@ const CalenderNotificationList = () => {
               type="text"
               className="form-control"
               placeholder="Search..."
-              style={{ maxWidth: '350px' }}
+              style={{ maxWidth: "350px" }}
               onChange={handleSearchChange}
             />
-            <div className="d-flex gap-2 align-items-center">
-              <Select
-                id="unitID"
-                options={NotificationTimeSlot}
-                value={NotificationTimeSlot.filter((item) => item.value === notificationTimeSlotID)}
-                placeholder="Select Time"
-                onChange={(selectedOption) => {
-                  setNotificationTimeSlotID(selectedOption ? selectedOption.value : null);
 
-                  GetCalenderNotifiListData(currentPage, null, selectedOption.value, selectedMonthFilterID ? selectedMonthFilterID : null);
-                }}
-                menuPlacement="auto"
-                menuPosition="fixed"
-                menuPortalTarget={document.body} // 👈 renders menu at <body> level
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  container: (base) => ({
-                    ...base,
-                    width: '150px' // 👈 increase dropdown container width
-                  }),
-                  control: (base) => ({
-                    ...base,
-                    minWidth: '150px' // 👈 ensure the visible input also matches
-                  })
-                }}
-              />
-            </div>
-            <div className="d-flex gap-2 align-items-center">
-              <Select
-                id="unitID"
-                options={MonthWiseUtilList}
-                value={MonthWiseUtilList.filter((item) => item.value === selectedMonthFilterID)}
-                placeholder="Select Month"
-                onChange={(selectedOption) => {
-                  setSelectedMonthFilterID(selectedOption ? selectedOption.value : null);
 
-                  GetCalenderNotifiListData(
-                    currentPage,
-                    null,
-                    notificationTimeSlotID ? notificationTimeSlotID : null,
-                    selectedOption.value
-                  );
-                }}
-                menuPlacement="auto"
-                menuPosition="fixed"
-                menuPortalTarget={document.body} // 👈 renders menu at <body> level
-                styles={{
-                  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                  container: (base) => ({
-                    ...base,
-                    width: '180px' // 👈 increase dropdown container width
-                  }),
-                  control: (base) => ({
-                    ...base,
-                    minWidth: '180px' // 👈 ensure the visible input also matches
-                  })
-                }}
-              />
-            </div>
+
             {/* Action Buttons */}
             <div className="d-flex gap-2 align-items-center">
+
+              {/* Time + Month dropdowns grouped */}
+              <div className="d-flex align-items-center" style={{ gap: "8px" }}>
+                <Select
+                  id="unitID"
+                  options={NotificationTimeSlot}
+                  value={NotificationTimeSlot.filter(
+                    (item) => item.value === notificationTimeSlotID
+                  )}
+                  placeholder="Select Time"
+                  onChange={(selectedOption) => {
+                    setNotificationTimeSlotID(selectedOption ? selectedOption.value : null);
+                    GetCalenderNotifiListData(
+                      currentPage,
+                      null,
+                      selectedOption?.value || null,
+                      selectedMonthFilterID || null
+                    );
+                  }}
+                  menuPlacement="auto"
+                  menuPosition="fixed"
+                  menuPortalTarget={document.body}
+                  styles={{
+                    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                    container: (base) => ({
+                      ...base,
+                      width: "150px",
+                    }),
+                    control: (base) => ({
+                      ...base,
+                      minWidth: "150px",
+                    }),
+                  }}
+                />
+
+                <Select
+                  id="unitID"
+                  options={MonthWiseUtilList}
+                  value={MonthWiseUtilList.filter(
+                    (item) => item.value === selectedMonthFilterID
+                  )}
+                  placeholder="Select Month"
+                  onChange={(selectedOption) => {
+                    setSelectedMonthFilterID(selectedOption ? selectedOption.value : null);
+                    GetCalenderNotifiListData(
+                      currentPage,
+                      null,
+                      notificationTimeSlotID || null,
+                      selectedOption?.value
+                    );
+                  }}
+                  menuPlacement="auto"
+                  menuPosition="fixed"
+                  menuPortalTarget={document.body}
+                  styles={{
+                    menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                    container: (base) => ({
+                      ...base,
+                      width: "180px",
+                    }),
+                    control: (base) => ({
+                      ...base,
+                      minWidth: "180px",
+                    }),
+                  }}
+                />
+              </div>
+
               <Tooltip title="Add Notification">
-                <button onClick={handleAddModal} className="btn btn-primary btn-sm" style={{ cursor: 'pointer' }}>
-                  <i className="fa-solid fa-plus me-1" style={{ fontSize: '11px' }}></i>
+                <button
+                  onClick={handleAddModal}
+                  className="btn btn-primary btn-sm"
+                  style={{ cursor: "pointer" }}
+                >
+                  <i className="fa-solid fa-plus me-1" style={{ fontSize: "11px" }}></i>
                   <span className="d-none d-sm-inline">Add Notification</span>
                 </button>
               </Tooltip>
             </div>
           </div>
+
           <div>
             <div className="table-responsive" style={{ maxHeight: '65vh' }}>
               <Table striped bordered hover>
@@ -442,7 +452,7 @@ const CalenderNotificationList = () => {
                 <tbody>
                   {calenderNotifiList?.map((item, idx) => (
                     <tr className="text-nowrap text-center" key={item.pujaBookingID}>
-                      <td style={{ whiteSpace: 'nowrap' }} className="text-center">
+                      <td style={{ whiteSpace: 'nowrap' }} className="text-center py-2">
                         {(currentPage - 1) * pageSize + idx + 1}
                       </td>
                       <td style={{ whiteSpace: 'nowrap' }}>
@@ -456,7 +466,7 @@ const CalenderNotificationList = () => {
                           '-'
                         )}
                       </td>
-                      <td style={{ whiteSpace: 'nowrap' }}>
+                      <td style={{ whiteSpace: 'nowrap' }} className="text-center py-2">
                         {item?.templateTitle ? (
                           item.templateTitle.length > 25 ? (
                             <Tooltip title={item.templateTitle}>{item.templateTitle.substring(0, 25) + '...'}</Tooltip>
@@ -467,7 +477,7 @@ const CalenderNotificationList = () => {
                           '-'
                         )}
                       </td>
-                      <td style={{ whiteSpace: 'nowrap' }}>
+                      <td style={{ whiteSpace: 'nowrap' }} className="text-center py-2">
                         {item?.template ? (
                           item.template.length > 25 ? (
                             <Tooltip title={item.template}>{item.template.substring(0, 25) + '...'}</Tooltip>
@@ -478,9 +488,9 @@ const CalenderNotificationList = () => {
                           '-'
                         )}
                       </td>
-                      <td>{item.notificationTime}</td>
+                      <td className="text-center py-2">{item.notificationTime}</td>
 
-                      <td style={{ whiteSpace: 'nowrap', cursor: 'pointer' }}>
+                      <td style={{ whiteSpace: 'nowrap', cursor: 'pointer' }} >
                         {item.image ? (
                           <img
                             src={item.image}
@@ -492,8 +502,8 @@ const CalenderNotificationList = () => {
                           'No Image'
                         )}
                       </td>
-                      <td>{item.date?.split(' ')[0]}</td>
-                      <td>{item.createdOnDate}</td>
+                      <td className="text-center py-2">{dayjs(item.date).format("DD/MM/YYYY")}</td>
+                      <td className="text-center py-2">{dayjs(item.createdOnDate).format("DD/MM/YYYY")}</td>
 
                       <td className="text-center text-nowrap" onClick={() => ChangeStatusData(item)}>
                         <Tooltip title={item.status === 'Active' ? 'Enable' : 'Disable'}>

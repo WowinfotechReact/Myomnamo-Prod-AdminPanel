@@ -47,6 +47,8 @@ const ImageList = () => {
   const [showAssignPanditModal, setShowAssignPanditModal] = useState(false);
   const [showBookingOrderDetailsModal, setShowBookingOrderDetailsModal] = useState(false);
 
+  const [copiedImage, setCopiedImage] = useState(null);
+  const [isCopied, setIisCopied] = useState(false);
   const [imageList, setImageList] = useState([]);
   const [toDate, setToDate] = useState(null);
   const [fromDate, setFromDate] = useState(null);
@@ -271,13 +273,23 @@ const ImageList = () => {
     });
   };
 
-  const handleCopyPath = async (pathToCopy) => {
+  const handleCopyPath = async (url) => {
     try {
-      await navigator.clipboard.writeText(pathToCopy);
+      await navigator.clipboard.writeText(url);
+      setCopiedImage(url); // set current copied image
+      setIisCopied(true)
+      // Reset after 2 seconds
+      setTimeout(() => {
+        setCopiedImage(null);
+        setIisCopied(false)
+      }, 2000);
     } catch (err) {
-      console.error('Failed to copy: ', err);
+      console.error("Failed to copy:", err);
     }
+
   };
+
+
 
   const handleImageClick = (imgUrl) => {
     // setModalTitle(deityName); // set the modal title dynamically
@@ -438,9 +450,19 @@ const ImageList = () => {
                               <i class="fas fa-edit"></i>
                             </Button>
                           </Tooltip>
-                          <Tooltip title="Copy Image URL">
-                            <Button style={{ marginRight: '5px' }} className="btn-sm" onClick={() => handleCopyPath(item.imageURL)}>
-                              <i className="fas fa-file-invoice"></i>
+                          <Tooltip title={isCopied ? "Copied!" : "Copy Image URL"}>
+                            <Button
+                              style={{ marginRight: "5px" }}
+                              className="btn-sm"
+                              onClick={() => handleCopyPath(item.imageURL)}
+                            >
+                              <i
+                                className={
+                                  isCopied
+                                    ? "fa-solid fa-check text-green-600" // ✅ after copy
+                                    : "fa-regular fa-copy" // 📋 before copy
+                                }
+                              ></i>
                             </Button>
                           </Tooltip>
                           {/* <Tooltip title="Add Language">

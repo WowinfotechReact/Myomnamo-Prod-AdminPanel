@@ -48,14 +48,17 @@ const TimeSlotLanguageWiseAddUpdateModal = ({ show, onHide, modelRequestData, se
       isValid = false;
     }
     const apiParam = {
-      adminID: user?.admiN_ID,
+      adminID: user?.adminID,
       timeSlot: blogCatObj?.timeSlot,
       appLangID: blogCatObj?.appLangID,
       timeSlotKeyID: modelRequestData?.timeSlotKeyID,
-      timeSlotByLangKeyID: blogCatObj?.timeSlotByLangKeyID
+      timeSlotByLangKeyID: modelRequestData?.timeSlotByLangKeyID
     };
 
+
     if (isValid) {
+
+
       AddUpdateTimeSlotData(apiParam);
     }
   };

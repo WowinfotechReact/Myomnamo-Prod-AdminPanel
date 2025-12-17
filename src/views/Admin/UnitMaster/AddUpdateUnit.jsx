@@ -184,7 +184,7 @@ const AddUpdateUnitModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone
     }
 
     const apiParam = {
-      adminID: user?.admiN_ID,
+      adminID: user?.adminID,
       unitKeyID: modelRequestData.unitKeyID ? modelRequestData.unitKeyID : null,
       unit: formObj.unit,
       appLangID: null,

@@ -15,11 +15,14 @@ import { debounce } from 'Middleware/Utils';
 import { GetProductCatList } from 'services/Admin/EStoreAPI/ProductCatAPI';
 import { ChangeStatus, GetDarshanBookingListAPI } from 'services/Admin/DarshanBookingAPI/DarshanBookingAPI';
 import AddUpdateDarshanbookModal from './AddUpdateDarshanBookingModal';
+import StatusChangeModal from 'component/StatusChangeModal';
+import SuccessPopupModal from 'component/SuccessPopupModal';
+import ErrorModal from 'component/ErrorModal';
 
 const DarshanBookingLanguageWiseList = () => {
   const location = useLocation();
   const [modelAction, setModelAction] = useState();
-  const { setLoader } = useContext(ConfigContext);
+  const { setLoader, truncateText } = useContext(ConfigContext);
   const [showModal, setShowModal] = useState(false);
   const [stateChangeStatus, setStateChangeStatus] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
@@ -58,7 +61,7 @@ const DarshanBookingLanguageWiseList = () => {
     }
   }, [isAddUpdateDone]);
 
-  const GetDarshanBookingListData = async () => {
+  const GetDarshanBookingListData = async (pageNumber, searchKeywordValue) => {
     setLoader(true);
     try {
       const response = await GetDarshanBookingListAPI(
@@ -76,7 +79,7 @@ const DarshanBookingLanguageWiseList = () => {
           pageNo: 0,
           sortingDirection: null,
           sortingColumnName: null,
-          searchKeyword: null,
+          searchKeyword: searchKeywordValue === undefined || searchKeywordValue === null ? searchKeyword : searchKeywordValue,
           fromDate: null,
           toDate: null
         },
@@ -108,8 +111,8 @@ const DarshanBookingLanguageWiseList = () => {
 
   const confirmStatusChange = async (item, user) => {
     try {
-      const { productCatKeyID, appLangID } = item; // Destructure to access only what's needed
-      const response = await ChangeStatus(productCatKeyID, appLangID);
+      const { templeDarshanKeyID, appLangID } = item; // Destructure to access only what's needed
+      const response = await ChangeStatus(templeDarshanKeyID, appLangID);
 
       if (response?.data?.statusCode === 200) {
         setShowStatusChangeModal(false);
@@ -117,7 +120,7 @@ const DarshanBookingLanguageWiseList = () => {
         setIsAddUpdateDone(true);
 
         setShowSuccessModal(true);
-        setModelAction('Puja Category status changed successfully.');
+        setModelAction('Status changed successfully.');
         setShowStatusChangeModal(false);
       } else {
         console.error(response?.response?.data?.errorMessage);
@@ -200,7 +203,7 @@ const DarshanBookingLanguageWiseList = () => {
             </button>
 
             {/* Title – centered */}
-            <h5 className="m-0 text-center flex-grow-1">Darshan Booking Language List</h5>
+            <h5 className="m-0 text-center flex-grow-1">{truncateText(location?.state?.data?.templeDarshanName, 30)} Language List</h5>
 
             {/* Add Button – visible only on mobile (<576px) */}
             <button onClick={AddBtnClicked} className="btn btn-primary btn-sm d-inline d-sm-none">
@@ -278,7 +281,7 @@ const DarshanBookingLanguageWiseList = () => {
                       {/* <td style={{ whiteSpace: 'nowrap' }}>{item.pujaServiceName === null ? '-' : item.pujaSubServiceName}</td> */}
                       {/* <td style={{ whiteSpace: 'nowrap' }}>{item.pujaSubServiceName === null ? '-' : item.pujaSubServiceName}</td> */}
 
-                      <td className="text-center text-nowrap" onClick={() => confirmStatusChange(item)}>
+                      <td className="text-center text-nowrap" >
                         <Tooltip title={item.status === true ? 'Enable' : 'Disable'}>
                           {item.status === true ? 'Enable' : 'Disable'}
                           <Android12Switch
@@ -323,13 +326,13 @@ const DarshanBookingLanguageWiseList = () => {
         imgSrc={selectedImage}
         title={modalTitle} // pass deity name as title
       />
-
+*/}
       <StatusChangeModal
         open={showStatusChangeModal}
         onClose={() => setShowStatusChangeModal(false)}
         onConfirm={() => confirmStatusChange(stateChangeStatus)} // Pass the required arguments
       />
-      <SuccessPopupModal show={showSuccessModal} onHide={() => HandleCloseAll()} successMassage={ChangeStatusMassage} />
+      {/* <SuccessPopupModal show={showSuccessModal} onHide={() => HandleCloseAll()} successMassage={ChangeStatusMassage} />
       <ErrorModal show={showErrorModal} onHide={() => setShowErrorModal(false)} Massage={modelAction} /> */}
     </>
   );

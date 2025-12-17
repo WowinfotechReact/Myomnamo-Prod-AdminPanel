@@ -120,7 +120,7 @@ const DistrictAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdate
                   isValid = false
             }
             const apiParam = {
-                  // adminID: user?.admiN_ID,
+                  // adminID: user?.adminID,
                   //  templePujaID: modelRequestData?.templePujaID,
                   // districtName: blogCatObj?.districtName,
                   // districtKeyID: blogCatObj?.districtKeyID,
@@ -225,9 +225,7 @@ const DistrictAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdate
                                                       menuPlacement="auto"
                                                       menuPosition="fixed"
                                                 />
-                                                {error && (!blogCatObj?.appLangID) && (
-                                                      <span className="text-danger">{ERROR_MESSAGES}</span>
-                                                )}
+
                                           </div>
 
 

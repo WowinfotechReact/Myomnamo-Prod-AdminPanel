@@ -166,7 +166,7 @@ const BlogCategoryList = () => {
 
 
       const handleImageClick = (imgUrl, deityName) => {
-            debugger
+
             setModalTitle(deityName); // set the modal title dynamically
             setSelectedImage(imgUrl);
             setShowModal(true);

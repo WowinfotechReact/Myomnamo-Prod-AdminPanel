@@ -1,4 +1,3 @@
-
 import { Tooltip } from '@mui/material'
 import Android12Switch from 'component/Android12Switch'
 import { ChangeStatusMassage } from 'component/GlobalMassage'
@@ -14,7 +13,7 @@ import { Button, Table } from 'react-bootstrap'
 import { useLocation, useNavigate } from 'react-router'
 import AddUpdatePackageModal from './AddUpdatePackageModal'
 import StatusChangeModal from 'component/StatusChangeModal'
-import { GetPujaSubscriptionPackageList } from 'services/Admin/SubscriptionPackage/SubscriptionPackageApi'
+import { ChangeSubsPackageStatus, GetPujaSubscriptionPackageList } from 'services/Admin/SubscriptionPackage/SubscriptionPackageApi'
 
 const PackagesListPage = () => {
     const { setLoader, user } = useContext(ConfigContext);
@@ -33,6 +32,7 @@ const PackagesListPage = () => {
     const [modelRequestData, setModelRequestData] = useState({ Action: null, tempPujaSubPackageKeyID: null, moduleName: 'PackageList' })
     const [showAddPackageModal, setShowAddPackageModal] = useState(false)
 
+
     const [isAddUpdateDone, setIsAddUpdateDone] = useState(false)
     const [showSuccessModal, setShowSuccessModal] = useState(false)
     const [showStatusChangeModal, setShowStatusChangeModal] = useState(false);
@@ -42,6 +42,9 @@ const PackagesListPage = () => {
     const [packageList, setPackageList] = useState([])
 
     useEffect(() => {
+        setPageHeading(
+            location.state.data?.pujaName
+        )
         GetPujaSubscriptionPackageListData(1, null)
     }, [])
 
@@ -58,8 +61,9 @@ const PackagesListPage = () => {
     const GetPujaSubscriptionPackageListData = async (pageNumber, searchKeywordValue) => {
         setLoader(true);
         try {
+
             const response = await GetPujaSubscriptionPackageList({
-                adminID: user?.admiN_ID,
+                adminID: user?.adminID,
                 pageSize: pageSize,
                 pageNo: pageNumber - 1,
                 sortingDirection: sortingType ? sortingType : null,
@@ -92,6 +96,29 @@ const PackagesListPage = () => {
             console.log(error);
         }
     }
+
+    const confirmStatusChange = async (item, user) => {
+        try {
+
+            const response = await ChangeSubsPackageStatus(item?.tempPujaSubPackageKeyID);
+
+            if (response && response.data.statusCode === 200) {
+                setShowStatusChangeModal(false);
+                setStateChangeStatus(null);
+                GetStateListData(currentPage, null);
+                setShowSuccessModal(true);
+                // setModelAction('State status changed successfully.');
+            } else {
+                console.error(response?.data?.errorMessage);
+                setShowSuccessModal(true);
+                // setModelAction('Failed to change state status.');
+            }
+        } catch (error) {
+            console.error('Error changing state status:', error);
+            setShowSuccessModal(true);
+            // setModelAction('An error occurred while changing the employee status.');
+        }
+    };
 
     const AddBtnClicked = () => {
         setModelRequestData((prev) => ({ ...prev, Action: null, tempPujaSubPackageKeyID: null, tempPujaSubPackLangKeyID: null, pujaKeyID: location?.state?.data?.pujaKeyID }))
@@ -142,6 +169,10 @@ const PackagesListPage = () => {
         })
     }
 
+    const handleStatusChange = (item) => {
+        setModelRequestData((prev) => ({ ...prev, changeStatusData: item })); // You can set only relevant data if needed
+        setShowStatusChangeModal(true);
+    };
 
     return (
         <>
@@ -159,7 +190,7 @@ const PackagesListPage = () => {
                         </button>
 
                         {/* Title – centered */}
-                        <h5 className="m-0 text-center flex-grow-1">{pageHeading} List</h5>
+                        <h5 className="m-0 text-center flex-grow-1">{pageHeading} Package List</h5>
 
                         {/* Add Button – visible only on mobile (<576px) */}
                         <button
@@ -227,9 +258,9 @@ const PackagesListPage = () => {
                                         </th>
 
 
-                                        {/* <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
+                                        <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                                             Status
-                                        </th> */}
+                                        </th>
 
                                         <th className="text-center actionSticky" style={{ whiteSpace: 'nowrap' }}>
                                             Action
@@ -261,15 +292,15 @@ const PackagesListPage = () => {
 
                                             </td>
 
-                                            {/* <td className="text-center text-nowrap"
-                                                onClick={() => ChangeStatusData(item)}
+                                            <td className="text-center text-nowrap"
+                                                onClick={() => handleStatusChange(item)}
                                             >
                                                 <Tooltip title={item.status === true ? 'Enable' : 'Disable'}>
                                                     {item.status === true ? 'Enable' : 'Disable'}
                                                     <Android12Switch
                                                         style={{ padding: '8px' }} checked={item.status === true} />
                                                 </Tooltip>
-                                            </td> */}
+                                            </td>
 
                                             <td className="text-center actionColSticky" style={{ zIndex: 4 }}>
                                                 <div className="d-flex justify-content-center gap-2">
@@ -307,7 +338,7 @@ const PackagesListPage = () => {
             <StatusChangeModal
                 open={showStatusChangeModal}
                 onClose={() => setShowStatusChangeModal(false)}
-                onConfirm={() => ChangeStatusData(modelRequestData?.changeStatusData)} // Pass the required arguments
+                onConfirm={() => confirmStatusChange(modelRequestData?.changeStatusData)} // Pass the required arguments
             />
         </>
     )

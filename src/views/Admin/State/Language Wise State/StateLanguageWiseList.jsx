@@ -89,11 +89,14 @@ const StateLanguageWiseList = () => {
 
 
       const AddShopBtnClicked = () => {
-            setModelRequestData((prev) => ({
-                  ...prev, Action: null,
 
-                  stateByLangKeyID: location?.state?.stateData?.stateByLangKeyID
-            }))
+            setModelRequestData((prev) => ({
+                  ...prev,
+                  Action: null,
+                  stateByLangKeyID: location?.state?.stateData?.stateByLangKeyID,
+                  stateKeyID: location?.state?.stateData?.stateKeyID,
+            }));
+
             setShowAddUpdateModal(true)
       }
 
@@ -166,7 +169,7 @@ const StateLanguageWiseList = () => {
                                           <i className="fa-solid fa-arrow-left me-1" style={{ fontSize: '11px' }}></i>
                                           <span className="d-none d-sm-inline">Back</span>
                                     </button>
-                                    <h5 className="m-0 text-center flex-grow-1">State Language List</h5>
+                                    <h5 className="m-0 text-center flex-grow-1">{location?.state?.stateData?.stateName} State Language List</h5>
                                     <button
                                           onClick={AddShopBtnClicked}
                                           className="btn btn-primary btn-sm d-inline d-sm-none"

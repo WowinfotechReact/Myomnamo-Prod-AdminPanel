@@ -206,7 +206,7 @@ const AddUpdateImageModal = ({ show, onHide, modelRequestData, setIsAddUpdateDon
     }
 
     const apiParam = {
-      adminID: user?.admiN_ID,
+      adminID: user?.adminID,
       imageKeyID: modelRequestData.imageKeyID,
       imageCatID: formObj.imageCategoryID,
       imageURL: uploadedImageUrl

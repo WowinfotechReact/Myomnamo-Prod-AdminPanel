@@ -22,7 +22,12 @@ import { UploadImage } from 'services/Upload Cloud-flare Image/UploadCloudflareI
 import { AddUpdateProductCatAPI, GetProductCatModalAPI } from 'services/Admin/EStoreAPI/ProductCatAPI';
 import { AddUpdateBannerAPI, GetBannerModalAPI } from 'services/Admin/BannerAPI/BannerAPI';
 import { GetServiceTypeLookupList, GetSubServiceTypeLookupList } from 'services/Admin/FAQAPI/FAQAPI';
-import { GetPujaServiceTypeLookupList, GetPujaSubServiceTypeLookupList, GetPujaTypeLookupList } from 'services/Admin/MasterAPI/MasterAPI';
+import {
+  GetModuleTypeLookupList,
+  GetPujaServiceTypeLookupList,
+  GetPujaSubServiceTypeLookupList,
+  GetPujaTypeLookupList
+} from 'services/Admin/MasterAPI/MasterAPI';
 
 const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) => {
   const { setLoader, user } = useContext(ConfigContext);
@@ -49,13 +54,14 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
 
   const [formObj, setFormObj] = useState({
     bannerName: null,
-    heading: null,
-    subHeading: null,
-    // CTAUrl: null,
+    header1: null,
+    header2: null,
+    ctaUrl: null,
     CTAName: null,
     serviceID: null,
     subServiceID: null,
-    pujaModuleID: null
+    pujaModuleID: null,
+    appLangID: null
   });
 
   useEffect(() => {
@@ -89,7 +95,7 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
   const GetModelData = async () => {
     setLoader(true);
     try {
-      const response = await GetBannerModalAPI(modelRequestData?.bannerKeyID);
+      const response = await GetBannerModalAPI(modelRequestData?.bannerKeyID, modelRequestData?.appLangID);
 
       if (response) {
         if (response?.data?.statusCode === 200) {
@@ -99,16 +105,21 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
             setFormObj((prev) => ({
               ...prev,
               bannerName: List.bannerName,
-              heading: List.header1,
-              subHeading: List.header2,
+              header1: List.header1,
+              header2: List.header2,
               CTAName: List.ctaName,
+              ctaUrl: List.ctaUrl,
               serviceID: List.pujaServiceID,
               subServiceID: List.pujaSubServiceID,
-              pujaModuleID: List.moduleID
+              pujaModuleID: List.moduleID,
+              appLangID: List.appLangID,
+
             }));
             setFilePreview(List.bannerImage);
             setUploadedImageUrl(List.bannerImage);
+            setSelectedFile(List.bannerImage);
             setWebFilePreview(List.webImage);
+            setWebSelectedFile(List.webImage)
             setWebUploadedImageUrl(List.webImage);
           }
         } else {
@@ -163,22 +174,15 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
     }
   };
   const GetPujaLookupListData = async (serviceID, subServiceID) => {
-    // debugger;
     try {
-      const response = await GetPujaTypeLookupList({
-        pujaCatKeyID: null,
-        applangID: null,
-        pujaServiceID: serviceID,
-        pujaSubServiceID: subServiceID,
-        templeID: null
-      });
+      const response = await GetModuleTypeLookupList(serviceID, subServiceID);
 
       if (response?.data?.statusCode === 200) {
         const list = response?.data?.responseData?.data || [];
 
         const formattedLangList = list.map((Lang) => ({
-          value: Lang.pujaID,
-          label: Lang.pujaName
+          value: Lang.moduleID,
+          label: Lang.moduleName
         }));
 
         setPujaLookupList(formattedLangList);
@@ -220,13 +224,13 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
     setFormObj((prev) => ({
       ...prev,
       bannerName: null,
-      heading: null,
-      subHeading: null,
-      // CTAUrl: null,
+      header1: null,
+      heading2: null,
+      ctaUrl: null,
       CTAName: null,
       serviceID: null,
       subServiceID: null,
-      pujaModuleID: null
+      appLangID: null
     }));
   };
 
@@ -250,37 +254,45 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
       formObj.bannerName === null ||
       formObj.bannerName === undefined ||
       formObj.bannerName === '' ||
-      formObj.heading === null ||
-      formObj.heading === undefined ||
-      formObj.heading === '' ||
-      formObj.subHeading === null ||
-      formObj.subHeading === undefined ||
-      formObj.subHeading === '' ||
-      formObj.CTAName === null ||
-      formObj.CTAName === undefined ||
-      formObj.CTAName === ''
-      // formObj.CTAUrl === null ||
-      // formObj.CTAUrl === undefined ||
-      // formObj.CTAUrl === ''
+      formObj.header1 === null ||
+      formObj.header1 === undefined ||
+      formObj.header1 === '' ||
+      formObj.header2 === null ||
+      formObj.header2 === undefined ||
+      formObj.header2 === ''
+      // formObj.CTAName === null ||
+      // formObj.CTAName === undefined ||
+      // formObj.CTAName === ''
+      // formObj.ctaUrl === null ||
+      // formObj.ctaUrl === undefined ||
+      // formObj.ctaUrl === ''
     ) {
       setError(true);
       isValid = false;
-    } else if (formObj.CTAUrl && !isValidURL(formObj.CTAUrl)) {
+    } else if (formObj.ctaUrl && !isValidURL(formObj.ctaUrl)) {
       setError(true);
       isValid = false;
     }
 
+    if (modelRequestData.moduleName === 'LanguageWiseList') {
+      if (formObj.appLangID === null || formObj.appLangID === undefined || formObj.appLangID === '') {
+        setError(true);
+        isValid = false;
+      }
+    }
+
     const apiParam = {
-      adminID: user?.admiN_ID,
+      adminID: user?.adminID,
       bannerKeyID: modelRequestData.bannerKeyID ? modelRequestData.bannerKeyID : null,
-      appLangID: null,
+      appLangID: formObj.appLangID,
       bannerName: formObj.bannerName,
+      bannerByLangKeyID: modelRequestData.bannerByLangKeyID ? modelRequestData.bannerByLangKeyID : null,
       bannerImage: uploadedImageUrl,
       bannerLink: 'Test banner Link',
       webImage: webUploadedImageUrl,
-      header1: formObj.heading,
-      header2: formObj.subHeading,
-      ctaUrl: formObj.CTAUrl,
+      header1: formObj.header1,
+      header2: formObj.header2,
+      ctaUrl: formObj.ctaUrl,
       ctaName: formObj.CTAName,
       pujaServiceID: formObj.serviceID,
       pujaSubServiceID: formObj.subServiceID,
@@ -435,6 +447,7 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
     return pattern.test(url.trim());
   };
 
+  console.log("formObj", formObj)
   return (
     <>
       <Modal style={{ zIndex: 1300 }} size="lg" show={show} backdrop="static" keyboard={false} centered>
@@ -476,74 +489,41 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                 )}
               </div>
 
-              {/* Heading */}
-              <div className="col-md-6 mb-3">
-                <label htmlFor="pujaName" className="form-label">
-                  Heading <span className="text-danger">*</span>
-                </label>
-                <input
-                  maxLength={90}
-                  type="text"
-                  className="form-control"
-                  id="catName"
-                  placeholder="Enter Heading"
-                  aria-describedby="Employee"
-                  value={formObj.heading}
-                  onChange={(e) => {
-                    let input = e.target.value;
-                    if (input.startsWith(' ')) {
-                      input = input.trimStart();
-                    }
-
-                    setFormObj((prev) => ({
-                      ...prev,
-                      heading: input
-                    }));
-                  }}
-                />
-                {error && (formObj.heading === null || formObj.heading === undefined || formObj.heading === '') ? (
-                  <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
-                ) : (
-                  ''
-                )}
-              </div>
-
-              {/* Sub Heading */}
-              <div className="col-md-6 mb-3">
-                <label htmlFor="pujaName" className="form-label">
-                  Sub Heading <span className="text-danger">*</span>
-                </label>
-                <input
-                  maxLength={90}
-                  type="text"
-                  className="form-control"
-                  id="catName"
-                  placeholder="Enter Sub Heading"
-                  aria-describedby="Employee"
-                  value={formObj.subHeading}
-                  onChange={(e) => {
-                    let input = e.target.value;
-                    if (input.startsWith(' ')) {
-                      input = input.trimStart();
-                    }
-
-                    setFormObj((prev) => ({
-                      ...prev,
-                      subHeading: input
-                    }));
-                  }}
-                />
-                {error && (formObj.subHeading === null || formObj.subHeading === undefined || formObj.subHeading === '') ? (
-                  <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
-                ) : (
-                  ''
-                )}
-              </div>
+              {/* Language Selection */}
+              {modelRequestData?.moduleName === 'LanguageWiseList' && (
+                <>
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="stateID" className="form-label">
+                      Select Language <span className="text-danger">*</span>
+                    </label>
+                    <Select
+                      options={languageList}
+                      value={languageList?.filter((v) => v?.value === formObj?.appLangID)}
+                      onChange={(selectedOption) => {
+                        setFormObj((prev) => ({
+                          ...prev,
+                          appLangID: selectedOption ? selectedOption.value : null
+                        }));
+                      }}
+                      menuPlacement="auto"
+                      menuPosition="fixed"
+                      className='selector-index'
+                      styles={{
+                        menu: (provided) => ({
+                          ...provided,
+                          zIndex: 9999, // 👈 Inline z-index here
+                        }),
+                      }}
+                    />
+                    {error && !formObj?.appLangID && <span className="text-danger">{ERROR_MESSAGES}</span>}
+                  </div>
+                </>
+              )}
 
               {/* CTA Name */}
               <div className="col-md-6 mb-3">
                 <label htmlFor="pujaName" className="form-label">
-                  CTA Name <span className="text-danger">*</span>
+                  CTA Name
                 </label>
                 <input
                   maxLength={90}
@@ -565,17 +545,18 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                     }));
                   }}
                 />
-                {error && (formObj.CTAName === null || formObj.CTAName === undefined || formObj.CTAName === '') ? (
+                {/* {error && (formObj.CTAName === null || formObj.CTAName === undefined || formObj.CTAName === '') ? (
                   <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
                 ) : (
                   ''
-                )}
+                )} */}
               </div>
 
               {/* CTA URL */}
-              {/* <div className="col-md-6 mb-3">
+              <div className="col-md-6 mb-3">
                 <label htmlFor="pujaName" className="form-label">
-                  CTA URL <span className="text-danger">*</span>
+                  CTA URL
+                  {/* <span className="text-danger">*</span> */}
                 </label>
                 <input
                   maxLength={90}
@@ -584,7 +565,7 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                   id="catName"
                   placeholder="Enter CTA URL"
                   aria-describedby="Employee"
-                  value={formObj.CTAUrl}
+                  value={formObj.ctaUrl}
                   onChange={(e) => {
                     let input = e.target.value.trimStart();
 
@@ -592,25 +573,25 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
 
                     setFormObj((prev) => ({
                       ...prev,
-                      CTAUrl: input
+                      ctaUrl: input
                     }));
                   }}
                 />
-                {error && (
+                {/* {error && (
                   <>
-                    {!formObj.CTAUrl || formObj.CTAUrl.trim() === '' ? (
+                    {!formObj.ctaUrl || formObj.ctaUrl.trim() === '' ? (
                       <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
                     ) : (
-                      !isValidURL(formObj.CTAUrl) && <span style={{ color: 'red' }}>Please enter a valid URL</span>
+                      !isValidURL(formObj.ctaUrl) && <span style={{ color: 'red' }}>Please enter a valid URL</span>
                     )}
                   </>
-                )}
-              </div> */}
+                )} */}
+              </div>
 
               {/* Select Service */}
               <div className="col-md-6 mb-3">
                 <label htmlFor="stateID" className="form-label">
-                  Select Service <span className="text-danger">*</span>
+                  Select Service
                 </label>
                 <Select
                   options={serviceTypeList}
@@ -626,14 +607,21 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                   }}
                   menuPlacement="auto"
                   menuPosition="fixed"
+                  className='selector-index'
+                  styles={{
+                    menu: (provided) => ({
+                      ...provided,
+                      zIndex: 999999, // 👈 Inline z-index here
+                    }),
+                  }}
                 />
-                {error && !formObj?.serviceID && <span className="text-danger">{ERROR_MESSAGES}</span>}
+                {/* {error && !formObj?.serviceID && <span className="text-danger">{ERROR_MESSAGES}</span>} */}
               </div>
 
               {/* Select Sub Service */}
               <div className="col-md-6 mb-3">
                 <label htmlFor="stateID" className="form-label">
-                  Select Sub Service <span className="text-danger">*</span>
+                  Select Sub Service
                 </label>
                 <Select
                   options={subServiceTypeList}
@@ -648,14 +636,21 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                   }}
                   menuPlacement="auto"
                   menuPosition="fixed"
+                  className='selector-index'
+                  styles={{
+                    menu: (provided) => ({
+                      ...provided,
+                      zIndex: 10000, // 👈 Inline z-index here
+                    }),
+                  }}
                 />
-                {error && !formObj?.subServiceID && <span className="text-danger">{ERROR_MESSAGES}</span>}
+                {/* {error && !formObj?.subServiceID && <span className="text-danger">{ERROR_MESSAGES}</span>} */}
               </div>
 
               {/* Select Module */}
               <div className="col-md-6 mb-3">
                 <label htmlFor="stateID" className="form-label">
-                  Select Module <span className="text-danger">*</span>
+                  Select Module
                 </label>
                 <Select
                   options={pujaLookupList}
@@ -668,12 +663,13 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                   }}
                   menuPlacement="auto"
                   menuPosition="fixed"
+
                 />
-                {error && !formObj?.pujaModuleID && <span className="text-danger">{ERROR_MESSAGES}</span>}
+                {/* {error && !formObj?.pujaModuleID && <span className="text-danger">{ERROR_MESSAGES}</span>} */}
               </div>
 
               {/* Banner Image */}
-              <div className="col-md-12 mb-3">
+              <div className="col-md-6 mb-3">
                 <div className="mb-3 position-relative">
                   <div className="d-flex justify-content-between align-items-center mb-1">
                     <label htmlFor="imageUpload" className="form-label ">
@@ -747,7 +743,7 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
               </div>
 
               {/* Web Image */}
-              <div className="col-md-12 mb-3">
+              <div className="col-md-6 mb-3">
                 <div className="mb-3 position-relative">
                   <div className="d-flex justify-content-between align-items-center mb-1">
                     <label htmlFor="imageUpload" className="form-label ">
@@ -824,6 +820,52 @@ const AddUpdateBannerModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                     <span className="text-danger small mx-3">{ERROR_MESSAGES}</span>
                   )}
                 </div>
+              </div>
+
+              {/* heading editor */}
+              <div className="col-md-12 mb-3">
+                <label htmlFor="canonicalTag" className="form-label">
+                  Heading <span className="text-danger">*</span>
+                </label>
+                <Text_Editor
+                  editorState={formObj?.header1}
+                  handleContentChange={(htmlContent) => {// Strip HTML tags and check if anything meaningful remains
+                    const strippedContent = htmlContent.replace(/<[^>]+>/g, '').trim();
+
+                    setFormObj(({
+                      ...formObj,
+                      header1: strippedContent === '' ? null : htmlContent,
+                    }));
+                  }}
+                />
+                {error && (formObj.header1 === null || formObj.header1 === undefined || formObj.header1 === '') ? (
+                  <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
+                ) : (
+                  ''
+                )}
+              </div>
+
+
+              <div className="col-md-12 mb-3">
+                <label htmlFor="canonicalTag" className="form-label">
+                  Sub Heading <span className="text-danger">*</span>
+                </label>
+                <Text_Editor
+                  editorState={formObj?.header2}
+                  handleContentChange={(htmlContent) => {// Strip HTML tags and check if anything meaningful remains
+                    const strippedContent = htmlContent.replace(/<[^>]+>/g, '').trim();
+
+                    setFormObj(({
+                      ...formObj,
+                      header2: strippedContent === '' ? null : htmlContent,
+                    }));
+                  }}
+                />
+                {error && (formObj.header2 === null || formObj.header2 === undefined || formObj.header2 === '') ? (
+                  <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
+                ) : (
+                  ''
+                )}
               </div>
             </div>
           </div>

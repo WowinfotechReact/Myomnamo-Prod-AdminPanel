@@ -25,7 +25,7 @@ const AddUpdatePackageModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
         title: null,
         subTitle: null,
         price: null,
-        discount: null,
+        discount: "0",
         timeLine: null,
         description: null,
         timeLineInWeeks: null,
@@ -135,9 +135,9 @@ const AddUpdatePackageModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
             setError(true)
             isValid = false
         }
-        debugger
+
         const apiParam = {
-            adminID: user?.admiN_ID,
+            adminID: user?.adminID,
             tempPujaSubPackageKeyID: modelRequestData?.tempPujaSubPackageKeyID,
             tempPujaSubPackLangKeyID: modelRequestData?.tempPujaSubPackLangKeyID === undefined || modelRequestData?.tempPujaSubPackLangKeyID === null ? null : modelRequestData?.tempPujaSubPackLangKeyID,
             appLangID: packageForm?.appLangID,
@@ -153,6 +153,7 @@ const AddUpdatePackageModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
             timeLineInWeeks: packageForm?.timeLineInWeeks
         }
         if (isValid) {
+
             AddUpdatePujaSubscriptionPackageData(apiParam)
         }
     }
@@ -186,7 +187,7 @@ const AddUpdatePackageModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
             title: null,
             subTitle: null,
             price: null,
-            discount: null,
+            discount: '0',
             timeLine: null,
             description: null,
             dayID: null,
@@ -212,8 +213,38 @@ const AddUpdatePackageModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
             // value = value.replace(/[^a-zA-Z\s]/g, '');
             value = value.charAt(0).toUpperCase() + value.slice(1);
         }
-        if (id === "price" || id === "discount") {
+        if (id === "price") {
             value = value.charAt(0) > '0' ? value.replace(/\D/g, '').slice(0, 6) : ''; // Only keep digits and slice to 10 digits
+
+        }
+
+        // if (id === "discount") {
+        //     value = value.replace(/\D/g, '');
+        //     let numericValue = Number(value);
+        //     if (numericValue > 100) numericValue = 100;
+        //     if (value.length > 1 && value.startsWith('0')) {
+        //         numericValue = Number(value.replace(/^0+/, ''));
+        //     }
+        //     value = value === '' ? '' : numericValue.toString();
+        // }
+
+        if (id === "discount") {
+            // Remove everything except digits
+            value = value.replace(/\D/g, '');
+
+            // Allow empty input (so user can delete)
+            if (value === '') {
+                setPackageForm(prev => ({ ...prev, [id]: null }));
+                return;
+            }
+
+            const numericValue = Number(value);
+
+            // Allow only numbers between 0–100
+            if (numericValue < 0 || numericValue > 100) {
+                return; // simply exit without changing state
+            }
+            value = numericValue.toString();
 
         }
 
@@ -284,7 +315,7 @@ const AddUpdatePackageModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
                                     id="title"
                                     value={packageForm?.title || ''}
                                     onChange={handleChange}
-                                    placeholder="Enter Temple Name"
+                                    placeholder="Enter Package Title"
                                     maxLength={150}
                                 />
                                 {error && (!packageForm?.title) && (
@@ -303,7 +334,7 @@ const AddUpdatePackageModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
                                     id="subTitle"
                                     value={packageForm?.subTitle || ''}
                                     onChange={handleChange}
-                                    placeholder="Enter Temple Name"
+                                    placeholder="Enter Package Sub Title"
                                     maxLength={150}
                                 />
                                 {error && (!packageForm?.subTitle) && (
@@ -316,7 +347,7 @@ const AddUpdatePackageModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
                                     {/* Price  */}
                                     <div className="col-md-6 mb-3">
                                         <label htmlFor="price" className="form-label">
-                                            Price <span className="text-danger">*</span>
+                                            Price (₹)<span className="text-danger">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -324,7 +355,7 @@ const AddUpdatePackageModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
                                             id="price"
                                             value={formatToIndianCurrency(packageForm?.price) || ''}
                                             onChange={handleChange}
-                                            placeholder="Enter Temple Name"
+                                            placeholder="Enter Package Price (₹)"
                                             maxLength={150}
                                         />
                                         {error && (!packageForm?.price) && (
@@ -335,20 +366,21 @@ const AddUpdatePackageModal = ({ show, onHide, modelRequestData, setIsAddUpdateD
                                     {/* Discount  */}
                                     <div className="col-md-6 mb-3">
                                         <label htmlFor="discount" className="form-label">
-                                            Discount <span className="text-danger">*</span>
+                                            Discount (%)
+                                            {/* <span className="text-danger">*</span> */}
                                         </label>
                                         <input
                                             type="text"
                                             className="form-control my-box"
                                             id="discount"
-                                            value={packageForm?.discount || ''}
+                                            value={packageForm?.discount}
                                             onChange={handleChange}
                                             placeholder="Enter Discount %"
                                             maxLength={150}
                                         />
-                                        {error && (!packageForm?.discount) && (
+                                        {/* {error && (!packageForm?.discount) && (
                                             <span className="text-danger">{ERROR_MESSAGES}</span>
-                                        )}
+                                        )} */}
                                     </div>
 
 

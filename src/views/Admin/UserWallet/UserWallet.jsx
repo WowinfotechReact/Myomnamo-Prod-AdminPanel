@@ -329,22 +329,27 @@ const UserWalletList = () => {
                       <input type="checkbox" checked={allSelected} onChange={handleSelectAll} />
                     </th> */}
                     <th className="text-center">Sr No.</th>
-                    <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
+                    {/* <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                       Admin Name
-                    </th>
+                    </th> */}
 
                     <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                       User Name
                     </th>
-
                     <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
-                      Wallet Amount
+                      Contact No
+                    </th>
+                    <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
+                      Wallet Amount (₹)
                     </th>
 
                     <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
-                      Registration Date
+                      Wallet Credit Date
                     </th>
+                    <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
 
+                      Credited By
+                    </th>
                     <th className="text-center actionSticky" style={{ whiteSpace: 'nowrap' }}>
                       Action
                     </th>
@@ -353,10 +358,21 @@ const UserWalletList = () => {
 
                 <tbody>
                   {userWalletList?.map((item, idx) => (
-                    <tr className="text-nowrap text-center" key={item.pujaBookingID}>
+                    <tr className="text-center align-middle" key={item.pujaBookingID}>
                       <td style={{ whiteSpace: 'nowrap' }} className="text-center">
                         {(currentPage - 1) * pageSize + idx + 1}
                       </td>
+                      {/* <td style={{ whiteSpace: 'nowrap' }}>
+                        {item?.adminName ? (
+                          item.adminName.length > 25 ? (
+                            <Tooltip title={item.adminName}>{item.adminName.substring(0, 25) + '...'}</Tooltip>
+                          ) : (
+                            item.adminName
+                          )
+                        ) : (
+                          '-'
+                        )} 
+                      </td> */}
                       <td style={{ whiteSpace: 'nowrap' }}>
                         {item?.adminName ? (
                           item.adminName.length > 25 ? (
@@ -369,26 +385,18 @@ const UserWalletList = () => {
                         )}
                       </td>
                       <td style={{ whiteSpace: 'nowrap' }}>
-                        {item?.referredByUserName ? (
-                          item.referredByUserName.length > 25 ? (
-                            <Tooltip title={item.referredByUserName}>{item.referredByUserName.substring(0, 25) + '...'}</Tooltip>
-                          ) : (
-                            item.referredByUserName
-                          )
-                        ) : (
-                          '-'
-                        )}
+                        {item?.contactNo || '-'}
                       </td>
                       <td>
                         {new Intl.NumberFormat('en-IN', {
-                          style: 'currency',
+                          // style: 'currency',
                           currency: 'INR',
-                          minimumFractionDigits: 2
+                          // minimumFractionDigits: 2
                         }).format(item.walletAmount)}
                       </td>
 
                       <td style={{ whiteSpace: 'nowrap' }}>{item.regDate}</td>
-
+                      <td style={{ whiteSpace: 'nowrap' }}>{item.referredByUserName}</td>
                       <td className="text-center actionColSticky" style={{ zIndex: 4 }}>
                         <div className="d-flex justify-content-center gap-2">
                           <Tooltip title={`Update ${pageHeading}`}>

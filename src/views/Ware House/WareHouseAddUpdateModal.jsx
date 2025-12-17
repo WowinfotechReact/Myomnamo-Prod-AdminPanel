@@ -55,7 +55,7 @@ const WareHouseAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdat
                   const response = await GetWareHouseModel(id);
 
                   if (response) {
-                        debugger
+
                         if (response?.data?.statusCode === 200) {
                               console.log(response.data.responseData.data, 'dsadasd3242');
 
@@ -94,7 +94,7 @@ const WareHouseAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdat
                   isValid = false
             }
             const ApiParam = {
-                  adminID: user?.admiN_ID,
+                  adminID: user?.adminID,
                   warehouseName: wareHouseObj?.warehouseName,
                   address: wareHouseObj?.address,
                   warehouseKeyID: wareHouseObj?.warehouseKeyID,
@@ -208,6 +208,7 @@ const WareHouseAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdat
                                                       aria-describedby="Employee"
                                                       value={wareHouseObj.address}
                                                       onChange={(e) => {
+                                                            debugger
                                                             setErrorMessage(false);
                                                             let inputValue = e.target.value;
 
@@ -217,10 +218,10 @@ const WareHouseAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdat
                                                             }
 
                                                             // Remove unwanted characters (allow letters, numbers, spaces)
-                                                            const cleanedValue = inputValue.replace(/[^a-zA-Z0-9\s]/g, '');
+                                                            // const cleanedValue = inputValue.replace(/[^a-zA-Z0-9\s]/g, '');
 
                                                             // Trim only leading spaces
-                                                            const trimmedValue = cleanedValue.trimStart();
+                                                            const trimmedValue = inputValue.trimStart();
 
                                                             // Capitalize first letter of every word
                                                             const updatedValue = trimmedValue

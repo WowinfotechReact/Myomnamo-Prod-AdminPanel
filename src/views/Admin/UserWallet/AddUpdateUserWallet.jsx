@@ -220,9 +220,9 @@ const AddUpdateUserWalletModal = ({ show, onHide, modelRequestData, setIsAddUpda
       setError(true);
       isValid = false;
     }
-
+    debugger
     const apiParam = {
-      adminID: user?.admiN_ID,
+      adminID: user?.adminID,
       userWalletID: modelRequestData.userWalletID ? modelRequestData.userWalletID : null,
       userID: formObj.userListID,
       // walletAmount: formObj.walletAmount
@@ -417,7 +417,12 @@ const AddUpdateUserWalletModal = ({ show, onHide, modelRequestData, setIsAddUpda
                   </label>
                   <Select
                     id="templeID"
-                    options={userList}
+                    // options={userList}
+                    options={
+                      (userList || [])
+                        .filter(item => item && item.label) // ✅ filter out invalid entries
+                        .sort((a, b) => a.label.localeCompare(b.label))
+                    } //Todo: useMemo for better memoized sorted array
                     value={userList.filter((item) => formObj.userListID?.includes(item.value))}
                     onChange={(selectedOptions) =>
                       setFormObj((prev) => ({

@@ -36,3 +36,15 @@ export const AddUpdatePujaSubscriptionPackage = async (params) => {
     const res = await postApiWithAuthenticated(url, params);
     return res;
 };
+
+export const ChangeSubsPackageStatus = async (TempPujaSubPackageKeyID, AppLangID) => {
+    let url = ""
+    if (AppLangID === null || AppLangID === undefined || AppLangID === "") {
+        url = `${BaseURL}/ChangeSubsPackageStatus?TempPujaSubPackageKeyID=${TempPujaSubPackageKeyID}`;
+    } else {
+        url = `${BaseURL}/ChangeSubsPackageStatus?TempPujaSubPackageKeyID=${TempPujaSubPackageKeyID}&AppLangID=${AppLangID}`;
+    }
+
+    const res = await getListWithAuthenticated(url);
+    return res;
+};

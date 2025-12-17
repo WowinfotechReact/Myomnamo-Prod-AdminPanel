@@ -5,6 +5,8 @@
 export const Base_Url = 'https://api.prod.myomnamo.com'; // Prod
 
 export const generatePdf_Url = `https://node-js-multipurpose-api.vercel.app`;
+export const googleMapKey = `AIzaSyAtZ94hrxs813CocYwcRdWMOQvP0dIlvgA`;
+
 
 
 

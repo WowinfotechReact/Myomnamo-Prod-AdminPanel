@@ -1,9 +1,3 @@
-
-
-
-
-
-
 import { Tooltip } from '@mui/material'
 import NoResultFoundModel from 'component/NoResultFoundModal'
 import PaginationComponent from 'component/Pagination'
@@ -27,8 +21,10 @@ import { ChangeBlogStatus, GetBlogList } from 'services/Blog/BlogApi'
 import LanguageWiseAddUpdateBlogModal from './LanguageWiseAddUpdateBlogModal'
 
 const LanguageWiseBlogList = () => {
+      //==============config=======================
+      const { setLoader, truncateText } = useContext(ConfigContext);
+      //==============config=======================
       const [modelAction, setModelAction] = useState();
-      const { setLoader } = useContext(ConfigContext);
       const [showModal, setShowModal] = useState(false);
       const [stateChangeStatus, setStateChangeStatus] = useState('');
       const [selectedImage, setSelectedImage] = useState(null);
@@ -115,7 +111,7 @@ const LanguageWiseBlogList = () => {
                   // blogKeyID: location.
                   availableLangID: availableLangIDs,
                   blogKeyID: location?.state?.blogCategoryData?.blogKeyID
-
+                  , blogCatID: location?.state?.blogCategoryData?.blogCatID
             }))
             setShowAddUpdateModal(true)
       }
@@ -123,7 +119,7 @@ const LanguageWiseBlogList = () => {
             setModelRequestData((prev) => ({
                   ...prev, Action: 'Update',
                   blogKeyID: item?.blogKeyID,
-                  blogCategoryKeyID: item?.blogCategoryKeyID,
+                  blogCatID: item?.blogCatID,
                   blogBylangKeyID: item?.blogBylangKeyID,
                   appLangID: item.appLangID,
                   availableLangID: availableLangIDs,
@@ -182,13 +178,13 @@ const LanguageWiseBlogList = () => {
 
 
       const handleImageClick = (imgUrl, deityName) => {
-            debugger
+
             setModalTitle(deityName); // set the modal title dynamically
             setSelectedImage(imgUrl);
             setShowModal(true);
       };
 
-      console.log(ShopList, '3dddddddds');
+
 
 
       return (
@@ -203,7 +199,7 @@ const LanguageWiseBlogList = () => {
                                           <i className="fa-solid fa-arrow-left me-1" style={{ fontSize: '11px' }}></i>
                                           <span className="d-none d-sm-inline">Back</span>
                                     </button>
-                                    <h5 className="m-0 text-center flex-grow-1">Blog Language List</h5>
+                                    <h5 className="m-0 text-center flex-grow-1">{truncateText(location?.state?.blogCategoryData?.blogTitle, 30)}</h5>
                                     <button
                                           onClick={AddShopBtnClicked}
                                           className="btn btn-primary btn-sm d-inline d-sm-none"
@@ -286,11 +282,6 @@ const LanguageWiseBlogList = () => {
                                                                   <td style={{ whiteSpace: 'nowrap' }} className="text-center">
                                                                         {(currentPage - 1) * pageSize + idx + 1}
                                                                   </td>
-
-
-
-
-
 
                                                                   <td style={{ whiteSpace: 'nowrap' }} >
                                                                         {item.blogTitle}

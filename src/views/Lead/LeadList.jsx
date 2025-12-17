@@ -153,7 +153,7 @@ const LeadList = () => {
   };
 
   const handleTechnicianBtnClicked = (value) => {
-    debugger
+
     setModelRequestData((prevObj) => ({
       ...prevObj,
       leadKeyID: value.leadKeyID

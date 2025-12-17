@@ -87,7 +87,7 @@ const BlogCategoryLanguageWiseAddUpdateModal = ({ show, onHide, modelRequestData
             }
 
             const apiParam = {
-                  adminID: user?.admiN_ID,
+                  adminID: user?.adminID,
                   blogCatName: blogCatObj?.blogCatName,
                   appLangID: blogCatObj?.appLangID,
                   blogCategoryKeyID: modelRequestData?.blogCategoryKeyID,

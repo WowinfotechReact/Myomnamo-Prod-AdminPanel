@@ -120,7 +120,7 @@ const CouponCodeList = () => {
   const ChangeStatusData = async (value) => {
     setLoader(true);
     try {
-      const response = await CouponChangeStatus(value?.couponCodeKeyID, user?.admiN_ID);
+      const response = await CouponChangeStatus(value?.couponCodeKeyID, user?.adminID);
 
       if (response) {
         if (response?.data?.statusCode === 200) {
@@ -463,12 +463,14 @@ const CouponCodeList = () => {
           </div>
         </div>
       </div>
+
       <AddUpdateCouponCodeModal
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
         modelRequestData={modelRequestData}
         setIsAddUpdateDone={setIsAddUpdateDone}
       />
+
       <SuccessPopupModal show={showSuccessModal} onHide={() => onSuccessClose()} successMassage={ChangeStatusMassage} />
 
       {/* <SuccessPopupModal

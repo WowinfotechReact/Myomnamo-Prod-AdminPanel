@@ -251,7 +251,7 @@ const TimeSlot = () => {
                                                 </td>
                                                 <td className="text-center" style={{ zIndex: 4 }}>
                                                     <div className="d-flex justify-content-center gap-2">
-                                                        <Tooltip title="Update State">
+                                                        <Tooltip title="Update Time Slot">
                                                             <Button className="btn-sm" onClick={() => updateBtnClick(item)}>
                                                                 <i class="fas fa-edit"></i>
                                                             </Button>

@@ -45,7 +45,7 @@ const PanditPujaList = () => {
 
 
     useEffect(() => {
-
+        setCurrentPage(1);
         if (location?.pathname === "/daily-pandit-puja") {
             setPageHeading("Daily Pandit Puja")
             GetPujaListData(1, null, pujaServiceID?.PanditPuja, pujaSubServiceID?.DailyPanditPuja)
@@ -65,7 +65,7 @@ const PanditPujaList = () => {
         }
 
 
-    }, [location])
+    }, [location?.pathname])
     useEffect(() => {
         if (isAddUpdateDone) {
             setSearchKeyword("")
@@ -286,10 +286,10 @@ const PanditPujaList = () => {
                                     {pujaList?.map((item, idx) => (
                                         <tr className='text-nowrap  text-center' key={item.idx}>
 
-                                            <td style={{ whiteSpace: 'nowrap' }} className="text-center">
+                                            <td style={{ whiteSpace: 'nowrap' }} className="text-center py-2">
                                                 {(currentPage - 1) * pageSize + idx + 1}
                                             </td>
-                                            <td style={{ whiteSpace: 'nowrap' }}>
+                                            <td style={{ whiteSpace: 'nowrap' }} className="text-center py-2">
                                                 {item.pujaName === null ? '-' : item?.pujaName}
 
                                             </td>
@@ -302,7 +302,7 @@ const PanditPujaList = () => {
                                                 </>
                                             )}
 
-                                            <td style={{ whiteSpace: 'nowrap' }}>{item?.offlinePujaPrice === null ? '-' : item?.offlinePujaPrice}</td>
+                                            <td className="text-center py-2" style={{ whiteSpace: 'nowrap' }}>{item?.offlinePujaPrice === null ? '-' : item?.offlinePujaPrice}</td>
 
 
                                             <td className="text-center text-nowrap"

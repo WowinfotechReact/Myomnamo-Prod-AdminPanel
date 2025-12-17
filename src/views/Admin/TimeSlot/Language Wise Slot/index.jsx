@@ -19,7 +19,7 @@ import TimeSlotLanguageWiseAddUpdateModal from './TimeSlotLanguageWiseAddUpdateM
 
 const TimeSlotLanguageWiseList = () => {
     const [modelAction, setModelAction] = useState();
-    const { user, setLoader } = useContext(ConfigContext);
+    const { user, setLoader, truncateText } = useContext(ConfigContext);
     const [stateChangeStatus, setStateChangeStatus] = useState('');
     const [toDate, setToDate] = useState(null);
     const [fromDate, setFromDate] = useState(null);
@@ -93,8 +93,11 @@ const TimeSlotLanguageWiseList = () => {
     const AddShopBtnClicked = () => {
         setModelRequestData((prev) => ({
             ...prev, Action: null,
-            timeSlotByLangKeyID: location?.state?.stateData?.timeSlotByLangKeyID
+            timeSlotByLangKeyID: location?.state?.stateData?.timeSlotByLangKeyID,
+            timeSlotKeyID: location?.state?.stateData?.timeSlotKeyID
         }))
+
+
         setShowAddUpdateModal(true)
     }
 
@@ -167,7 +170,7 @@ const TimeSlotLanguageWiseList = () => {
                             <i className="fa-solid fa-arrow-left me-1" style={{ fontSize: '11px' }}></i>
                             <span className="d-none d-sm-inline">Back</span>
                         </button>
-                        <h5 className="m-0 text-center flex-grow-1">Time Slot Language List</h5>
+                        <h5 className="m-0 text-center flex-grow-1">{truncateText(location.state.stateData.timeSlot, 30)} List</h5>
                         <button
                             onClick={AddShopBtnClicked}
                             className="btn btn-primary btn-sm d-inline d-sm-none"

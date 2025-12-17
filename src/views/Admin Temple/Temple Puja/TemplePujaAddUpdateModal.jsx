@@ -489,7 +489,7 @@ const TemplePujaAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpda
             }
 
             const apiParam = {
-                  adminID: user?.admiN_ID, templePujaID: modelRequestData?.templePujaID,
+                  adminID: user?.adminID, templePujaID: modelRequestData?.templePujaID,
                   templeID: templePujaObj?.templeID,
                   templePujaID: templePujaObj?.templePujaID,
                   pujaName: templePujaObj?.pujaName,

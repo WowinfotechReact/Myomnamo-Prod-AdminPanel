@@ -24,6 +24,15 @@ import StateLanguageWiseList from 'views/Admin/State/Language Wise State/StateLa
 import DistrictLanguageWiseList from 'views/Admin/District/Language Wise State/DistrictLanguageWiseList';
 import TimeSlot from 'views/Admin/TimeSlot';
 import TimeSlotLanguageWiseList from 'views/Admin/TimeSlot/Language Wise Slot';
+import LanguageWisePackage from 'views/Admin/Packages/LanguageWisePackage';
+import StallBusinessList from 'views/Stall Business/StallBusinessList';
+import MandalBusinessList from 'views/Mandal Business/MandalBusinessList';
+import FestivalIdlBookings from 'views/Festival Idol Booking';
+import AdminMasterList from 'views/Admin/Admin Master/AdminMasterList';
+import EmployeeMasterList from 'views/Admin/Employee Master/EmployeeMasterList';
+import PanditMasterList from 'views/Admin/Pandit Master/PanditMasterList';
+import ProductSubscriptionPackageList from 'views/Admin/Estore/ProductSubscriptionPackageList';
+import LanguageWisePackageList from 'views/Admin/Estore/LanguageWisePackageList';
 
 const DashboardDefault = Loadable(lazy(() => import('views/Dashboard/Default')));
 const LeadList = Loadable(lazy(() => import('views/Lead/LeadList')));
@@ -72,6 +81,10 @@ const WebinarUsersList = Loadable(lazy(() => import('../views/Admin/WebinarUsers
 const CouponCodeList = Loadable(lazy(() => import('../views/Admin/CouponCodeList/CouponCodeList')));
 const ImageList = Loadable(lazy(() => import('../views/Admin/ImageMaster/ImageList')));
 const ImageCatList = Loadable(lazy(() => import('../views/Admin/ImageMaster/ImageCategoryList')));
+const ProductImageList = Loadable(lazy(() => import('../views/Admin/Estore/ProductImageList')));
+const BannerLanguageWiseList = Loadable(lazy(() => import('../views/Admin/BannerList/BannerLanguageWiseList')));
+const UsersList = Loadable(lazy(() => import('../views/Admin/Users/UsersList')));
+const PujaKitSubscriptionOrderList = Loadable(lazy(() => import('../views/Admin/PujaBooking/PujaKitSubscriptionOrder/PujaKitSubscriptionOrderList')));
 
 const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
@@ -435,10 +448,26 @@ const MainRoutes = {
       )
     },
     {
+      path: '/puja-kit-bookings',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <PujaKitSubscriptionOrderList />
+        </Suspense>
+      )
+    },
+    {
       path: '/packages-List',
       element: (
         <Suspense fallback={<Loader />}>
           <PackagesListPage />
+        </Suspense>
+      )
+    },
+    {
+      path: '/language-wise-package',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <LanguageWisePackage />
         </Suspense>
       )
     },
@@ -511,6 +540,14 @@ const MainRoutes = {
       element: (
         <Suspense fallback={<Loader />}>
           <BannerList />
+        </Suspense>
+      )
+    },
+    {
+      path: '/banner-language-wise',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <BannerLanguageWiseList />
         </Suspense>
       )
     },
@@ -679,6 +716,86 @@ const MainRoutes = {
       element: (
         <Suspense fallback={<Loader />}>
           <TimeSlotLanguageWiseList />
+        </Suspense>
+      )
+    },
+    {
+      path: '/add-image',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <ProductImageList />
+        </Suspense>
+      )
+    },
+    {
+      path: '/users',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <UsersList />
+        </Suspense>
+      )
+    },
+    {
+      path: '/stall-business',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <StallBusinessList />
+        </Suspense>
+      )
+    },
+    {
+      path: '/mandal-business',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <MandalBusinessList />
+        </Suspense>
+      )
+    },
+    {
+      path: '/festival-idol-booking-list',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <FestivalIdlBookings />
+        </Suspense>
+      )
+    },
+    {
+      path: '/admin-master',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <AdminMasterList />
+        </Suspense>
+      )
+    },
+    {
+      path: '/employee-master',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <EmployeeMasterList />
+        </Suspense>
+      )
+    },
+    {
+      path: '/pandit-master',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <PanditMasterList />
+        </Suspense>
+      )
+    },
+    {
+      path: '/product-subscription-package',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <ProductSubscriptionPackageList />
+        </Suspense>
+      )
+    },
+    {
+      path: '/product-subscription-language',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <LanguageWisePackageList />
         </Suspense>
       )
     },

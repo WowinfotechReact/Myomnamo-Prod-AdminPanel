@@ -5,7 +5,6 @@ import NoResultFoundModel from 'component/NoResultFoundModal';
 import PaginationComponent from 'component/Pagination';
 import SuccessPopupModal from 'component/SuccessPopupModal';
 import { ConfigContext } from 'context/ConfigContext';
-import dayjs from 'dayjs';
 import { pujaServiceID, pujaSubServiceID } from 'Middleware/Enum';
 import { debounce } from 'Middleware/Utils';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
@@ -30,7 +29,6 @@ const RegularNotificationList = () => {
   const [sortingType, setSortingType] = useState(null);
   const [sortValueName, setSortValueName] = useState(null);
   const [pageHeading, setPageHeading] = useState('Puja List');
-  const [selectedPuja, setSelectedPuja] = useState([]);
   const [modelRequestData, setModelRequestData] = useState({
     Action: null,
     bannerKeyID: null
@@ -55,7 +53,6 @@ const RegularNotificationList = () => {
   // const allSelected = bannerList?.length > 0 && selectedBookings.length === bannerList.length;
   const allSelected = selectableRows.length > 0 && selectableRows.every((item) => selectedBookings.includes(item.pujaBookingID));
 
-  //   console.log('selectedBookings', selectedBookings);
 
   useEffect(() => {
     if (location?.pathname === '/regular-notification') {
@@ -86,15 +83,7 @@ const RegularNotificationList = () => {
     setLoader(true);
     try {
       const response = await GetRegularNotificationAPI({
-        // pageSize: pageSize,
-        // pageNo: pageNumber - 1,
-        // sortingDirection: sortingType ? sortingType : null,
-        // sortingColumnName: sortValueName ? sortValueName : null,
-        // searchKeyword: searchKeywordValue === undefined || searchKeywordValue === null ? searchKeyword : searchKeywordValue,
-        // fromDate: fromDate ? dayjs(fromDate).format('YYYY-MM-DD') : null,
-        // toDate: toDate ? dayjs(toDate).format('YYYY-MM-DD') : null,
-        // pujaServiceID: pujaServiceID,
-        // pujaSubServiceID: pujaSubServiceID
+
         pageSize: pageSize,
         pageNo: pageNo - 1,
         sortingDirection: null,
@@ -175,7 +164,7 @@ const RegularNotificationList = () => {
     setShowAddModal(true);
   };
   const fetchSearchResults = (searchValue) => {
-    // GetRegularNotificationData(currentPage, searchValue);
+    GetRegularNotificationData(currentPage, searchValue);
   };
   const debouncedSearch = useCallback(debounce(fetchSearchResults, 500), []);
 
@@ -189,7 +178,7 @@ const RegularNotificationList = () => {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
     setBannerList([]);
-    // GetRegularNotificationData();
+    GetRegularNotificationData(pageNumber, searchKeyword);
   };
 
   // // ✅ Toggle select all
@@ -361,7 +350,7 @@ const RegularNotificationList = () => {
 
                 <tbody>
                   {bannerList?.map((item, idx) => (
-                    <tr className="text-nowrap text-center" key={item.pujaBookingID}>
+                    <tr className="text-nowrap align-middle" key={item.pujaBookingID}>
                       {/* ✅ Row checkbox */}
                       {/* <td className="text-center">
                         <input
@@ -372,10 +361,10 @@ const RegularNotificationList = () => {
                         />
                       </td> */}
 
-                      <td style={{ whiteSpace: 'nowrap' }} className="text-center">
+                      <td style={{ whiteSpace: 'nowrap' }} className="text-center py-2">
                         {(currentPage - 1) * pageSize + idx + 1}
                       </td>
-                      <td style={{ whiteSpace: 'nowrap' }}>
+                      <td style={{ whiteSpace: 'nowrap' }} className="text-center py-2">
                         {item?.title ? (
                           item.title.length > 25 ? (
                             <Tooltip title={item.title}>{item.title.substring(0, 25) + '...'}</Tooltip>
@@ -386,7 +375,7 @@ const RegularNotificationList = () => {
                           '-'
                         )}
                       </td>
-                      <td style={{ whiteSpace: 'nowrap' }}>
+                      <td style={{ whiteSpace: 'nowrap' }} >
                         {item?.message ? (
                           item.message.length > 25 ? (
                             <Tooltip title={item.message}>{item.message.substring(0, 25) + '...'}</Tooltip>
@@ -398,7 +387,7 @@ const RegularNotificationList = () => {
                         )}
                       </td>
 
-                      <td style={{ whiteSpace: 'nowrap', cursor: 'pointer' }}>
+                      <td style={{ whiteSpace: 'nowrap', cursor: 'pointer' }} >
                         {item.notificationImageUrl ? (
                           <img
                             src={item.notificationImageUrl}
@@ -411,7 +400,7 @@ const RegularNotificationList = () => {
                         )}
                       </td>
 
-                      <td>{item.createdOnDate}</td>
+                      <td className="text-center py-2">{item.createdOnDate}</td>
 
                       {/* <td style={{ whiteSpace: 'nowrap' }}>{item.userName === null ? '-' : item?.userName}</td> */}
 

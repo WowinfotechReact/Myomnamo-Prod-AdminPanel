@@ -226,7 +226,7 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
   };
 
   const SubmitBtnClicked = () => {
-    debugger;
+
     let isValid = false;
 
     if (modelRequestData.moduleName === 'DarshanBookingModal') {
@@ -283,7 +283,7 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
     }
 
     const apiParam = {
-      adminID: user?.admiN_ID,
+      adminID: user?.adminID,
       templeDarshanKeyID: modelRequestData.templeDarshanKeyID,
       templeDarshanByLangKeyID: null,
       appLangID: darshanBookingFormObj.appLangID,
@@ -347,7 +347,7 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
 
   const formatSlug = (value) => {
     const slug = value.toLowerCase().replace(/\s+/g, '-');
-    setDarshanBookingFormObj((prev) => ({ ...prev, pujaSlug: slug }));
+    setDarshanBookingFormObj((prev) => ({ ...prev, slug: slug }));
   };
 
   const handleChange = (e) => {
@@ -567,42 +567,46 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
         </Modal.Header>
         <Modal.Body style={{ maxHeight: '60vh', overflow: 'auto' }}>
           <div className="container-fluid ">
-            <div className="row">
-              {/* New Inputs */}
 
-              {/* Temple Selection */}
-              {modelRequestData?.moduleName === 'DarshanBookingModal' && (
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="pujaCategoryID" className="form-label">
-                    Select Temple <span className="text-danger">*</span>
-                  </label>
-                  <Select
-                    id="templeID"
-                    options={templeList}
-                    value={templeList.filter((item) => item.value === darshanBookingFormObj.templeID)}
-                    onChange={(selectedOption) =>
-                      setDarshanBookingFormObj((prev) => ({
-                        ...prev,
-                        templeID: selectedOption ? selectedOption.value : null
-                      }))
-                    }
-                    menuPlacement="auto"
-                    menuPosition="fixed"
-                  />
-                  {error &&
-                  (darshanBookingFormObj.templeID === null ||
-                    darshanBookingFormObj.templeID === undefined ||
-                    darshanBookingFormObj.templeID === '') ? (
-                    <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
-                  ) : (
-                    ''
-                  )}
-                </div>
-              )}
 
-              {/* product Category */}
+            <fieldset className="border rounded p-3">
+              <legend className="float-none w-auto px-2 fw-bold" style={{ fontSize: "14px" }}>
+                Darshan Details
+              </legend>
+              <div className="row">
+                {/* Temple Selection */}
+                {modelRequestData?.moduleName === 'DarshanBookingModal' && (
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="pujaCategoryID" className="form-label">
+                      Select Temple <span className="text-danger">*</span>
+                    </label>
+                    <Select
+                      id="templeID"
+                      options={templeList}
+                      value={templeList.filter((item) => item.value === darshanBookingFormObj.templeID)}
+                      onChange={(selectedOption) =>
+                        setDarshanBookingFormObj((prev) => ({
+                          ...prev,
+                          templeID: selectedOption ? selectedOption.value : null
+                        }))
+                      }
+                      menuPlacement="auto"
+                      menuPosition="fixed"
+                    />
+                    {error &&
+                      (darshanBookingFormObj.templeID === null ||
+                        darshanBookingFormObj.templeID === undefined ||
+                        darshanBookingFormObj.templeID === '') ? (
+                      <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
+                    ) : (
+                      ''
+                    )}
+                  </div>
+                )}
 
-              {/* {modelRequestData.moduleName === 'ProductModal' && (
+                {/* product Category */}
+
+                {/* {modelRequestData.moduleName === 'ProductModal' && (
                 <div className="col-md-6 mb-3">
                   <label htmlFor="pujaCategoryID" className="form-label">
                     Select Product Category <span className="text-danger">*</span>
@@ -631,422 +635,390 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                 </div>
               )} */}
 
-              {/* Darshan Booking Name */}
+                {/* Darshan Booking Name */}
 
-              <div className="col-md-6 mb-3">
-                <label htmlFor="openGraphTag" className="form-label">
-                  Darshan Booking Name <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="darshanBookingName"
-                  placeholder="Enter Darshan Booking Name"
-                  value={darshanBookingFormObj?.darshanBookingName}
-                  onChange={(e) => {
-                    let input = e.target.value;
-                    if (input.startsWith(' ')) {
-                      input = input.trimStart();
-                    }
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="openGraphTag" className="form-label">
+                    Darshan Booking Name <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="darshanBookingName"
+                    placeholder="Enter Darshan Booking Name"
+                    value={darshanBookingFormObj?.darshanBookingName}
+                    onChange={(e) => {
+                      let input = e.target.value;
+                      if (input.startsWith(' ')) {
+                        input = input.trimStart();
+                      }
 
-                    setDarshanBookingFormObj((prev) => ({
-                      ...prev,
-                      darshanBookingName: input
-                    }));
-                  }}
-                />
-                {error &&
-                (darshanBookingFormObj.darshanBookingName === null ||
-                  darshanBookingFormObj.darshanBookingName === undefined ||
-                  darshanBookingFormObj.darshanBookingName === '') ? (
-                  <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
-                ) : (
-                  ''
+                      setDarshanBookingFormObj((prev) => ({
+                        ...prev,
+                        darshanBookingName: input
+                      }));
+                      formatSlug(input);
+                    }}
+                  />
+                  {error &&
+                    (darshanBookingFormObj.darshanBookingName === null ||
+                      darshanBookingFormObj.darshanBookingName === undefined ||
+                      darshanBookingFormObj.darshanBookingName === '') ? (
+                    <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
+                  ) : (
+                    ''
+                  )}
+                </div>
+
+                {/* Language Selection */}
+                {modelRequestData?.moduleName === 'LanguageWiseList' && (
+                  <>
+                    <div className="col-md-6 mb-3">
+                      <label htmlFor="stateID" className="form-label">
+                        Select Language <span className="text-danger">*</span>
+                      </label>
+                      <Select
+                        options={languageList}
+                        value={languageList?.filter((v) => v?.value === darshanBookingFormObj?.appLangID)}
+                        onChange={(selectedOption) => {
+                          setDarshanBookingFormObj((prev) => ({
+                            ...prev,
+                            appLangID: selectedOption ? selectedOption.value : null
+                          }));
+                        }}
+                        menuPlacement="auto"
+                        menuPosition="fixed"
+                      />
+                      {error &&
+                        (darshanBookingFormObj.appLangID === null ||
+                          darshanBookingFormObj.appLangID === undefined ||
+                          darshanBookingFormObj.appLangID === '') ? (
+                        <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </>
                 )}
-              </div>
 
-              {/* Language Selection */}
-              {modelRequestData?.moduleName === 'LanguageWiseList' && (
-                <>
+
+
+                {/* price */}
+
+                {modelRequestData.moduleName !== 'LanguageWiseList' && (
                   <div className="col-md-6 mb-3">
-                    <label htmlFor="stateID" className="form-label">
-                      Select Language <span className="text-danger">*</span>
+                    <label htmlFor="openGraphTag" className="form-label">
+                      Darshan Price (Rs.)
+                      <span className="text-danger">*</span>
                     </label>
-                    <Select
-                      options={languageList}
-                      value={languageList?.filter((v) => v?.value === darshanBookingFormObj?.appLangID)}
-                      onChange={(selectedOption) => {
-                        setDarshanBookingFormObj((prev) => ({
-                          ...prev,
-                          appLangID: selectedOption ? selectedOption.value : null
-                        }));
-                      }}
-                      menuPlacement="auto"
-                      menuPosition="fixed"
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="darshanPrice"
+                      placeholder="Enter Darshan Price"
+                      value={darshanBookingFormObj?.darshanPrice}
+                      onChange={(e) => handleIntegerInputChange('darshanPrice', e.target.value)}
                     />
                     {error &&
-                    (darshanBookingFormObj.appLangID === null ||
-                      darshanBookingFormObj.appLangID === undefined ||
-                      darshanBookingFormObj.appLangID === '') ? (
+                      (darshanBookingFormObj.darshanPrice === null ||
+                        darshanBookingFormObj.darshanPrice === undefined ||
+                        darshanBookingFormObj.darshanPrice === '') ? (
                       <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
                     ) : (
                       ''
                     )}
                   </div>
-                </>
-              )}
-
-              {/* Darshan Rules */}
-
-              <div className="col-md-6 mb-3">
-                <label htmlFor="Darshan Rules" className="form-label">
-                  Darshan Rules <span className="text-danger">*</span>
-                </label>
-                <textarea
-                  type="text"
-                  className="form-control"
-                  id="Darshan Rules"
-                  placeholder="Enter Darshan Rules"
-                  value={darshanBookingFormObj?.darshanRules}
-                  onChange={(e) => {
-                    let input = e.target.value;
-                    if (input.startsWith() === ' ') {
-                      input = input.trimStart();
-                    }
-
-                    setDarshanBookingFormObj((prev) => ({
-                      ...prev,
-                      darshanRules: input
-                    }));
-                  }}
-                />
-                {error &&
-                (darshanBookingFormObj.darshanRules === null ||
-                  darshanBookingFormObj.darshanRules === undefined ||
-                  darshanBookingFormObj.darshanRules === '') ? (
-                  <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
-                ) : (
-                  ''
                 )}
-              </div>
+                {/* Darshan Rules */}
 
-              {/* price */}
+                <div className={`${modelRequestData.moduleName === 'LanguageWiseList' ? "col-md-12" : "col-md-6"} mb-3`}>
+                  <label htmlFor="Darshan Rules" className="form-label">
+                    Darshan Rules <span className="text-danger">*</span>
+                  </label>
+                  <Text_Editor
+                    editorState={darshanBookingFormObj?.darshanRules}
+                    handleContentChange={(html) => handleEditorChange('darshanRules', html)}
+                  />
+                  {error &&
+                    (darshanBookingFormObj.darshanRules === null ||
+                      darshanBookingFormObj.darshanRules === undefined ||
+                      darshanBookingFormObj.darshanRules === '') ? (
+                    <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
+                  ) : (
+                    ''
+                  )}
+                </div>
+                {/* Convenience Fee(Rs.) */}
 
-              {modelRequestData.moduleName !== 'LanguageWiseList' && (
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="openGraphTag" className="form-label">
-                    Darshan Price (Rs.)
+                {modelRequestData.moduleName !== 'LanguageWiseList' && (
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="openGraphTag" className="form-label">
+                      Convenience Fee(Rs.)
+                      <span className="text-danger">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="convenienceFee"
+                      placeholder="Enter Convenience Fee"
+                      value={darshanBookingFormObj?.convenienceFee}
+                      onChange={(e) => handleIntegerInputChange('convenienceFee', e.target.value)}
+                    />
+                    {error &&
+                      (darshanBookingFormObj.convenienceFee === null ||
+                        darshanBookingFormObj.convenienceFee === undefined ||
+                        darshanBookingFormObj.convenienceFee === '') ? (
+                      <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
+                    ) : (
+                      ''
+                    )}
+                  </div>
+                )}
+
+                {/* Slug */}
+
+                {modelRequestData.moduleName !== 'LanguageWiseList' && (
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="openGraphTag" className="form-label">
+                      Slug <span className="text-danger">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="slug"
+                      placeholder="Enter Slug"
+                      value={darshanBookingFormObj?.slug}
+                      onChange={(e) => {
+                        let input = e.target.value;
+                        if (input.startsWith(' ')) {
+                          input = input.trimStart();
+                        }
+
+                        setDarshanBookingFormObj((prev) => ({
+                          ...prev,
+                          slug: input
+                        }));
+                      }}
+                    />
+                    {error &&
+                      (darshanBookingFormObj.slug === null || darshanBookingFormObj.slug === undefined || darshanBookingFormObj.slug === '') ? (
+                      <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
+                    ) : (
+                      ''
+                    )}
+                  </div>
+                )}
+
+                {/* Open Graph Tag */}
+
+                {modelRequestData.moduleName !== 'LanguageWiseList' && (
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="openGraphTag" className="form-label">
+                      Open Graph Tag
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="OpenGraphTag"
+                      placeholder="Enter Open Graph Tag"
+                      value={darshanBookingFormObj?.productOGTag}
+                      onChange={(e) => {
+                        let input = e.target.value;
+                        if (input.startsWith(' ')) {
+                          input = input.trimStart();
+                        }
+
+                        setDarshanBookingFormObj((prev) => ({
+                          ...prev,
+                          productOGTag: input
+                        }));
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* Meta description */}
+
+                {modelRequestData.moduleName !== 'LanguageWiseList' && (
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="openGraphTag" className="form-label">
+                      Meta description
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="MetaDescription"
+                      placeholder="Enter Meta description"
+                      value={darshanBookingFormObj?.darshanBookingMetaDescription}
+                      onChange={(e) => {
+                        let input = e.target.value;
+                        if (input.startsWith(' ')) {
+                          input = input.trimStart();
+                        }
+
+                        setDarshanBookingFormObj((prev) => ({
+                          ...prev,
+                          darshanBookingMetaDescription: input
+                        }));
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* Cannonical Tag */}
+
+                {modelRequestData.moduleName !== 'LanguageWiseList' && (
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="openGraphTag" className="form-label">
+                      Cannonical Tag
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="cannonicalTag"
+                      placeholder="Enter Cannonical Tag"
+                      value={darshanBookingFormObj?.darshanBookingCanonicalTag}
+                      onChange={(e) => {
+                        let input = e.target.value;
+                        if (input.startsWith(' ')) {
+                          input = input.trimStart();
+                        }
+
+                        setDarshanBookingFormObj((prev) => ({
+                          ...prev,
+                          darshanBookingCanonicalTag: input
+                        }));
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* Extra Meta Tag */}
+
+                {modelRequestData.moduleName !== 'LanguageWiseList' && (
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="openGraphTag" className="form-label">
+                      Extra Meta Tag
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="extraMetaTag"
+                      placeholder="Enter Extra Meta Tag"
+                      value={darshanBookingFormObj?.darshanBookingExtraMetaTag}
+                      onChange={(e) => {
+                        let input = e.target.value;
+                        if (input.startsWith(' ')) {
+                          input = input.trimStart();
+                        }
+
+                        setDarshanBookingFormObj((prev) => ({
+                          ...prev,
+                          darshanBookingExtraMetaTag: input
+                        }));
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* Meta Title */}
+                {modelRequestData.moduleName !== 'LanguageWiseList' && (
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="openGraphTag" className="form-label">
+                      Meta Title
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="metaTitle"
+                      placeholder="Enter Meta Title"
+                      value={darshanBookingFormObj?.darshanBookingMetaTitle}
+                      onChange={(e) => {
+                        let input = e.target.value;
+                        if (input.startsWith(' ')) {
+                          input = input.trimStart();
+                        }
+
+                        setDarshanBookingFormObj((prev) => ({
+                          ...prev,
+                          darshanBookingMetaTitle: input
+                        }));
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* Temple Selection */}
+
+                {modelRequestData.moduleName !== 'LanguageWiseList' && (
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="pujaCategoryID" className="form-label">
+                      Time Zone <span className="text-danger">*</span>
+                    </label>
+                    <Select
+                      id="templeID"
+                      options={timeSlotList}
+                      value={timeSlotList.filter((item) => darshanBookingFormObj.timeSlotID?.includes(item.value))}
+                      onChange={(selectedOptions) =>
+                        setDarshanBookingFormObj((prev) => ({
+                          ...prev,
+                          timeSlotID: selectedOptions ? selectedOptions.map((opt) => opt.value) : []
+                        }))
+                      }
+                      menuPlacement="auto"
+                      menuPosition="fixed"
+                      isMulti
+                    />
+                    {error && darshanBookingFormObj.timeSlotID.length === 0 ? <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span> : ''}
+                  </div>
+                )}
+
+                {/* Description */}
+
+                <div className="col-md-12 mb-3">
+                  <label htmlFor="canonicalTag" className="form-label">
+                    Darshan Details
                     <span className="text-danger">*</span>
                   </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="darshanPrice"
-                    placeholder="Enter Darshan Price"
-                    value={darshanBookingFormObj?.darshanPrice}
-                    onChange={(e) => handleIntegerInputChange('darshanPrice', e.target.value)}
+                  <Text_Editor
+                    editorState={darshanBookingFormObj?.darshanDetails}
+                    handleContentChange={(html) => handleEditorChange('darshanDetails', html)}
                   />
-                  {error &&
-                  (darshanBookingFormObj.darshanPrice === null ||
-                    darshanBookingFormObj.darshanPrice === undefined ||
-                    darshanBookingFormObj.darshanPrice === '') ? (
+                  {error && (!darshanBookingFormObj?.darshanDetails || darshanBookingFormObj?.darshanDetails === '') ? (
                     <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
                   ) : (
                     ''
                   )}
                 </div>
-              )}
 
-              {/* Convenience Fee(Rs.) */}
 
-              {modelRequestData.moduleName !== 'LanguageWiseList' && (
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="openGraphTag" className="form-label">
-                    Convenience Fee(Rs.)
-                    <span className="text-danger">*</span>
+
+                {/* Short Description */}
+
+                <div className="col-md-12 mb-3">
+                  <label htmlFor="canonicalTag" className="form-label">
+                    Short Description
                   </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="convenienceFee"
-                    placeholder="Enter Convenience Fee"
-                    value={darshanBookingFormObj?.convenienceFee}
-                    onChange={(e) => handleIntegerInputChange('convenienceFee', e.target.value)}
-                  />
-                  {error &&
-                  (darshanBookingFormObj.convenienceFee === null ||
-                    darshanBookingFormObj.convenienceFee === undefined ||
-                    darshanBookingFormObj.convenienceFee === '') ? (
-                    <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
-                  ) : (
-                    ''
-                  )}
-                </div>
-              )}
-
-              {/* Slug */}
-
-              {modelRequestData.moduleName !== 'LanguageWiseList' && (
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="openGraphTag" className="form-label">
-                    Slug <span className="text-danger">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="slug"
-                    placeholder="Enter Slug"
-                    value={darshanBookingFormObj?.slug}
-                    onChange={(e) => {
-                      let input = e.target.value;
-                      if (input.startsWith(' ')) {
-                        input = input.trimStart();
-                      }
-
-                      setDarshanBookingFormObj((prev) => ({
-                        ...prev,
-                        slug: input
-                      }));
-                    }}
-                  />
-                  {error &&
-                  (darshanBookingFormObj.slug === null || darshanBookingFormObj.slug === undefined || darshanBookingFormObj.slug === '') ? (
-                    <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
-                  ) : (
-                    ''
-                  )}
-                </div>
-              )}
-
-              {/* Open Graph Tag */}
-
-              {modelRequestData.moduleName !== 'LanguageWiseList' && (
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="openGraphTag" className="form-label">
-                    Open Graph Tag
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="OpenGraphTag"
-                    placeholder="Enter Open Graph Tag"
-                    value={darshanBookingFormObj?.productOGTag}
-                    onChange={(e) => {
-                      let input = e.target.value;
-                      if (input.startsWith(' ')) {
-                        input = input.trimStart();
-                      }
-
-                      setDarshanBookingFormObj((prev) => ({
-                        ...prev,
-                        productOGTag: input
-                      }));
-                    }}
+                  <Text_Editor
+                    editorState={darshanBookingFormObj?.darshanBookingShortDescription}
+                    handleContentChange={(html) => handleEditorChange('darshanBookingShortDescription', html)}
                   />
                 </div>
-              )}
 
-              {/* Meta description */}
+                {/* Key Feature */}
 
-              {modelRequestData.moduleName !== 'LanguageWiseList' && (
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="openGraphTag" className="form-label">
-                    Meta description
+                <div className="col-md-12 mb-3">
+                  <label htmlFor="canonicalTag" className="form-label">
+                    Key Feature
                   </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="MetaDescription"
-                    placeholder="Enter Meta description"
-                    value={darshanBookingFormObj?.darshanBookingMetaDescription}
-                    onChange={(e) => {
-                      let input = e.target.value;
-                      if (input.startsWith(' ')) {
-                        input = input.trimStart();
-                      }
-
-                      setDarshanBookingFormObj((prev) => ({
-                        ...prev,
-                        darshanBookingMetaDescription: input
-                      }));
-                    }}
+                  <Text_Editor
+                    editorState={darshanBookingFormObj?.darshanBookingKeyFeature}
+                    handleContentChange={(html) => handleEditorChange('darshanBookingKeyFeature', html)}
                   />
                 </div>
-              )}
 
-              {/* Cannonical Tag */}
-
-              {modelRequestData.moduleName !== 'LanguageWiseList' && (
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="openGraphTag" className="form-label">
-                    Cannonical Tag
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="cannonicalTag"
-                    placeholder="Enter Cannonical Tag"
-                    value={darshanBookingFormObj?.darshanBookingCanonicalTag}
-                    onChange={(e) => {
-                      let input = e.target.value;
-                      if (input.startsWith(' ')) {
-                        input = input.trimStart();
-                      }
-
-                      setDarshanBookingFormObj((prev) => ({
-                        ...prev,
-                        darshanBookingCanonicalTag: input
-                      }));
-                    }}
-                  />
-                </div>
-              )}
-
-              {/* Extra Meta Tag */}
-
-              {modelRequestData.moduleName !== 'LanguageWiseList' && (
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="openGraphTag" className="form-label">
-                    Extra Meta Tag
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="extraMetaTag"
-                    placeholder="Enter Extra Meta Tag"
-                    value={darshanBookingFormObj?.darshanBookingExtraMetaTag}
-                    onChange={(e) => {
-                      let input = e.target.value;
-                      if (input.startsWith(' ')) {
-                        input = input.trimStart();
-                      }
-
-                      setDarshanBookingFormObj((prev) => ({
-                        ...prev,
-                        darshanBookingExtraMetaTag: input
-                      }));
-                    }}
-                  />
-                </div>
-              )}
-
-              {/* Meta Title */}
-
-              {modelRequestData.moduleName !== 'LanguageWiseList' && (
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="openGraphTag" className="form-label">
-                    Meta Title
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="metaTitle"
-                    placeholder="Enter Meta Title"
-                    value={darshanBookingFormObj?.darshanBookingMetaTitle}
-                    onChange={(e) => {
-                      let input = e.target.value;
-                      if (input.startsWith(' ')) {
-                        input = input.trimStart();
-                      }
-
-                      setDarshanBookingFormObj((prev) => ({
-                        ...prev,
-                        darshanBookingMetaTitle: input
-                      }));
-                    }}
-                  />
-                </div>
-              )}
-
-              {/* Temple Selection */}
-
-              {modelRequestData.moduleName !== 'LanguageWiseList' && (
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="pujaCategoryID" className="form-label">
-                    Time Zone <span className="text-danger">*</span>
-                  </label>
-                  <Select
-                    id="templeID"
-                    options={timeSlotList}
-                    value={timeSlotList.filter((item) => darshanBookingFormObj.timeSlotID?.includes(item.value))}
-                    onChange={(selectedOptions) =>
-                      setDarshanBookingFormObj((prev) => ({
-                        ...prev,
-                        timeSlotID: selectedOptions ? selectedOptions.map((opt) => opt.value) : []
-                      }))
-                    }
-                    menuPlacement="auto"
-                    menuPosition="fixed"
-                    isMulti
-                  />
-                  {error && darshanBookingFormObj.timeSlotID.length === 0 ? <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span> : ''}
-                </div>
-              )}
-
-              {/* Description */}
-
-              <div className="col-md-12 mb-3">
-                <label htmlFor="canonicalTag" className="form-label">
-                  Darshan Details
-                  <span className="text-danger">*</span>
-                </label>
-                <Text_Editor
-                  editorState={darshanBookingFormObj?.darshanDetails}
-                  handleContentChange={(html) => handleEditorChange('darshanDetails', html)}
-                />
-                {error && (!darshanBookingFormObj?.darshanDetails || darshanBookingFormObj?.darshanDetails === '') ? (
-                  <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
-                ) : (
-                  ''
-                )}
-              </div>
-
-              {/* Darshan Shortdetails */}
-
-              <div className="col-md-12 mb-3">
-                <label htmlFor="canonicalTag" className="form-label">
-                  Darshan Short Details<span className="text-danger">*</span>
-                </label>
-                <Text_Editor
-                  editorState={darshanBookingFormObj?.darshanShortdetails}
-                  handleContentChange={(html) => handleEditorChange('darshanShortdetails', html)}
-                />
-                {error &&
-                (darshanBookingFormObj?.darshanShortdetails === null ||
-                  darshanBookingFormObj?.darshanShortdetails === undefined ||
-                  darshanBookingFormObj?.darshanShortdetails === '') ? (
-                  <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
-                ) : (
-                  ''
-                )}
-              </div>
-
-              {/* Short Description */}
-
-              <div className="col-md-12 mb-3">
-                <label htmlFor="canonicalTag" className="form-label">
-                  Short Description
-                </label>
-                <Text_Editor
-                  editorState={darshanBookingFormObj?.darshanBookingShortDescription}
-                  handleContentChange={(html) => handleEditorChange('darshanBookingShortDescription', html)}
-                />
-              </div>
-
-              {/* Key Feature */}
-
-              <div className="col-md-12 mb-3">
-                <label htmlFor="canonicalTag" className="form-label">
-                  Key Feature
-                </label>
-                <Text_Editor
-                  editorState={darshanBookingFormObj?.darshanBookingKeyFeature}
-                  handleContentChange={(html) => handleEditorChange('darshanBookingKeyFeature', html)}
-                />
-              </div>
-
-              {/*  Select Temple  */}
-              {/* {modelRequestData?.pujaSubServiceID !== 6 && modelRequestData?.pujaSubServiceID !== 5 && (
+                {/*  Select Temple  */}
+                {/* {modelRequestData?.pujaSubServiceID !== 6 && modelRequestData?.pujaSubServiceID !== 5 && (
                 <div div className="col-md-6 mb-3">
                   <label htmlFor="templeID" className="form-label">
                     Select Temple <span className="text-danger">*</span>
@@ -1072,8 +1044,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                 </div>
               )} */}
 
-              {/* Puja Name */}
-              {/* <div className="col-md-6 mb-3">
+                {/* Puja Name */}
+                {/* <div className="col-md-6 mb-3">
                 <label htmlFor="pujaName" className="form-label">
                   Puja Name <span className="text-danger">*</span>
                 </label>
@@ -1094,10 +1066,10 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                 )}
               </div> */}
 
-              {modelRequestData?.pujaSubServiceID !== 5 && modelRequestData?.pujaSubServiceID !== 6 && (
-                <>
-                  {/*Booking Data*/}
-                  {/* <div className="col-md-6 col-sm-12 mb-2 d-flex flex-column form-font-size">
+                {modelRequestData?.pujaSubServiceID !== 5 && modelRequestData?.pujaSubServiceID !== 6 && (
+                  <>
+                    {/*Booking Data*/}
+                    {/* <div className="col-md-6 col-sm-12 mb-2 d-flex flex-column form-font-size">
                     <label htmlFor="bookingDate" style={{ textAlign: 'left' }}>
                       Puja Date<span style={{ color: 'red' }}>*</span>
                     </label>
@@ -1113,8 +1085,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     {error && !darshanBookingFormObj.pujaDate && <span className="error-msg">{ERROR_MESSAGES}</span>}
                   </div> */}
 
-                  {/* Booking Time */}
-                  {/* <div className="col-md-6 col-sm-12 mb-2 d-flex flex-column form-font-size">
+                    {/* Booking Time */}
+                    {/* <div className="col-md-6 col-sm-12 mb-2 d-flex flex-column form-font-size">
                     <label style={{ textAlign: 'left' }}>
                       Time<span style={{ color: 'red' }}>*</span>
                     </label>
@@ -1140,11 +1112,11 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     />
                     {error && !darshanBookingFormObj.pujaTime && <span className="error-msg">{ERROR_MESSAGES}</span>}
                   </div> */}
-                </>
-              )}
+                  </>
+                )}
 
-              {/* Language */}
-              {/* {modelRequestData?.moduleName === 'LanguageWiseList' && (
+                {/* Language */}
+                {/* {modelRequestData?.moduleName === 'LanguageWiseList' && (
                 <div className="col-md-6 mb-3">
                   <label htmlFor="offlinePujaPrice" className="form-label">
                     Select Language <span className="text-danger">*</span>
@@ -1165,10 +1137,10 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                 </div>
               )} */}
 
-              {modelRequestData?.moduleName !== 'LanguageWiseList' && (
-                <>
-                  {/* Select Puja Type */}
-                  {/* {modelRequestData?.pujaSubServiceID !== 5 && modelRequestData?.pujaSubServiceID !== 6 && (
+                {modelRequestData?.moduleName !== 'LanguageWiseList' && (
+                  <>
+                    {/* Select Puja Type */}
+                    {/* {modelRequestData?.pujaSubServiceID !== 5 && modelRequestData?.pujaSubServiceID !== 6 && (
                     <div className="col-md-6 mb-3">
                       <label htmlFor="pujaCategoryID" className="form-label">
                         Select Puja Type<span className="text-danger">*</span>
@@ -1191,8 +1163,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     </div>
                   )} */}
 
-                  {/*  Is Trending Puja */}
-                  {/* <div className="col-md-6 mb-3">
+                    {/*  Is Trending Puja */}
+                    {/* <div className="col-md-6 mb-3">
                     <label htmlFor="canonicalTag" className="form-label">
                       Is Trending Puja <span className="text-danger">*</span>
                     </label>
@@ -1241,8 +1213,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     )}
                   </div> */}
 
-                  {/* { onlinePrice} */}
-                  {/* {(darshanBookingFormObj?.pujaTypeID == 1 || darshanBookingFormObj?.pujaTypeID == 3) && (
+                    {/* { onlinePrice} */}
+                    {/* {(darshanBookingFormObj?.pujaTypeID == 1 || darshanBookingFormObj?.pujaTypeID == 3) && (
                     <div className="col-md-6 mb-3">
                       <label htmlFor="onlinePujaPrice" className="form-label">
                         Online Price <span className="text-danger">*</span>
@@ -1267,8 +1239,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     </div>
                   )} */}
 
-                  {/* Offline puja */}
-                  {/* {(darshanBookingFormObj?.pujaTypeID == 2 || darshanBookingFormObj?.pujaTypeID == 3) && modelRequestData?.pujaSubServiceID !== 6 && (
+                    {/* Offline puja */}
+                    {/* {(darshanBookingFormObj?.pujaTypeID == 2 || darshanBookingFormObj?.pujaTypeID == 3) && modelRequestData?.pujaSubServiceID !== 6 && (
                     <div className="col-md-6 mb-3">
                       <label htmlFor="offlinePujaPrice" className="form-label">
                         Offline Price <span className="text-danger">*</span>
@@ -1293,7 +1265,7 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     </div>
                   )} */}
 
-                  {/* {modelRequestData?.pujaSubServiceID === 6 && (
+                    {/* {modelRequestData?.pujaSubServiceID === 6 && (
                     <div className="col-md-6 mb-3">
                       <label htmlFor="offlinePujaPrice" className="form-label">
                         Puja Price <span className="text-danger">*</span>
@@ -1318,8 +1290,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     </div>
                   )} */}
 
-                  {/* {convenienceFee} */}
-                  {/* <div className="col-md-6 mb-3">
+                    {/* {convenienceFee} */}
+                    {/* <div className="col-md-6 mb-3">
                     <label htmlFor="convenienceFee" className="form-label">
                       Convenience Fee <span className="text-danger">*</span>
                     </label>
@@ -1341,8 +1313,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                       ''
                     )}
                   </div> */}
-                  {/* {wetSamagriPrice } */}
-                  {/* <div className="col-md-6 mb-3">
+                    {/* {wetSamagriPrice } */}
+                    {/* <div className="col-md-6 mb-3">
                     <label htmlFor="wetSamagriPrice" className="form-label">
                       Wet Samagri Price <span className="text-danger">*</span>
                     </label>
@@ -1365,8 +1337,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     )}
                   </div> */}
 
-                  {/* {Dry Samagri Price } */}
-                  {/* <div className="col-md-6 mb-3">
+                    {/* {Dry Samagri Price } */}
+                    {/* <div className="col-md-6 mb-3">
                     <label htmlFor="drySamagriPrice" className="form-label">
                       Dry Samagri Price <span className="text-danger">*</span>
                     </label>
@@ -1389,8 +1361,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     )}
                   </div> */}
 
-                  {/* {Discount } */}
-                  {/* <div className="col-md-6 mb-3">
+                    {/* {Discount } */}
+                    {/* <div className="col-md-6 mb-3">
                     <label htmlFor="pujaDiscount" className="form-label">
                       Discount
                     </label>
@@ -1405,8 +1377,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     />
                   </div> */}
 
-                  {/* Slug */}
-                  {/* <div className="col-md-6 mb-3">
+                    {/* Slug */}
+                    {/* <div className="col-md-6 mb-3">
                     <label htmlFor="pujaSlug" className="form-label">
                       Slug <span className="text-danger">*</span>
                     </label>
@@ -1426,8 +1398,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     )}
                   </div> */}
 
-                  {/* Meta Title */}
-                  {/* <div className="col-md-6 mb-3">
+                    {/* Meta Title */}
+                    {/* <div className="col-md-6 mb-3">
                     <label htmlFor="metaTitle" className="form-label">
                       Meta Title
                     </label>
@@ -1441,8 +1413,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     />
                   </div> */}
 
-                  {/* Meta Description */}
-                  {/* <div className="col-md-6 mb-3">
+                    {/* Meta Description */}
+                    {/* <div className="col-md-6 mb-3">
                     <label htmlFor="metaDescription" className="form-label">
                       Meta Description
                     </label>
@@ -1456,8 +1428,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     />
                   </div> */}
 
-                  {/* Canonical Tag */}
-                  {/* <div className="col-md-6 mb-3">
+                    {/* Canonical Tag */}
+                    {/* <div className="col-md-6 mb-3">
                     <label htmlFor="canonicalTag" className="form-label">
                       Canonical Tag
                     </label>
@@ -1471,8 +1443,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     />
                   </div> */}
 
-                  {/* Extra Meta Tag */}
-                  {/* <div className="col-md-6 mb-3">
+                    {/* Extra Meta Tag */}
+                    {/* <div className="col-md-6 mb-3">
                     <label htmlFor="extraMetaTag" className="form-label">
                       Extra Meta Tag
                     </label>
@@ -1486,8 +1458,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                     />
                   </div> */}
 
-                  {/* Open Graph Tag */}
-                  {/* <div className="col-md-6 mb-3">
+                    {/* Open Graph Tag */}
+                    {/* <div className="col-md-6 mb-3">
                     <label htmlFor="openGraphTag" className="form-label">
                       Open Graph Tag
                     </label>
@@ -1500,10 +1472,10 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                       onChange={handleChange}
                     />
                   </div> */}
-                </>
-              )}
+                  </>
+                )}
 
-              {/* {modelRequestData?.moduleName !== 'LanguageWiseList' && (
+                {/* {modelRequestData?.moduleName !== 'LanguageWiseList' && (
                 <div className="col-md-12 mb-3">
                   <div className="mb-3 position-relative">
                     <div className="d-flex justify-content-between align-items-center mb-1">
@@ -1591,7 +1563,7 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                 </div>
               )} */}
 
-              {/* <div className="col-md-12 mb-3">
+                {/* <div className="col-md-12 mb-3">
                 <label htmlFor="canonicalTag" className="form-label">
                   Puja Details<span className="text-danger">*</span>
                 </label>
@@ -1603,8 +1575,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                 )}
               </div> */}
 
-              {/*  Short Description */}
-              {/* <div className="col-md-12 mb-3">
+                {/*  Short Description */}
+                {/* <div className="col-md-12 mb-3">
                 <label htmlFor="shortDescription" className="form-label">
                   Short Description<span className="text-danger">*</span>
                 </label>
@@ -1619,8 +1591,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                 )}
               </div> */}
 
-              {/* Puja Samagri */}
-              {/* <div className="col-md-12 mb-3">
+                {/* Puja Samagri */}
+                {/* <div className="col-md-12 mb-3">
                 <label htmlFor="pujaSamagri" className="form-label">
                   Puja Samagri<span className="text-danger">*</span>
                 </label>
@@ -1632,8 +1604,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                 )}
               </div> */}
 
-              {/* Key Features */}
-              {/* <div className="col-md-12 mb-3">
+                {/* Key Features */}
+                {/* <div className="col-md-12 mb-3">
                 <label htmlFor="keyFeature" className="form-label">
                   Key Features<span className="text-danger">*</span>
                 </label>
@@ -1644,7 +1616,8 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
                   ''
                 )}
               </div> */}
-            </div>
+              </div>
+            </fieldset>
           </div>
         </Modal.Body>
         <Modal.Footer>

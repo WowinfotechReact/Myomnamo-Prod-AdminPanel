@@ -1,8 +1,4 @@
 
-
-
-
-
 import axios from 'axios';
 import { ERROR_MESSAGES } from 'component/GlobalMassage';
 import Text_Editor from 'component/Text_Editor';
@@ -53,7 +49,8 @@ const BlogAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone
             blogCatID: null,
             autherName: null,
             blogDate: null,
-            canonicalTag: null
+            canonicalTag: null,
+            hreflangTag: null
       })
 
 
@@ -172,7 +169,7 @@ const BlogAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone
             }
 
             const apiParam = {
-                  adminID: user?.admiN_ID, templePujaID: modelRequestData?.templePujaID,
+                  adminID: user?.adminID, templePujaID: modelRequestData?.templePujaID,
                   blogKeyID: blogObj?.blogKeyID,
                   blogTitle: blogObj?.blogTitle,
                   blogImage: uploadedImageUrl,
@@ -185,6 +182,7 @@ const BlogAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone
                   autherName: blogObj?.autherName,
                   blogDate: blogObj?.blogDate,
                   canonicalTag: blogObj?.canonicalTag,
+                  hreflangTag: blogObj?.hreflangTag
 
             }
 
@@ -194,7 +192,7 @@ const BlogAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone
       }
 
       const AddUpdateBlogData = async (ApiParam) => {
-            debugger
+
             setLoader(true);
             try {
                   const response = await AddUpdateBlog(ApiParam);
@@ -240,7 +238,7 @@ const BlogAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone
 
 
 
-                                          adminID: user?.admiN_ID,
+                                          adminID: user?.adminID,
                                           blogKeyID: List?.blogKeyID,
                                           blogTitle: List?.blogTitle,
                                           // blogImage: uploadedImageUrl,
@@ -253,6 +251,7 @@ const BlogAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone
                                           autherName: List?.autherName,
                                           blogDate: List?.blogDate,
                                           canonicalTag: List?.canonicalTag,
+                                          hreflangTag: List?.hreflangTag,
 
 
 
@@ -445,7 +444,7 @@ const BlogAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone
                                                       Blog Title<span className="text-danger">*</span>
                                                 </label>
                                                 <input
-                                                      maxLength={50}
+                                                      // maxLength={50}
                                                       type="text"
                                                       className="form-control"
                                                       id="StateName"
@@ -543,7 +542,7 @@ const BlogAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone
                                           {/* Is White Page */}
 
 
-                                          {/* { onlinePrice} */}
+                                          {/* {  Author Name } */}
                                           <div className="col-md-6 mb-3">
                                                 <label htmlFor="trend" className="form-label">
                                                       Author Name <span className="text-danger">*</span>
@@ -564,16 +563,21 @@ const BlogAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone
                                                                   inputValue = '';
                                                             }
 
-                                                            // Remove unwanted characters (allow letters, numbers, spaces)
-                                                            const cleanedValue = inputValue.replace(/[^a-zA-Z0-9\s]/g, '');
+                                                            // ✅ Allow: letters (any script), numbers, marks (matras), spaces, and punctuation
+                                                            const cleanedValue = inputValue.replace(/[^\p{L}\p{M}\p{N}\s.,!?'"()\-]/gu, '');
 
                                                             // Trim only leading spaces
                                                             const trimmedValue = cleanedValue.trimStart();
 
-                                                            // Capitalize first letter of every word
+                                                            // ✅ Capitalize only English words, leave Indian scripts untouched
                                                             const updatedValue = trimmedValue
                                                                   .split(' ')
-                                                                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                                                  .map(word => {
+                                                                        if (/^[a-zA-Z]/.test(word)) {
+                                                                              return word.charAt(0).toUpperCase() + word.slice(1);
+                                                                        }
+                                                                        return word; // keep Hindi/Marathi/Gujarati/etc. as is
+                                                                  })
                                                                   .join(' ');
 
                                                             setBlogObj(prev => ({
@@ -587,21 +591,7 @@ const BlogAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone
                                                 ) : (
                                                       ''
                                                 )}
-
-
-
-
-
                                           </div>
-
-
-
-
-
-
-
-
-
 
                                           {/* Slug */}
 
@@ -823,6 +813,31 @@ const BlogAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone
 
 
 
+                                                </div>
+
+                                                <div className="row mt-1">
+
+                                                      {/* Canonical Tag */}
+                                                      <div className="col-12 col-md-6 mb-1">
+                                                            <label htmlFor="hreflangTag" className="form-label">
+                                                                  Href Lang Tag
+                                                                  {/* <span className="text-danger">*</span> */}
+                                                            </label>
+                                                            <input
+                                                                  type="text"
+                                                                  className="form-control"
+                                                                  id="hreflangTag"
+                                                                  placeholder="Enter Href Lang Tag"
+                                                                  value={blogObj?.hreflangTag}
+                                                                  onChange={handleChange}
+                                                            />
+                                                            {/* {error && (blogObj.hreflangTag === null || blogObj.hreflangTag === undefined || blogObj.hreflangTag === '') ? (
+                                                                  <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
+                                                            ) : (
+                                                                  ''
+                                                            )} */}
+
+                                                      </div>
                                                 </div>
 
                                           </div>

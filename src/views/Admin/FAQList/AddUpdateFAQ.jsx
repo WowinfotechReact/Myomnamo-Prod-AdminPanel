@@ -21,6 +21,7 @@ import CustomUploadImg from '../../../assets/images/upload_img.jpg';
 import { UploadImage } from 'services/Upload Cloud-flare Image/UploadCloudflareImageApi';
 import { AddUpdateProductCatAPI, GetProductCatModalAPI } from 'services/Admin/EStoreAPI/ProductCatAPI';
 import { AddUpdateFAQAPI, GetFAQModalAPI, GetServiceTypeLookupList, GetSubServiceTypeLookupList } from 'services/Admin/FAQAPI/FAQAPI';
+import { GetModuleTypeLookupList, GetPujaServiceTypeLookupList, GetPujaSubServiceTypeLookupList } from 'services/Admin/MasterAPI/MasterAPI';
 
 const AddUpdateFAQModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) => {
   const { setLoader, user } = useContext(ConfigContext);
@@ -51,12 +52,16 @@ const AddUpdateFAQModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
   const [deityList, setDeityList] = useState([]);
   const [heading, setHeading] = useState('Puja');
 
+
+  const [pujaLookupList, setPujaLookupList] = useState([]);
+
   const [formObj, setFormObj] = useState({
     question: null,
     answer: null,
     serviceID: null,
     subServiceID: null,
-    appLangID: null
+    appLangID: null,
+    pujaModuleID: null
   });
 
   useEffect(() => {
@@ -103,10 +108,14 @@ const AddUpdateFAQModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
               ...prev,
               question: List.question,
               answer: List.answer,
-              serviceID: List.serviceTypeID,
-              subServiceID: List.subServiceTypeID,
+              serviceID: List.pujaServiceID,
+              subServiceID: List.pujaSubServiceID,
+              pujaModuleID: List.moduleID,
               appLangID: List.appLangID
             }));
+
+            GetPujaSubServiceLookupListData(List.pujaServiceID)
+            GetModuleTypeLookupListData(List.pujaServiceID, List.pujaSubServiceID)
           }
         } else {
           console.error(response?.data?.errorMessage);
@@ -119,26 +128,48 @@ const AddUpdateFAQModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
     }
   };
 
-  //   const GetPujaCategoryLookupListData = async () => {
-  //     try {
-  //       const response = await GetPujaCategoryLookupList(); // Ensure it's correctly imported
 
-  //       if (response?.data?.statusCode === 200) {
-  //         const languageLookupList = response.data.responseData.data || [];
+  const GetPujaSubServiceLookupListData = async (serviceID) => {
+    try {
+      const response = await GetPujaSubServiceTypeLookupList(serviceID); // Ensure it's correctly imported
 
-  //         const formattedLangList = languageLookupList.map((Lang) => ({
-  //           value: Lang.pujaCategoryID,
-  //           label: Lang.pujaCategoryName
-  //         }));
+      if (response?.data?.statusCode === 200) {
+        const list = response?.data?.responseData?.data || [];
 
-  //         setPujaCategoryOption(formattedLangList);
-  //       } else {
-  //         console.error('Failed to fetch sim Type lookup list:', response?.data?.statusMessage || 'Unknown error');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching sim Type lookup list:', error);
-  //     }
-  //   };
+        const formattedLangList = list.map((Lang) => ({
+          value: Lang.pujaSubServiceID,
+          label: Lang.pujaSubServiceName
+        }));
+
+        setSubServiceTypeList(formattedLangList);
+      } else {
+        console.error('Failed to fetch sim Type lookup list:', response?.data?.statusMessage || 'Unknown error');
+      }
+    } catch (error) {
+      console.error('Error fetching sim Type lookup list:', error);
+    }
+  };
+  const GetModuleTypeLookupListData = async (serviceID, subServiceID) => {
+    try {
+      const response = await GetModuleTypeLookupList(serviceID, subServiceID);
+
+      if (response?.data?.statusCode === 200) {
+        const list = response?.data?.responseData?.data || [];
+
+        const formattedLangList = list.map((Lang) => ({
+          value: Lang.moduleID,
+          label: Lang.moduleName
+        }));
+
+        setPujaLookupList(formattedLangList);
+      } else {
+        console.error('Failed to fetch sim Type lookup list:', response?.data?.statusMessage || 'Unknown error');
+      }
+    } catch (error) {
+      console.error('Error fetching sim Type lookup list:', error);
+    }
+  };
+
 
   const GetAppLanguageLookupListData = async () => {
     try {
@@ -181,26 +212,7 @@ const AddUpdateFAQModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
       console.error('Error fetching sim Type lookup list:', error);
     }
   };
-  const GetSubServiceLookupListData = async (serviceID) => {
-    try {
-      const response = await GetSubServiceTypeLookupList(serviceID); // Ensure it's correctly imported
 
-      if (response?.data?.statusCode === 200) {
-        const list = response?.data?.responseData?.data || [];
-
-        const formattedLangList = list.map((Lang) => ({
-          value: Lang.subServiceID,
-          label: Lang.name
-        }));
-
-        setSubServiceTypeList(formattedLangList);
-      } else {
-        console.error('Failed to fetch sim Type lookup list:', response?.data?.statusMessage || 'Unknown error');
-      }
-    } catch (error) {
-      console.error('Error fetching sim Type lookup list:', error);
-    }
-  };
 
   const setDataInitial = () => {
     setFormObj((prev) => ({
@@ -209,7 +221,8 @@ const AddUpdateFAQModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
       answer: null,
       serviceID: null,
       subServiceID: null,
-      appLangID: null
+      appLangID: null,
+      pujaModuleID: null
     }));
   };
 
@@ -223,19 +236,13 @@ const AddUpdateFAQModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
 
   const SubmitBtnClicked = () => {
     let isValid = true;
-    if (
-      formObj.question === null ||
-      formObj.question === undefined ||
-      formObj.question === '' ||
-      formObj.answer === null ||
-      formObj.answer === undefined ||
-      formObj.answer === '' ||
-      formObj.serviceID === null ||
-      formObj.serviceID === undefined ||
-      formObj.serviceID === '' ||
-      formObj.subServiceID === null ||
-      formObj.subServiceID === undefined ||
-      formObj.subServiceID === ''
+    if ((modelRequestData?.moduleName !== 'LanguageWiseList') &&
+      (formObj.question === null ||
+        formObj.question === undefined ||
+        formObj.question === '' ||
+        formObj.answer === null ||
+        formObj.answer === undefined ||
+        formObj.answer === '')
     ) {
       setError(true);
       isValid = false;
@@ -249,14 +256,15 @@ const AddUpdateFAQModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
     }
 
     const apiParam = {
-      adminID: user?.admiN_ID,
+      adminID: user?.adminID,
       faqKeyID: modelRequestData.faqKeyID ? modelRequestData.faqKeyID : null,
       faqByLanKeyID: modelRequestData.faqByLanKeyID ? modelRequestData.faqByLanKeyID : null,
       appLangID: formObj.appLangID,
       question: formObj.question,
       answer: formObj.answer,
-      serviceTypeID: formObj.serviceID,
-      subServiceTypeID: formObj.subServiceID
+      pujaServiceID: formObj.serviceID,
+      pujaSubServiceID: formObj.subServiceID,
+      moduleID: formObj?.pujaModuleID
     };
 
     if (isValid) {
@@ -286,179 +294,20 @@ const AddUpdateFAQModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
     }
   };
 
-  const formatSlug = (value) => {
-    const slug = value.toLowerCase().replace(/\s+/g, '-');
-    setFormObj((prev) => ({ ...prev, pujaSlug: slug }));
-  };
-
-  const handleChange = (e) => {
-    let { id, value } = e.target;
-    if (id === 'pujaName') {
-      // Remove leading spaces
-      // value = value.replace(/[^a-zA-Z\s]/g, '');
-      value = value.replace(/^\s+/, '');
-
-      // Capitalize first letter (if any)
-      if (value.length > 0) {
-        value = value.charAt(0).toUpperCase() + value.slice(1);
-      }
-      formatSlug(value);
-    }
-    if (id === 'pujaSlug') {
-      // Remove leading spaces
-      // value = value.replace(/[^a-zA-Z\s]/g, '');
-      value = value.replace(/[\s]/g, '');
-    }
-
-    if (
-      id === 'onlinePujaPrice' ||
-      id === 'convenienceFee' ||
-      id === 'offlinePujaPrice' ||
-      id === 'drySamagriPrice' ||
-      id === 'wetSamagriPrice'
-    ) {
-      const sanitizedInput = value
-        .replace(/[^0-9.]/g, '') // Allow only numeric and dot characters
-        .slice(0, 16); // Limit to 6 characters (5 digits + 1 dot or 4 digits + 2 decimals)
-
-      // Split the input into integer and decimal parts
-      const [integerPart, decimalPart] = sanitizedInput.split('.');
-
-      // Format the integer part with commas as thousand separators
-      const formattedIntegerPart = integerPart;
-
-      // Combine integer and decimal parts with appropriate precision
-      value =
-        decimalPart !== undefined ? `${formattedIntegerPart.slice(0, 12)}.${decimalPart.slice(0, 2)}` : formattedIntegerPart.slice(0, 12);
-    }
-
-    if (id === 'pujaDiscount') {
-      let numericValue = value.replace(/\D/g, '').slice(0, 3); // Only digits, max 3 characters
-
-      // Allow empty value (so user can delete)
-      if (numericValue === '' || Number(numericValue) <= 100) {
-        value = numericValue;
-      } else {
-        // Keep previous valid value (fallback)
-        value = formObj?.pujaDiscount || '';
-      }
-    }
-    if (id === 'metaTitle' || id === 'metaDescription' || id === 'canonicalTag' || id === 'extraMetaTag' || id === 'openGraphTag') {
-      value = value.replace(/^\s+/, '');
-    }
-
-    setFormObj((prev) => ({
-      ...prev,
-      [id]: value
-    }));
-  };
-
-  const handlePujaDetailsDescriptionChange = (htmlContent) => {
-    // Strip HTML tags and check if anything meaningful remains
-    const strippedContent = htmlContent.replace(/<[^>]+>/g, '').trim();
-
-    setFormObj((obj) => ({
-      ...obj,
-      pujaDetails: strippedContent === '' ? null : htmlContent
-    }));
-  };
-  const handleShortDescriptionChange = (htmlContent) => {
-    // Strip HTML tags and check if anything meaningful remains
-    const strippedContent = htmlContent.replace(/<[^>]+>/g, '').trim();
-
-    setFormObj((obj) => ({
-      ...obj,
-      shortDescription: strippedContent === '' ? null : htmlContent
-    }));
-  };
-  const handlePujaSamagriChange = (htmlContent) => {
-    // Strip HTML tags and check if anything meaningful remains
-    const strippedContent = htmlContent.replace(/<[^>]+>/g, '').trim();
-
-    setFormObj((obj) => ({
-      ...obj,
-      pujaSamagri: strippedContent === '' ? null : htmlContent
-    }));
-  };
-  const handleKeyFeaturesChange = (htmlContent) => {
-    // Strip HTML tags and check if anything meaningful remains
-    const strippedContent = htmlContent.replace(/<[^>]+>/g, '').trim();
-
-    setFormObj((obj) => ({
-      ...obj,
-      keyFeature: strippedContent === '' ? null : htmlContent
-    }));
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Allowed types
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-    if (!allowedTypes.includes(file.type)) {
-      setSizeError('Only JPG, JPEG, PNG files are allowed.');
-      return;
-    }
-
-    // Size check (10 MB)
-    if (file.size > 10 * 1024 * 1024) {
-      setSizeError('File size must be less than 10 MB.');
-      return;
-    }
-
-    setSizeError('');
-    setSelectedFile(file);
-
-    // Preview
-    const reader = new FileReader();
-    reader.onloadend = () => setFilePreview(reader.result);
-    reader.readAsDataURL(file);
-
-    // Automatically upload after selecting
-    handleApiCall(file);
-  };
-
-  const handleRemoveImage = () => {
-    setFilePreview(null);
-    setSelectedFile(null);
-    setUploadedImageUrl('');
-  };
-  const handleApiCall = async (file) => {
-    setLoader(true);
-    const formData = new FormData();
-    formData.append('File', file);
-
-    try {
-      const response = await UploadImage(formData);
-      const uploadedUrl = response?.data?.url ?? response?.data?.data?.url ?? null;
-
-      if (response?.status === 200 && uploadedUrl) {
-        setUploadedImageUrl(uploadedUrl);
-        console.log('Uploaded Image URL:', uploadedUrl);
-      } else {
-        console.warn('Upload succeeded but no URL found:', response?.data);
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-    } finally {
-      setLoader(false);
-    }
-  };
-
-  const handleToDateChange = (newValue) => {
-    if (dayjs(newValue).isValid()) {
-      const newToDate = dayjs(newValue).format('YYYY-MM-DD');
-      setFormObj((prev) => ({ ...prev, pujaDate: newToDate }));
-    } else {
-      setFormObj((prev) => ({ ...prev, pujaDate: null }));
-    }
-  };
   return (
     <>
       <Modal style={{ zIndex: 1300 }} size="lg" show={show} backdrop="static" keyboard={false} centered>
         <Modal.Header>
-          <h4 className="text-center">{modelRequestData?.Action === null ? `Add FAQ` : `Update FAQ`}</h4>
+          <h4 className="text-center">
+            {modelRequestData?.moduleName === "LanguageWiseList"
+              ? modelRequestData?.Action === null
+                ? "Add Language Wise"
+                : "Update Language Wise"
+              : modelRequestData?.Action === null
+                ? "Add FAQ"
+                : "Update FAQ"}
+          </h4>
+
         </Modal.Header>
         <Modal.Body style={{ maxHeight: '60vh', overflow: 'auto' }}>
           <div className="container-fluid ">
@@ -469,7 +318,7 @@ const AddUpdateFAQModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
                   Question <span className="text-danger">*</span>
                 </label>
                 <input
-                  maxLength={90}
+                  // maxLength={90}
                   type="text"
                   className="form-control"
                   id="catName"
@@ -501,7 +350,7 @@ const AddUpdateFAQModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
                   Answer <span className="text-danger">*</span>
                 </label>
                 <input
-                  maxLength={90}
+                  // maxLength={90}
                   type="text"
                   className="form-control"
                   id="catName"
@@ -527,48 +376,12 @@ const AddUpdateFAQModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
                 )}
               </div>
 
-              {/* Select Service */}
-              <div className="col-md-6 mb-3">
-                <label htmlFor="stateID" className="form-label">
-                  Select Service <span className="text-danger">*</span>
-                </label>
-                <Select
-                  options={serviceTypeList}
-                  value={serviceTypeList?.filter((v) => v?.value === formObj?.serviceID)}
-                  onChange={(selectedOption) => {
-                    setFormObj((prev) => ({
-                      ...prev,
-                      serviceID: selectedOption ? selectedOption.value : null
-                    }));
-                    GetSubServiceLookupListData(selectedOption.value);
-                  }}
-                  menuPlacement="auto"
-                  menuPosition="fixed"
-                />
-                {error && !formObj?.serviceID && <span className="text-danger">{ERROR_MESSAGES}</span>}
-              </div>
 
-              {/* Select Sub Service */}
-              <div className="col-md-6 mb-3">
-                <label htmlFor="stateID" className="form-label">
-                  Select Sub Service <span className="text-danger">*</span>
-                </label>
-                <Select
-                  options={subServiceTypeList}
-                  value={subServiceTypeList?.filter((v) => v?.value === formObj?.subServiceID)}
-                  onChange={(selectedOption) => {
-                    setFormObj((prev) => ({
-                      ...prev,
-                      subServiceID: selectedOption ? selectedOption.value : null
-                    }));
-                  }}
-                  menuPlacement="auto"
-                  menuPosition="fixed"
-                />
-                {error && !formObj?.subServiceID && <span className="text-danger">{ERROR_MESSAGES}</span>}
-              </div>
+
+
+
               {/* Language Selection */}
-              {modelRequestData?.moduleName === 'LanguageWiseList' && (
+              {modelRequestData?.moduleName === 'LanguageWiseList' ? (
                 <>
                   <div className="col-md-6 mb-3">
                     <label htmlFor="stateID" className="form-label">
@@ -588,6 +401,74 @@ const AddUpdateFAQModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
                     />
                     {error && !formObj?.appLangID && <span className="text-danger">{ERROR_MESSAGES}</span>}
                   </div>
+                </>
+              ) : (
+                <>
+                  {/* Select Service */}
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="stateID" className="form-label">
+                      Select Service
+                    </label>
+                    <Select
+                      options={serviceTypeList}
+                      value={serviceTypeList?.filter((v) => v?.value === formObj?.serviceID)}
+                      onChange={(selectedOption) => {
+                        setFormObj((prev) => ({
+                          ...prev,
+                          serviceID: selectedOption ? selectedOption.value : null
+                        }));
+                        setSubServiceTypeList([]);
+                        setPujaLookupList([]);
+                        GetPujaSubServiceLookupListData(selectedOption.value);
+                      }}
+                      menuPlacement="auto"
+                      menuPosition="fixed"
+                    />
+                    {/* {error && !formObj?.serviceID && <span className="text-danger">{ERROR_MESSAGES}</span>} */}
+                  </div>
+
+                  {/* Select Sub Service */}
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="stateID" className="form-label">
+                      Select Sub Service
+                    </label>
+                    <Select
+                      options={subServiceTypeList}
+                      value={subServiceTypeList?.filter((v) => v?.value === formObj?.subServiceID)}
+                      onChange={(selectedOption) => {
+                        setFormObj((prev) => ({
+                          ...prev,
+                          subServiceID: selectedOption ? selectedOption.value : null
+                        }));
+                        setPujaLookupList([]);
+                        GetModuleTypeLookupListData(formObj.serviceID, selectedOption.value);
+                      }}
+                      menuPlacement="auto"
+                      menuPosition="fixed"
+                    />
+                    {/* {error && !formObj?.subServiceID && <span className="text-danger">{ERROR_MESSAGES}</span>} */}
+                  </div>
+
+                  {/* Select Module */}
+                  <div className="col-md-6 mb-3">
+                    <label htmlFor="stateID" className="form-label">
+                      Select Module
+                    </label>
+                    <Select
+                      options={pujaLookupList}
+                      value={pujaLookupList?.filter((v) => v?.value === formObj?.pujaModuleID)}
+                      onChange={(selectedOption) => {
+                        setFormObj((prev) => ({
+                          ...prev,
+                          pujaModuleID: selectedOption ? selectedOption.value : null
+                        }));
+                      }}
+                      menuPlacement="auto"
+                      menuPosition="fixed"
+                    />
+                    {/* {error && !formObj?.pujaModuleID && <span className="text-danger">{ERROR_MESSAGES}</span>} */}
+                  </div>
+
                 </>
               )}
             </div>

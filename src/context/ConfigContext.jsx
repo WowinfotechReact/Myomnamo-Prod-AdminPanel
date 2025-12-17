@@ -14,7 +14,8 @@ export const ConfigProvider = ({ children }) => {
   const [companyID, setCompanyID] = useState(localStorage.getItem('companyID') || null);
   const navigate = useNavigate();
   const [reloadOnce, setReloadOnce] = useState(false); // Flag to control reload
-
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
 
   const [user, setUser] = useState(() => {
     // Retrieve user from localStorage if available
@@ -89,6 +90,12 @@ export const ConfigProvider = ({ children }) => {
     return dayjs(time).format('hh:mm A');
   };
 
+
+  const formatSlug = (value) => {
+    const slug = value.toLowerCase().replace(/\s+/g, '-');
+    return slug
+  }
+
   const setListCount = (list) => {
     return list.length;
   };
@@ -135,10 +142,51 @@ export const ConfigProvider = ({ children }) => {
       : formattedIntegerPart;
   }
 
+
+
+  //slug generation function for all slug fields
+  //TODO:move this under utils to prevent re-rendering
+  function generateSlug(value = '') {
+    if (!value) return '';
+    return value
+      .trim()                      // remove leading/trailing spaces
+      .toLowerCase()               // lowercase everything
+      .replace(/\s+/g, '-')        // replace spaces with hyphens
+      .replace(/[^a-z0-9-]/g, '')  // remove special characters
+      .replace(/-+/g, '-')         // collapse multiple hyphens
+      .replace(/^-+|-+$/g, '');    // remove leading/trailing hyphens
+  }
+
+
+  function formatSlugOnChange(value = '') {
+    return value
+      .toLowerCase()
+      .replace(/\s+/g, '-')        // replace spaces with hyphens
+      .replace(/[^a-z0-9-]/g, '')  // remove special characters
+      .replace(/-+/g, '-');        // collapse multiple hyphens
+  }
+
+
+  function cleanSlugOnBlur(value = '') {
+    return value
+      .trim()                      // remove spaces from start/end
+      .replace(/^-+|-+$/g, '');    // remove leading/trailing hyphens
+  }
+
+
+  const truncateText = (text, maxLength = 30) => {
+    if (!text) return ''; // handles null or undefined
+    return text.length <= maxLength ? text : text.substring(0, maxLength) + '...';
+  };
+
+
+
   return (
     <ConfigContext.Provider
       value={{
         loader,
+        setToDate,
+        toDate, fromDate, setFromDate,
         setLoader,
         authToken,
         user,
@@ -150,7 +198,12 @@ export const ConfigProvider = ({ children }) => {
         setListCount,
         isValidEmail, isValidGST, isValidPAN,
         roleTypeID: user?.roleTypeID, // <-- Add this line
-        formatToIndianCurrency
+        formatToIndianCurrency,
+        generateSlug,
+        formatSlugOnChange,
+        cleanSlugOnBlur,
+        truncateText,
+        formatSlug
       }}
     >
       {children}

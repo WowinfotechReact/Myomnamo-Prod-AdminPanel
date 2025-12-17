@@ -58,7 +58,7 @@ const FAQList = () => {
 
   useEffect(() => {
     if (location?.pathname === '/faq') {
-      setPageHeading('FAQ');
+      setPageHeading("FAQ's");
       GetFAQListData(1, null, pujaServiceID?.PanditPuja, pujaSubServiceID?.PanditPuja);
       setModelRequestData((prev) => ({
         ...prev,

@@ -114,7 +114,7 @@ const AddMaterialModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }
         }
 
         const apiParam = {
-            adminID: user?.admiN_ID,
+            adminID: user?.adminID,
             materialID: modelRequestData?.materialID,
             purchaseID: modelRequestData?.purchaseID,
             productStockID: modelRequestData?.productStockID,

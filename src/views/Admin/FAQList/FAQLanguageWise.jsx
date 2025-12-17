@@ -11,22 +11,18 @@ import Select from 'react-select';
 import dayjs from 'dayjs';
 import { ConfigContext } from 'context/ConfigContext';
 import { debounce } from 'Middleware/Utils';
-import { ChangePujaCategoryStatus, GetPujaCategoryList } from 'services/Pooja Category/PoojaCategoryApi';
-
-import { ChangeStatus } from 'services/Admin/DarshanBookingAPI/DarshanBookingAPI';
 import { FAQChangeStatus, GetFAQList } from 'services/Admin/FAQAPI/FAQAPI';
 import AddUpdateFAQModal from './AddUpdateFAQ';
 
 const FAQLanguageWiseList = () => {
   const location = useLocation();
   const [modelAction, setModelAction] = useState();
-  const { setLoader } = useContext(ConfigContext);
+  const { setLoader, truncateText } = useContext(ConfigContext);
   const [showModal, setShowModal] = useState(false);
   const [stateChangeStatus, setStateChangeStatus] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [fromDate, setFromDate] = useState(null);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState(null);
   const [totalCount, setTotalCount] = useState(null);
@@ -180,7 +176,7 @@ const FAQLanguageWiseList = () => {
     }));
     setShowAddUpdateModal(true);
   };
-
+  console.log("location?.state?.data?.quetion=>>", truncateText(location.state.data.question, 3))
   return (
     <>
       <div className="card">
@@ -193,7 +189,7 @@ const FAQLanguageWiseList = () => {
             </button>
 
             {/* Title – centered */}
-            <h5 className="m-0 text-center flex-grow-1">FAQ Language List</h5>
+            <h5 className="m-0 text-center flex-grow-1">{truncateText(location?.state?.data?.question, 30)}</h5>
 
             {/* Add Button – visible only on mobile (<576px) */}
             <button onClick={AddBtnClicked} className="btn btn-primary btn-sm d-inline d-sm-none">

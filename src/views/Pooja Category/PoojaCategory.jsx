@@ -266,7 +266,7 @@ const PoojaCategoryList = () => {
                                                 </thead>
                                                 <tbody>
                                                       {pujaCategoryList?.map((item, idx) => (
-                                                            <tr className='text-nowrap text-center' key={item.idx}>
+                                                            <tr className='text-nowrap text-center align-middle' key={item.idx}>
 
                                                                   <td style={{ whiteSpace: 'nowrap' }} className="text-center">
                                                                         {(currentPage - 1) * pageSize + idx + 1}

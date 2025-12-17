@@ -47,7 +47,7 @@ const StateAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdateDon
                   isValid = false
             }
             const apiParam = {
-                  adminID: user?.admiN_ID,
+                  adminID: user?.adminID,
                   stateName: state?.stateName,
                   stateKeyID: state?.stateKeyID,
 
@@ -140,13 +140,11 @@ const StateAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdateDon
                                                       menuPlacement="auto"
                                                       menuPosition="fixed"
                                                 />
-                                                {error && (!state?.appLangID) && (
-                                                      <span className="text-danger">{ERROR_MESSAGES}</span>
-                                                )}
+
                                           </div>
 
 
-                                          {/* Blog Title */}
+
                                           <div className="col-md-12 mb-3">
                                                 <label htmlFor="stateTitle" className="form-label">
                                                       State Name<span className="text-danger">*</span>

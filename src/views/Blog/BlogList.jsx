@@ -11,7 +11,7 @@ import Android12Switch from 'component/Android12Switch'
 import DatePicker from 'react-date-picker'
 import 'react-calendar/dist/Calendar.css';
 import Select from 'react-select';
-import { set } from 'date-fns'
+import { format, set } from 'date-fns'
 
 import dayjs from 'dayjs'
 import { ConfigContext } from 'context/ConfigContext'
@@ -162,7 +162,7 @@ const BlogList = () => {
 
 
       const handleImageClick = (imgUrl, deityName) => {
-            debugger
+
             setModalTitle(deityName); // set the modal title dynamically
             setSelectedImage(imgUrl);
             setShowModal(true);
@@ -296,8 +296,8 @@ const BlogList = () => {
 
                                                                   </td> */}
                                                                   <td style={{ whiteSpace: 'nowrap' }} >
-                                                                        {item.blogDate}
-
+                                                                        {/* {item.blogDate} */}
+                                                                        {dayjs(item.blogDate).format('DD/MM/YYYY') || '-'}
                                                                   </td>
                                                                   <td style={{ whiteSpace: 'nowrap' }} >
                                                                         {item.autherName}
@@ -369,7 +369,11 @@ const BlogList = () => {
                   </div>
                   {showAddUpdateModal &&
 
-                        <BlogAddUpdateModal show={showAddUpdateModal} onHide={(() => setShowAddUpdateModal(false))} modelRequestData={modelRequestData} setIsAddUpdateDone={setIsAddUpdateDone} />
+                        <BlogAddUpdateModal
+                              show={showAddUpdateModal}
+                              onHide={(() => setShowAddUpdateModal(false))}
+                              modelRequestData={modelRequestData}
+                              setIsAddUpdateDone={setIsAddUpdateDone} />
                   }
                   <ImagePreviewModal
                         show={showModal}

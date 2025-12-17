@@ -1,15 +1,12 @@
-import axios from 'axios';
 import { ERROR_MESSAGES } from 'component/GlobalMassage';
 import Text_Editor from 'component/Text_Editor';
 import { ConfigContext } from 'context/ConfigContext';
 import DatePicker from 'react-date-picker';
 import 'react-calendar/dist/Calendar.css';
 import 'react-date-picker/dist/DatePicker.css';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import Select from 'react-select';
-import { CityLookupList } from 'services/AddressLookupList/AddressLookupListApi';
-import { GetTempleLookupList } from 'services/Admin/TempleApi/TemplesApi';
 import dayjs from 'dayjs';
 import SuccessPopupModal from 'component/SuccessPopupModal';
 import ErrorModal from 'component/ErrorModal';
@@ -23,6 +20,8 @@ import { AddUpdateProductCatAPI, GetProductCatModalAPI } from 'services/Admin/ES
 import { AddUpdateFAQAPI, GetFAQModalAPI, GetServiceTypeLookupList, GetSubServiceTypeLookupList } from 'services/Admin/FAQAPI/FAQAPI';
 import { GetUserLookupList } from 'services/Admin/UserWalletAPI/UserWalletAPI';
 import { AddUpdateCouponCodeAPI, GetCouponCodeModalAPI } from 'services/Admin/CouponCodeAPI/CouponCodeAPI';
+import DateErrorMessage from 'component/DateErrorMessage';
+import { GetModuleTypeLookupList, GetPujaSubServiceTypeLookupList } from 'services/Admin/MasterAPI/MasterAPI';
 
 const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) => {
   const { setLoader, user } = useContext(ConfigContext);
@@ -33,6 +32,7 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
   const [templePujaSubCatOption, setTemplePujaSubCatOption] = useState([]);
   const [isAllDaySelected, setAllDaySelected] = useState(false);
   const [error, setError] = useState(false);
+  const [dateError, setDateError] = useState(false);
   const [customError, setCustomError] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -41,6 +41,7 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
   const [languageList, setLanguageList] = useState([]);
   const [serviceTypeList, setServiceTypeList] = useState([]);
   const [subServiceTypeList, setSubServiceTypeList] = useState([]);
+  const [moduleLookupList, setModuleLookupList] = useState([]);
 
   const [filePreview, setFilePreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -63,7 +64,8 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
     serviceID: null,
     subServiceID: null,
     selectedUserListID: [],
-    appLangID: null
+    appLangID: null,
+    moduleID: null
   });
 
   useEffect(() => {
@@ -80,21 +82,7 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
     }
   }, [show]);
 
-  //   const isPageRender = () => {
-  //     if (modelRequestData?.pujaSubServiceID === 5) {
-  //       setHeading('Pandit Puja');
-  //     } else if (modelRequestData?.pujaSubServiceID === 6) {
-  //       setHeading('Daily Pandit Puja');
-  //     } else if (modelRequestData?.pujaSubServiceID === 1) {
-  //       setHeading('Remedy Puja');
-  //     } else if (modelRequestData?.pujaSubServiceID === 2) {
-  //       setHeading('Homam Puja');
-  //     } else if (modelRequestData?.pujaSubServiceID === 3) {
-  //       setHeading('Subscription Remedy Puja');
-  //     } else if (modelRequestData?.pujaSubServiceID === 4) {
-  //       setHeading('Subscription Homam Puja');
-  //     }
-  //   };
+
 
   const convertToDate = (dateString) => {
     const [day, month, year] = dateString.split('/');
@@ -125,8 +113,11 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
               serviceID: List.serviceID,
               subServiceID: List.subServiceID,
               selectedUserListID: List.userID,
-              appLangID: List.appLangID
+              appLangID: List.appLangID,
+              moduleID: List?.moduleID
             }));
+            GetSubServiceLookupListData(List.serviceID)
+            GetModuleTypeLookupListData(List.serviceID, List.subServiceID)
           }
         } else {
           console.error(response?.data?.errorMessage);
@@ -139,26 +130,7 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
     }
   };
 
-  //   const GetPujaCategoryLookupListData = async () => {
-  //     try {
-  //       const response = await GetPujaCategoryLookupList(); // Ensure it's correctly imported
 
-  //       if (response?.data?.statusCode === 200) {
-  //         const languageLookupList = response.data.responseData.data || [];
-
-  //         const formattedLangList = languageLookupList.map((Lang) => ({
-  //           value: Lang.pujaCategoryID,
-  //           label: Lang.pujaCategoryName
-  //         }));
-
-  //         setPujaCategoryOption(formattedLangList);
-  //       } else {
-  //         console.error('Failed to fetch sim Type lookup list:', response?.data?.statusMessage || 'Unknown error');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching sim Type lookup list:', error);
-  //     }
-  //   };
 
   const GetAppLanguageLookupListData = async () => {
     try {
@@ -201,19 +173,42 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
       console.error('Error fetching sim Type lookup list:', error);
     }
   };
+
+
   const GetSubServiceLookupListData = async (serviceID) => {
     try {
-      const response = await GetSubServiceTypeLookupList(serviceID); // Ensure it's correctly imported
+      const response = await GetPujaSubServiceTypeLookupList(serviceID); // Ensure it's correctly imported
 
       if (response?.data?.statusCode === 200) {
         const list = response?.data?.responseData?.data || [];
 
         const formattedLangList = list.map((Lang) => ({
-          value: Lang.subServiceID,
-          label: Lang.name
+          value: Lang.pujaSubServiceID,
+          label: Lang.pujaSubServiceName
         }));
 
         setSubServiceTypeList(formattedLangList);
+      } else {
+        console.error('Failed to fetch sim Type lookup list:', response?.data?.statusMessage || 'Unknown error');
+      }
+    } catch (error) {
+      console.error('Error fetching sim Type lookup list:', error);
+    }
+  };
+
+  const GetModuleTypeLookupListData = async (serviceID, subServiceID) => {
+    try {
+      const response = await GetModuleTypeLookupList(serviceID, subServiceID);
+
+      if (response?.data?.statusCode === 200) {
+        const list = response?.data?.responseData?.data || [];
+
+        const formattedLangList = list.map((Lang) => ({
+          value: Lang.moduleID,
+          label: Lang.moduleName
+        }));
+
+        setModuleLookupList(formattedLangList);
       } else {
         console.error('Failed to fetch sim Type lookup list:', response?.data?.statusMessage || 'Unknown error');
       }
@@ -236,7 +231,8 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
       serviceID: null,
       subServiceID: null,
       selectedUserListID: [],
-      appLangID: null
+      appLangID: null,
+      moduleID: null
     }));
   };
 
@@ -295,8 +291,12 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
       isValid = false;
     }
 
+    if (dateError) {
+      return
+    }
+
     const apiParam = {
-      adminID: user?.admiN_ID,
+      adminID: user?.adminID,
       couponCodeKeyID: modelRequestData.couponCodeKeyID,
       couponCode: formObj.couponCode,
       startDate: formObj.startDate,
@@ -308,7 +308,8 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
       applicableForID: formObj.applicableForID,
       pujaServiceID: formObj.serviceID,
       pujaSubServiceID: formObj.subServiceID,
-      userID: formObj.selectedUserListID
+      userID: formObj.selectedUserListID,
+      moduleID: formObj.moduleID
     };
 
     if (isValid) {
@@ -522,13 +523,23 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
 
       if (response?.data?.statusCode === 200) {
         const languageLookupList = response.data.responseData.data || [];
-
-        const formattedLangList = languageLookupList.map((Lang) => ({
-          value: Lang.userID,
-          label: Lang.userName
-        }));
+        const formattedLangList = (languageLookupList || [])
+          .slice()
+          // ✅ filter out entries with null, undefined, or empty userName
+          .filter((item) => item?.userName && item.userName.trim() !== "")
+          // ✅ sort alphabetically by userName (case-insensitive)
+          .sort((a, b) =>
+            a.userName.toLowerCase().localeCompare(b.userName.toLowerCase())
+          )
+          // ✅ format for dropdown
+          .map((Lang) => ({
+            value: Lang.userID,
+            label: Lang.userName,
+          }));
 
         setUserList(formattedLangList);
+
+
       } else {
         console.error('Failed to fetch sim Type lookup list:', response?.data?.statusMessage || 'Unknown error');
       }
@@ -536,6 +547,9 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
       console.error('Error fetching sim Type lookup list:', error);
     }
   };
+
+  console.log('Error ==>>', dateError);
+
   return (
     <>
       <Modal style={{ zIndex: 1300 }} size="lg" show={show} backdrop="static" keyboard={false} centered>
@@ -582,6 +596,7 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
                 <label htmlFor="bookingDate" style={{ textAlign: 'left' }}>
                   Start Date<span style={{ color: 'red' }}>*</span>
                 </label>
+
                 <DatePicker
                   id="date"
                   value={formObj?.startDate || ''}
@@ -589,6 +604,14 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
                   onChange={handleStartDateChange}
                   format="dd/MM/yyyy"
                   className="custom-date-picker"
+                  minDate={new Date()}
+                  onBlur={() => {
+                    if (formObj.startDate > formObj.endDate) {
+                      setDateError(true)
+                    } else {
+                      setDateError(false)
+                    }
+                  }}
                 />
 
                 {error && !formObj?.startDate && (
@@ -608,9 +631,19 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
                   value={formObj?.endDate || ''}
                   clearIcon={null}
                   onChange={handleEndDateChange}
+                  onBlur={() => {
+                    if (formObj.startDate > formObj.endDate) {
+                      setDateError(true)
+                    } else {
+                      setDateError(false)
+
+                    }
+                  }}
                   format="dd/MM/yyyy"
                   className="custom-date-picker"
+                  minDate={new Date()}
                 />
+                <DateErrorMessage errorMessage="Please enter valid end date" dateError={dateError} />
 
                 {error && !formObj?.endDate && (
                   <span className="error-msg" style={{ color: 'red' }}>
@@ -791,12 +824,33 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
                           ...prev,
                           subServiceID: selectedOption ? selectedOption.value : null
                         }));
+                        GetModuleTypeLookupListData(formObj?.serviceID, selectedOption.value);
                       }}
                       menuPlacement="auto"
                       menuPosition="fixed"
                     />
                     {error && !formObj?.subServiceID && <span className="text-danger">{ERROR_MESSAGES}</span>}
                   </div>
+
+                  {/* Select Module */}
+                  {/* <div className="col-md-6 mb-3">
+                    <label htmlFor="stateID" className="form-label">
+                      Select Module
+                    </label>
+                    <Select
+                      options={moduleLookupList}
+                      value={moduleLookupList?.filter((v) => v?.value === formObj?.moduleID)}
+                      onChange={(selectedOption) => {
+                        setFormObj((prev) => ({
+                          ...prev,
+                          moduleID: selectedOption ? selectedOption.value : null
+                        }));
+                      }}
+                      menuPlacement="auto"
+                      menuPosition="fixed"
+                    />
+                    {error && !formObj?.pujaModuleID && <span className="text-danger">{ERROR_MESSAGES}</span>}
+                  </div> */}
                 </>
               )}
 

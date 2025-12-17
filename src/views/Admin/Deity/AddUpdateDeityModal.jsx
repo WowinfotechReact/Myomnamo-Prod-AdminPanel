@@ -96,7 +96,7 @@ const AddUpdateDeityModal = ({ show, onHide, modelRequestData, setIsAddUpdateDon
         }
 
         const apiParam = {
-            adminID: user?.admiN_ID,
+            adminID: user?.adminID,
             deityKeyID: modelRequestData?.deityKeyID,
             deityName: deityFormObj?.deityName,
             deityImageUrl: uploadedImageUrl,

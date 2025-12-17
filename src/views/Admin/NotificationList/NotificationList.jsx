@@ -407,12 +407,14 @@ const NotificationList = () => {
           </div>
         </div>
       </div>
-      <AddUpdateNotificationModal
-        show={showAddModal}
-        onHide={() => setShowAddModal(false)}
-        modelRequestData={modelRequestData}
-        setIsAddUpdateDone={setIsAddUpdateDone}
-      />
+      {showAddModal && (
+        <AddUpdateNotificationModal
+          show={showAddModal}
+          onHide={() => setShowAddModal(false)}
+          modelRequestData={modelRequestData}
+          setIsAddUpdateDone={setIsAddUpdateDone}
+        />
+      )}
       <SuccessPopupModal show={showSuccessModal} onHide={() => onSuccessClose()} successMassage={ChangeStatusMassage} />
 
       {/* <SuccessPopupModal

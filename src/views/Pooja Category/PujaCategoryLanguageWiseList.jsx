@@ -23,7 +23,7 @@ const PujaCategoryLanguageWiseList = () => {
     const navigate = useNavigate()
     const location = useLocation()
     const [modelAction, setModelAction] = useState();
-    const { setLoader } = useContext(ConfigContext);
+    const { setLoader, truncateText } = useContext(ConfigContext);
     const [showModal, setShowModal] = useState(false);
     const [stateChangeStatus, setStateChangeStatus] = useState('');
     const [selectedImage, setSelectedImage] = useState(null);
@@ -196,7 +196,7 @@ const PujaCategoryLanguageWiseList = () => {
                         </button>
 
                         {/* Title – centered */}
-                        <h5 className="m-0 text-center flex-grow-1">Puja Category Language List</h5>
+                        <h5 className="m-0 text-center flex-grow-1">{truncateText(location?.state?.data?.pujaCategoryName, 30)} Language List</h5>
 
                         {/* Add Button – visible only on mobile (<576px) */}
                         <button

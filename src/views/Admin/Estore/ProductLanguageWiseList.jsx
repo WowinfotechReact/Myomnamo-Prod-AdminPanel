@@ -15,14 +15,15 @@ import { ChangePujaCategoryStatus, GetPujaCategoryList } from 'services/Pooja Ca
 
 import { GetProductCatList } from 'services/Admin/EStoreAPI/ProductCatAPI';
 import AddUpdateProductCatModal from './AddUpdateProductCat';
-import { ChangeStatus } from 'services/Admin/DarshanBookingAPI/DarshanBookingAPI';
-import { GetProductListAPI } from 'services/Admin/EStoreAPI/ProductAPI';
+
+import { ChangeStatus, GetProductListAPI } from 'services/Admin/EStoreAPI/ProductAPI';
 import AddUpdateProductModal from './AddUpdateProduct';
+import StatusChangeModal from 'component/StatusChangeModal';
 
 const ProductLanguageWiseList = () => {
   const location = useLocation();
   const [modelAction, setModelAction] = useState();
-  const { setLoader } = useContext(ConfigContext);
+  const { setLoader, truncateText } = useContext(ConfigContext);
   const [showModal, setShowModal] = useState(false);
   const [stateChangeStatus, setStateChangeStatus] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
@@ -212,7 +213,7 @@ const ProductLanguageWiseList = () => {
 
             {/* Title – centered */}
             <h5 className="m-0 text-center flex-grow-1">
-              {location.pathname === '/prasad-language-wise' ? 'Prasad Language List' : 'Product Language List'}
+              {location.pathname === '/prasad-language-wise' ? `${truncateText(location.state.data.productName, 30)} List` : 'Product Language List'}
             </h5>
 
             {/* Add Button – visible only on mobile (<576px) */}
@@ -291,13 +292,13 @@ const ProductLanguageWiseList = () => {
                       {/* <td style={{ whiteSpace: 'nowrap' }}>{item.pujaServiceName === null ? '-' : item.pujaSubServiceName}</td> */}
                       {/* <td style={{ whiteSpace: 'nowrap' }}>{item.pujaSubServiceName === null ? '-' : item.pujaSubServiceName}</td> */}
 
-                      <td className="text-center text-nowrap" onClick={() => confirmStatusChange(item)}>
-                        <Tooltip title={item.status === true ? 'Enable' : 'Disable'}>
-                          {item.status === true ? 'Enable' : 'Disable'}
+                      <td className="text-center text-nowrap" >
+                        <Tooltip title={item.status === "True" ? 'Enable' : 'Disable'}>
+                          {item.status === "True" ? 'Enable' : 'Disable'}
                           <Android12Switch
                             style={{ padding: '8px' }}
                             onClick={() => handleStatusChange(item)}
-                            checked={item.status === true}
+                            checked={item.status === "True"}
                           />
                         </Tooltip>
                       </td>
@@ -330,6 +331,12 @@ const ProductLanguageWiseList = () => {
         modelRequestData={modelRequestData}
         setIsAddUpdateDone={setIsAddUpdateDone}
       />
+
+      <StatusChangeModal
+        open={showStatusChangeModal}
+        onClose={() => setShowStatusChangeModal(false)}
+        onConfirm={() => confirmStatusChange(stateChangeStatus)} // Pass the required arguments
+      />
       {/* <ImagePreviewModal
         show={showModal}
         onHide={() => setShowModal(false)}
@@ -337,11 +344,7 @@ const ProductLanguageWiseList = () => {
         title={modalTitle} // pass deity name as title
       />
 
-      <StatusChangeModal
-        open={showStatusChangeModal}
-        onClose={() => setShowStatusChangeModal(false)}
-        onConfirm={() => confirmStatusChange(stateChangeStatus)} // Pass the required arguments
-      />
+      
       <SuccessPopupModal show={showSuccessModal} onHide={() => HandleCloseAll()} successMassage={ChangeStatusMassage} />
       <ErrorModal show={showErrorModal} onHide={() => setShowErrorModal(false)} Massage={modelAction} /> */}
     </>

@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 import axios from 'axios';
 import { ERROR_MESSAGES } from 'component/GlobalMassage';
 import Text_Editor from 'component/Text_Editor';
@@ -53,12 +45,9 @@ const LanguageWiseAddUpdateBlogModal = ({ show, onHide, modelRequestData, setIsA
             blogKeyID: null, // Provide Key ID For Update
             blogTitle: null,
             blog: null,
-
             metaTitle: null,
-
             blogCatID: null,
             autherName: null,
-
             appLangID: null
       })
 
@@ -71,7 +60,6 @@ const LanguageWiseAddUpdateBlogModal = ({ show, onHide, modelRequestData, setIsA
             }
       }, [isAddressChanged])
 
-      console.log(modelRequestData, 'dsad3223');
 
       useEffect(() => {
 
@@ -79,13 +67,13 @@ const LanguageWiseAddUpdateBlogModal = ({ show, onHide, modelRequestData, setIsA
                   GetBlogModelData(modelRequestData.blogKeyID)
             }
 
-
       }, [modelRequestData.Action])
 
 
       useEffect(() => {
             GetBlogCategoryLookupListData()
       }, [])
+
       const GetBlogCategoryLookupListData = async () => {
             // debugger
             // de
@@ -145,6 +133,42 @@ const LanguageWiseAddUpdateBlogModal = ({ show, onHide, modelRequestData, setIsA
 
 
 
+      const handleImageChange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                  if (
+                        (file.type === "image/jpeg" ||
+                              file.type === "image/png") &&
+                        file.size <= 2 * 1024 * 1024
+                  ) {
+                        setSizeError("");
+                        setSelectedFile(file);
+
+                        // Preview
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                              setFilePreview(event.target.result);
+                        };
+                        reader.readAsDataURL(file);
+
+                        // 🚀 Call upload immediately
+                        handleApiCall(file);
+
+                  } else if (file.size > 10 * 1024 * 1024) {
+                        setSizeError("Size of image should not exceed 2MB");
+                  } else {
+                        setFilePreview(null);
+                        setSizeError("");
+                  }
+            } else {
+                  setFilePreview(null);
+                  setSelectedFile(null);
+            }
+
+
+
+      };
+
 
 
 
@@ -168,6 +192,7 @@ const LanguageWiseAddUpdateBlogModal = ({ show, onHide, modelRequestData, setIsA
 
                   // blogObj?.blogImage === null || blogObj?.blogImage === undefined || blogObj?.blogImage === "" ||
                   blogObj?.blog === null || blogObj?.blog === undefined || blogObj?.blog === "" ||
+
                   // blogObj?.blogCatID === null || blogObj?.blogCatID === undefined || blogObj?.blogCatID === "" ||
                   blogObj?.autherName === null || blogObj?.autherName === undefined || blogObj?.autherName === "" ||
                   blogObj?.appLangID === null || blogObj?.appLangID === undefined || blogObj?.appLangID === ""
@@ -177,10 +202,11 @@ const LanguageWiseAddUpdateBlogModal = ({ show, onHide, modelRequestData, setIsA
             }
 
             const apiParam = {
-                  adminID: user?.admiN_ID,
+                  ...blogObj,
+                  adminID: user?.adminID,
                   blogKeyID: modelRequestData?.blogKeyID,
                   blogBylangKeyID: modelRequestData?.blogBylangKeyID,
-
+                  blogCatID: modelRequestData?.blogCatID,
                   appLangID: blogObj?.appLangID,
                   blogTitle: blogObj?.blogTitle,
 
@@ -198,7 +224,7 @@ const LanguageWiseAddUpdateBlogModal = ({ show, onHide, modelRequestData, setIsA
       }
 
       const AddUpdateBlogData = async (ApiParam) => {
-            debugger
+
             setLoader(true);
             try {
                   const response = await AddUpdateBlog(ApiParam);
@@ -238,14 +264,9 @@ const LanguageWiseAddUpdateBlogModal = ({ show, onHide, modelRequestData, setIsA
                                     const List = response.data.responseData.data;
                                     setBlogObj((prev) => ({
                                           ...prev,
-
                                           BlogKeyID: List.BlogKeyID, // Provide Key ID For Update
                                           blogCatName: List.blogCatName,
-
-
-
-
-                                          adminID: user?.admiN_ID,
+                                          adminID: user?.adminID,
                                           blogKeyID: List?.blogKeyID,
                                           appLangID: List?.appLangID,
                                           blogBylangKeyID: List?.blogBylangKeyID,
@@ -382,10 +403,10 @@ const LanguageWiseAddUpdateBlogModal = ({ show, onHide, modelRequestData, setIsA
                   if (response?.status === 200 && uploadedUrl) {
                         setLoader(false);
                         setUploadedImageUrl(uploadedUrl);
-                        console.log("Uploaded Image URL:", uploadedUrl);
+
 
                         // (optional) keep the form as single source of truth
-                        setDeityFormObj(prev => ({ ...prev, deityImageUrl: uploadedUrl }));
+                        setBlogObj(prev => ({ ...prev, blogImage: uploadedUrl }));
                   } else {
                         setLoader(false);
                         console.warn("Upload succeeded but no URL found:", {
@@ -401,7 +422,15 @@ const LanguageWiseAddUpdateBlogModal = ({ show, onHide, modelRequestData, setIsA
             }
       };
 
-      console.log(modelRequestData.availableLangID, 'dsad324432');
+
+
+      const handleRemoveImage = () => {
+            setFilePreview(null);
+            setSelectedFile(null);
+            setUploadedImageUrl("");
+            setBlogObj({ ...blogObj, blogImage: null })
+      };
+
 
       return (
             <>
@@ -419,7 +448,7 @@ const LanguageWiseAddUpdateBlogModal = ({ show, onHide, modelRequestData, setIsA
                                                       Blog Title<span className="text-danger">*</span>
                                                 </label>
                                                 <input
-                                                      maxLength={50}
+                                                      // maxLength={50}
                                                       type="text"
                                                       className="form-control"
                                                       id="StateName"
@@ -533,11 +562,6 @@ const LanguageWiseAddUpdateBlogModal = ({ show, onHide, modelRequestData, setIsA
                                                 ) : (
                                                       ''
                                                 )}
-
-
-
-
-
                                           </div>
 
 
@@ -594,8 +618,104 @@ const LanguageWiseAddUpdateBlogModal = ({ show, onHide, modelRequestData, setIsA
                                                 )}
                                           </div>
 
-                                    </div>
+                                          <div className="col-md-12 mb-3">
+                                                <div className="mb-3 position-relative">
+                                                      <div className="d-flex justify-content-between align-items-center mb-1">
+                                                            <label
+                                                                  htmlFor="imageUpload"
+                                                                  className="form-label "
+                                                            >
+                                                                  Blog Image
+                                                                  {/* <span className="text-danger">*</span> */}
+                                                            </label>
+                                                      </div>
+                                                      <div
+                                                            className="position-relative d-flex align-items-center justify-content-center w-100 border rounded"
+                                                            style={{ height: "12rem" }}
+                                                      >
+                                                            {filePreview ? (
+                                                                  <>
+                                                                        {/* Remove Button */}
+                                                                        <button
+                                                                              onClick={handleRemoveImage}
+                                                                              style={{
+                                                                                    padding: "3px 10px",
+                                                                                    position: "absolute",
+                                                                                    top: "5px",
+                                                                                    right: "5px",
+                                                                                    border: "none",
+                                                                                    outline: "none",
+                                                                                    zIndex: "20",
+                                                                                    background: "transparent",
+                                                                                    fontSize: "20px",
+                                                                                    cursor: "pointer",
+                                                                                    color: "black",
+                                                                              }}
+                                                                        >
+                                                                              <i className="fas fa-times"></i>
+                                                                        </button>
 
+                                                                        {/* Preview Image */}
+                                                                        <img
+                                                                              style={{ objectFit: "contain" }}
+                                                                              src={filePreview}
+                                                                              alt="Preview"
+                                                                              className="position-absolute top-0 start-0 w-100 h-100 border border-secondary rounded"
+                                                                        />
+                                                                  </>
+                                                            ) : (
+                                                                  <label
+                                                                        htmlFor="custom-pujaCategoryImage"
+                                                                        className="cursor-pointer text-center"
+                                                                  >
+                                                                        <img
+                                                                              src={CustomUploadImg} // replace with your CustomUploadImg path
+                                                                              alt="upload_img"
+                                                                              className="d-block mx-auto"
+                                                                              style={{ height: "5rem" }}
+                                                                        />
+                                                                        <span>Upload image</span>
+                                                                  </label>
+                                                            )}
+
+                                                            {/* Hidden Input */}
+                                                            <input
+                                                                  type="file"
+                                                                  id="custom-pujaCategoryImage"
+                                                                  accept="image/jpeg, image/png"
+                                                                  className="d-none"
+                                                                  onChange={handleImageChange}
+                                                            />
+                                                      </div>
+
+                                                      {/* Error Messages */}
+                                                      {sizeError ? (
+                                                            <span className="text-danger small mx-3">{sizeError}</span>
+                                                      ) : !selectedFile ? (
+                                                            <span
+                                                                  className="text-muted mx-3"
+                                                                  style={{
+                                                                        display: "block",
+                                                                        fontWeight: "500",
+                                                                        fontSize: "0.8rem",
+                                                                  }}
+                                                            >
+                                                                  Supported file types are .jpg, .jpeg, .png up to a file size of 2MB.
+                                                            </span>
+                                                      ) : (
+                                                            ""
+                                                      )}
+
+                                                      {error &&
+                                                            (selectedFile === null ||
+                                                                  selectedFile === "" ||
+                                                                  selectedFile === undefined) && (
+                                                                  <span className="text-danger small mx-3">{ERROR_MESSAGES}</span>
+                                                            )}
+                                                </div>
+                                          </div>
+
+                                    </div>
                               </div>
 
 

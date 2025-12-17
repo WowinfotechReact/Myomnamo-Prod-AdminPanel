@@ -10,7 +10,8 @@ export const CalenderFilterEnum = {
   Last_6_Months: 8,
   This_Year: 9,
   Last_Year: 10,
-  Custom_Date_Range: 11
+  Custom_Date_Range: 11,
+  Today: 12
 };
 
 export const RoleTypeList = {
@@ -25,11 +26,17 @@ export const itemTypeLookupList = [
   { value: 2, label: 'Finished Goods' }
 ];
 
+export const PanditTypeLookupList = [
+  { value: 1, label: 'Pandit' },
+  { value: 2, label: 'Daily Pandit' }
+];
+
+
 export const pujaServiceID = {
   Puja: 1,
   SankalpPuja: 2,
   PanditPuja: 3,
-  PujaAtTemple: 3
+  PujaAtTemple: 4
 };
 
 export const pujaSubServiceID = {

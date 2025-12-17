@@ -193,7 +193,7 @@ const ThoughtLanguageWiseList = () => {
             </button>
 
             {/* Title – centered */}
-            <h5 className="m-0 text-center flex-grow-1">Thought Language List</h5>
+            <h5 className="m-0 text-center flex-grow-1">Spiritual Thought Language List</h5>
 
             {/* Add Button – visible only on mobile (<576px) */}
             <button onClick={AddBtnClicked} className="btn btn-primary btn-sm d-inline d-sm-none">
@@ -239,7 +239,7 @@ const ThoughtLanguageWiseList = () => {
                   >
                     <th className="text-center">Sr No.</th>
                     <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
-                      Thought
+                      Spiritual Thought
                     </th>
 
                     <th className="text-center" style={{ whiteSpace: 'nowrap' }}>

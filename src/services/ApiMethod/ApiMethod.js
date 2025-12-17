@@ -1,6 +1,5 @@
-
-import axios from "axios"; 
-import Api from '../../auth-token/AuthToken'
+import axios from 'axios';
+import Api from '../../auth-token/AuthToken';
 
 //......................Post Api With Authorization........................................
 export const postApiWithAuthenticated = async (url, params) => {
@@ -12,7 +11,7 @@ export const postApiWithAuthenticated = async (url, params) => {
     return res;
   } catch (error) {
     if (error.status === 401) {
-      localStorage.clear()
+      localStorage.clear();
       window.location.replace('/login');
     }
     return error;
@@ -30,7 +29,7 @@ export const getListWithAuthenticated = async (url) => {
     return res;
   } catch (error) {
     if (error.status === 401) {
-      localStorage.clear()
+      localStorage.clear();
       window.location.replace('/login');
     }
     return error;

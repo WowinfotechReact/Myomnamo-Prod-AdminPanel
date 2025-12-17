@@ -59,7 +59,7 @@ const ThoughtMasterList = () => {
 
   useEffect(() => {
     if (location?.pathname === '/thought-master') {
-      setPageHeading('Thought Master');
+      setPageHeading('Spiritual Thought Master');
       GetThoughtMasterListData(1, null, pujaServiceID?.PanditPuja, pujaSubServiceID?.PanditPuja);
       setModelRequestData((prev) => ({
         ...prev,
@@ -303,10 +303,10 @@ const ThoughtMasterList = () => {
 
             {/* Action Buttons */}
             <div className="d-flex gap-2 align-items-center">
-              <Tooltip title="Add Thought">
+              <Tooltip title="Add Spiritual Thought">
                 <button onClick={handleAddModal} className="btn btn-primary btn-sm" style={{ cursor: 'pointer' }}>
                   <i className="fa-solid fa-plus me-1" style={{ fontSize: '11px' }}></i>
-                  <span className="d-none d-sm-inline">Add Thought</span>
+                  <span className="d-none d-sm-inline">Add Spiritual Thought</span>
                 </button>
               </Tooltip>
             </div>
@@ -331,7 +331,7 @@ const ThoughtMasterList = () => {
                     </th> */}
                     <th className="text-center">Sr No.</th>
                     <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
-                      Thought
+                      Spiritual Thought
                     </th>
                     <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                       Registration Date
@@ -386,7 +386,7 @@ const ThoughtMasterList = () => {
 
                       <td className="text-center actionColSticky" style={{ zIndex: 4 }}>
                         <div className="d-flex justify-content-center gap-2">
-                          <Tooltip title={`Update ${pageHeading}`}>
+                          <Tooltip title={`Update Spiritual Thought`}>
                             <Button style={{ marginRight: '5px' }} className="btn-sm" onClick={() => updateBtnClicked(item)}>
                               <i class="fas fa-edit"></i>
                             </Button>

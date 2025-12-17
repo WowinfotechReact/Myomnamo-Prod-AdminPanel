@@ -1,12 +1,3 @@
-
-
-
-
-
-
-
-
-
 import { Tooltip } from '@mui/material'
 import NoResultFoundModel from 'component/NoResultFoundModal'
 import PaginationComponent from 'component/Pagination'
@@ -68,7 +59,7 @@ const BlogCategoryLanguageWiseList = () => {
       }, [isAddUpdateDone])
 
 
-      console.log(location.state.blogCategoryData, 'siusgahiduasda');
+
       const availableLangIDs = ShopList.map(item => item.appLangID);
 
       console.log(availableLangIDs, 'sssssssss33333');
@@ -198,7 +189,7 @@ const BlogCategoryLanguageWiseList = () => {
                                           <span className="d-none d-sm-inline">Back</span>
                                     </button>
 
-                                    <h5 className="m-0 text-center flex-grow-1">Blog Category Language List</h5>
+                                    <h5 className="m-0 text-center flex-grow-1">{location.state.blogCategoryData.blogCatName} Language List</h5>
 
                                     <button
                                           onClick={AddShopBtnClicked}

@@ -47,7 +47,7 @@ const TimeSlotAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdate
             isValid = false
         }
         const apiParam = {
-            adminID: user?.admiN_ID,
+            adminID: user?.adminID,
             timeSlotKeyID: state?.timeSlotKeyID,
             timeSlot: state?.timeSlot,
             // "appLangID": null,
@@ -142,9 +142,7 @@ const TimeSlotAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdate
                                     menuPlacement="auto"
                                     menuPosition="fixed"
                                 />
-                                {error && (!state?.appLangID) && (
-                                    <span className="text-danger">{ERROR_MESSAGES}</span>
-                                )}
+
                             </div>
 
 

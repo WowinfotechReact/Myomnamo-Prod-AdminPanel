@@ -76,7 +76,7 @@ const SubscriptionList = () => {
         try {
             const response = await GetTemplePujaSubscriptionLookupList(pujaSubServiceID, pujaServiceID)
 
-            debugger
+
             if (response) {
                 if (response?.data?.statusCode === 200) {
                     setLoader(false);
@@ -280,7 +280,7 @@ const SubscriptionList = () => {
 
                                             <td className="text-center actionColSticky" style={{ zIndex: 4 }}>
                                                 <div className="d-flex justify-content-center gap-2">
-                                                    <Tooltip title="Update Package">
+                                                    <Tooltip title="Add Package">
                                                         <Button style={{ marginRight: '5px' }} className="btn-sm" onClick={() => HandleAddPackage(item)} >
                                                             Add Package
                                                         </Button>

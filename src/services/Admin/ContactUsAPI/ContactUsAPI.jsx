@@ -3,11 +3,8 @@ import { postApiWithAuthenticated } from 'services/ApiMethod/ApiMethod';
 
 export const GetContactUsList = async (params, ProductCatKeyID) => {
   let url = '';
-  if (ProductCatKeyID) {
-    url = `${Base_Url}/api/ProductCategory/GetProductCategoryList?ProductCatKeyID=${ProductCatKeyID}`;
-  } else {
-    url = `${Base_Url}/api/ProductCategory/GetProductCategoryList`;
-  }
+
+  url = `${Base_Url}/api/ContactUs/GetContactUsList`;
 
   const res = await postApiWithAuthenticated(url, params);
   return res;

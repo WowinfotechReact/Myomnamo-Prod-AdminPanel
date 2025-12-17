@@ -34,9 +34,6 @@ const AssignPanditModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
               value: item.panditID,
               label: item.panditName
             }));
-
-            console.log('panditList', panditList);
-
             setPanditList(panditList);
           }
         } else {
