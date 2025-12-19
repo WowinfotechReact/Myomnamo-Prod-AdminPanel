@@ -571,7 +571,7 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
 
     const handleSearch = async () => {
         try {
-            s
+            
             const response = await axios.get(
                 `https://maps.googleapis.com/maps/api/geocode/json`,
                 {

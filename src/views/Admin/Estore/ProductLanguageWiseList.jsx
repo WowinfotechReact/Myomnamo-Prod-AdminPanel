@@ -293,12 +293,12 @@ const ProductLanguageWiseList = () => {
                       {/* <td style={{ whiteSpace: 'nowrap' }}>{item.pujaSubServiceName === null ? '-' : item.pujaSubServiceName}</td> */}
 
                       <td className="text-center text-nowrap" >
-                        <Tooltip title={item.status === "True" ? 'Enable' : 'Disable'}>
-                          {item.status === "True" ? 'Enable' : 'Disable'}
+                        <Tooltip title={item.status  ? 'Enable' : 'Disable'}>
+                          {item.status  ? 'Enable' : 'Disable'}
                           <Android12Switch
                             style={{ padding: '8px' }}
                             onClick={() => handleStatusChange(item)}
-                            checked={item.status === "True"}
+                            checked={item.status }
                           />
                         </Tooltip>
                       </td>

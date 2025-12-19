@@ -14,7 +14,7 @@ import { ChangeStatusMassage } from 'component/GlobalMassage'
 import ImagePreviewModal from 'Image Preview Modal/ImagePreviewModal'
 import StatusChangeModal from 'component/StatusChangeModal'
 import { ChangeDistrictStatus } from 'services/District/DistrictApi'
-import {GetPanditMasterList, ChangePanditStatus, GetTempPanditList} from 'services/Admin/Pandit Master/PanditMasterApi'
+import { GetPanditMasterList, ChangePanditStatus, GetTempPanditList } from 'services/Admin/Pandit Master/PanditMasterApi'
 import PanditMasterAddUpdateModal from './PanditMasterAddUpdateModal'
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { PanditTypeLookupList } from 'Middleware/Enum'
@@ -33,13 +33,14 @@ const PanditMasterList = () => {
     const [totalCount, setTotalCount] = useState(null);
     const [totalPages, setTotalPages] = useState(1);
     const [totalRecords, setTotalRecords] = useState(0);
-    const [visible, setVisible] = useState(false);
+    const [visible, setVisible] = useState();
+    const [visibleMap, setVisibleMap] = useState({});
     const [pageSize, setPageSize] = useState(20);
     const [sortingType, setSortingType] = useState(null)
     const [sortValueName, setSortValueName] = useState(null)
     const [modalTitle, setModalTitle] = useState(false)
     const [ShopList, setShopList] = useState([]);
-    const [modelRequestData, setModelRequestData] = useState({ Action: null, actionMessage:null})
+    const [modelRequestData, setModelRequestData] = useState({ Action: null, actionMessage: null })
     const [showAddUpdateModal, setShowAddUpdateModal] = useState(false)
     const [isAddUpdateDone, setIsAddUpdateDone] = useState(false)
     const [showStatusChangeModal, setShowStatusChangeModal] = useState(false);
@@ -49,20 +50,20 @@ const PanditMasterList = () => {
 
     useEffect(() => {
         setCurrentPage(1)
-            setIsAddUpdateDone(false)
-            GetTempPanditListData(1,searchKeyword)
-            // GetPanditMasterListData(searchKeyword)
-        
+        setIsAddUpdateDone(false)
+        // GetTempPanditListData(1,searchKeyword)
+        GetPanditMasterListData(searchKeyword)
 
-    }, [isAddUpdateDone,searchKeyword])
 
-    const GetTempPanditListData = async (pageNumber,searchKeywordValue) => {
-        
+    }, [isAddUpdateDone, searchKeyword])
+
+    const GetTempPanditListData = async (pageNumber, searchKeywordValue) => {
+
         setLoader(true);
         try {
             const response = await GetTempPanditList({
                 pageSize: pageSize,
-                pageNo: pageNumber-1,
+                pageNo: pageNumber - 1,
                 sortingDirection: sortingType ? sortingType : null,
                 sortingColumnName: sortValueName ? sortValueName : null,
                 searchKeyword: searchKeywordValue === undefined || searchKeywordValue === null ? searchKeyword : searchKeywordValue,
@@ -83,7 +84,7 @@ const PanditMasterList = () => {
                         setTotalRecords(List?.length);
                     }
                 } else {
-                    
+
                     setLoader(false);
                     setTotalRecords(0);
                 }
@@ -91,12 +92,12 @@ const PanditMasterList = () => {
         } catch (error) {
             setTotalRecords(0);
             setLoader(false);
-            
+
         }
     }
 
     const GetPanditMasterListData = async (searchKeywordValue) => {
-        
+
         setLoader(true);
         try {
             const response = await GetPanditMasterList({
@@ -122,7 +123,7 @@ const PanditMasterList = () => {
                         setTotalRecords(List?.length);
                     }
                 } else {
-                    
+
                     setLoader(false);
                     setTotalRecords(0);
                 }
@@ -130,11 +131,11 @@ const PanditMasterList = () => {
         } catch (error) {
             setTotalRecords(0);
             setLoader(false);
-            
+
         }
     }
 
-  
+
 
     // const AddShopBtnClick   ed = () => {
     //     setModelRequestData((prev) => ({ ...prev, Action: null, }))
@@ -166,10 +167,10 @@ const PanditMasterList = () => {
                 setStateChangeStatus(null);
                 setIsAddUpdateDone(true);
                 setModelRequestData({
-                    actionMessage:'Pandit status changed successfully.'
+                    actionMessage: 'Pandit status changed successfully.'
                 })
                 setShowSuccessModal(true);
-                
+
             } else {
                 console.error(response?.data?.errorMessage);
                 setShowSuccessModal(true);
@@ -197,8 +198,8 @@ const PanditMasterList = () => {
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
-        GetTempPanditListData(pageNumber,searchKeyword)
-      
+        GetTempPanditListData(pageNumber, searchKeyword)
+
     };
 
     const AddLangBtnClicked = (item) => {
@@ -228,22 +229,23 @@ const PanditMasterList = () => {
                         />
 
                         {/* Action Buttons */}
-                        {/* <div className="d-flex gap-2 align-items-center">
+                        <div className="d-flex gap-2 align-items-center">
                             <Tooltip title="Add Pandit">
                                 <button
                                     onClick={() => {
                                         setModelRequestData({
-                                            Action:'Add'
+                                            Action: 'Add'
                                         })
-                                        setShowAddUpdateModal(true)}}
+                                        setShowAddUpdateModal(true)
+                                    }}
                                     className="btn btn-primary btn-sm"
                                     style={{ cursor: 'pointer' }}
                                 >
-                                    {/* <i className="fa-solid fa-plus me-1" style={{ fontSize: '11px' }}></i> */}
-                                    {/* <span className="d-none d-sm-inline">Add Pandit</span>
+                                    <i className="fa-solid fa-plus me-1" style={{ fontSize: '11px' }}></i>
+                                    <span className="d-none d-sm-inline">Add Pandit</span>
                                 </button>
                             </Tooltip>
-                        </div>  */}
+                        </div>
 
                     </div>
                     <div>
@@ -274,28 +276,28 @@ const PanditMasterList = () => {
                                         <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                                             Mobile No
                                         </th>
-                                        {/* <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
+                                        <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                                             Pandit Type
-                                        </th> */}
+                                        </th>
                                         <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                                             Experience
                                         </th>
-                                        {/* <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
+                                        <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                                             Languages
-                                        </th> */}
+                                        </th>
                                         <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                                             Password
                                         </th>
-                                        {/* <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
+                                        <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                                             Status
-                                        </th> */}
+                                        </th>
                                         <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                                             Registration  Date
                                         </th>
 
-                                        {/* <th className="text-center actionSticky" style={{ whiteSpace: 'nowrap' }}>
+                                        <th className="text-center actionSticky" style={{ whiteSpace: 'nowrap' }}>
                                             Action
-                                        </th> */}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -337,13 +339,21 @@ const PanditMasterList = () => {
                                                     <>{item.mobileNo}</>
                                                 )}
                                             </td>
-                                            {/* <td className="text-center py-2">
-                                                {item?.dailyPandit? (
-                                                    <Tooltip title={PanditTypeLookupList?.filter((v) => v?.value === item?.panditTypeID)}>{`${PanditTypeLookupList?.filter((v) => v?.value === item?.panditTypeID)}`}</Tooltip>
-                                                ) : (
-                                                    <>{PanditTypeLookupList?.filter((v) => v?.value === item?.panditTypeID) || '-'}</>
-                                                )}
-                                            </td> */}
+                                            <td className="text-center py-2">
+                                                {(() => {
+                                                    const typeObj = PanditTypeLookupList.find(
+                                                        v => v.value === item?.panditTypeID
+                                                    );
+
+                                                    if (!typeObj) return "-";
+
+                                                    return (
+                                                        <Tooltip title={typeObj.label}>
+                                                            <span>{typeObj.label}</span>
+                                                        </Tooltip>
+                                                    );
+                                                })()}
+                                            </td>
                                             <td className="text-center py-2">
                                                 {item.experience?.length > 30 ? (
                                                     <Tooltip title={item.experience}>{`${item.experience?.substring(0, 30)}...`}</Tooltip>
@@ -351,23 +361,24 @@ const PanditMasterList = () => {
                                                     <>{item.experience || '-'}</>
                                                 )}
                                             </td>
-                                            {/* <td className="text-center py-2">
-                                                {item.languages?.length > 30 ? (
-                                                    <Tooltip title={item.languages}>{`${item.languages?.substring(0, 30)}...`}</Tooltip>
+                                            <td className="text-center py-2">
+                                                {item.languageName?.length > 30 ? (
+                                                    <Tooltip title={item.languageName}>{`${item.languageName?.substring(0, 30)}...`}</Tooltip>
                                                 ) : (
-                                                    <>{item.languages || '-'}</>
+                                                    <>{item.languageName || '-'}</>
                                                 )}
-                                            </td> */}
+                                            </td>
                                             <td className="text-center py-2">
                                                 {(() => {
                                                     const pwd = item.password;
-                                                    
+
 
                                                     if (!pwd) return "-";
 
+                                                    const isVisible = !!visibleMap[idx];
                                                     const isLong = pwd.length > 30;
                                                     const masked = "•".repeat(Math.min(pwd.length, 12));
-                                                    const displayText = visible ? pwd : masked;
+                                                    const displayText = isVisible ? pwd : masked;
 
                                                     return (
                                                         <div className="flex items-center justify-center gap-2">
@@ -381,9 +392,14 @@ const PanditMasterList = () => {
 
                                                             <span
                                                                 className="cursor-pointer text-gray-600 hover:text-black"
-                                                                onClick={() => setVisible(!visible)}
+                                                                onClick={() =>
+                                                                    setVisibleMap(prev => ({
+                                                                        ...prev,
+                                                                        [idx]: !prev[idx],
+                                                                    }))
+                                                                }
                                                             >
-                                                                {visible ? <VisibilityOff /> : <Visibility />}
+                                                                {isVisible ? <VisibilityOff /> : <Visibility />}
                                                             </span>
                                                         </div>
                                                     );
@@ -400,12 +416,12 @@ const PanditMasterList = () => {
                                                     )}
                                                 
                                             </td> */}
-                                            {/* <td className="text-center text-nowrap" onClick={() => handleStatusChange(item)}>
+                                            <td className="text-center text-nowrap" onClick={() => handleStatusChange(item)}>
                                                 <Tooltip title={item.status === true ? 'Enable' : 'Disable'}>
                                                     {item.status === true ? 'Enable' : 'Disable'}
                                                     <Android12Switch style={{ padding: '8px' }} onClick={() => handleStatusChange(item)} checked={item.status === true} />
                                                 </Tooltip>
-                                            </td> */}
+                                            </td>
                                             <td className="text-center py-2">
                                                 {item.createdOnDate?.length > 30 ? (
                                                     <Tooltip title={item.createdOnDate}>{`${item.createdOnDate?.substring(0, 30)}...`}</Tooltip>
@@ -414,7 +430,7 @@ const PanditMasterList = () => {
                                                 )}
                                             </td>
 
-                                            {/* <td className="text-center" style={{ zIndex: 4 }}>
+                                            <td className="text-center actionSticky" style={{ zIndex: 4 }}>
                                                 <div className="d-flex justify-content-center gap-2">
                                                     <Tooltip title="Update Pandit">
                                                         <Button className="btn-sm" onClick={() => handleUpdate(item)}>
@@ -422,7 +438,7 @@ const PanditMasterList = () => {
                                                         </Button>
                                                     </Tooltip>
                                                 </div>
-                                            </td> */}
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -437,13 +453,13 @@ const PanditMasterList = () => {
 
             </div>
             {showAddUpdateModal &&
-                <PanditMasterAddUpdateModal show={showAddUpdateModal} onHide={(() => 
-                    setShowAddUpdateModal(false))} 
-                    modelRequestData={modelRequestData} 
+                <PanditMasterAddUpdateModal show={showAddUpdateModal} onHide={(() =>
+                    setShowAddUpdateModal(false))}
+                    modelRequestData={modelRequestData}
                     setModelRequestData={setModelRequestData}
                     setIsAddUpdateDone={setIsAddUpdateDone}
                     setShowSuccessModal={setShowSuccessModal}
-                    />
+                />
             }
             <ImagePreviewModal
                 show={showModal}
@@ -452,7 +468,7 @@ const PanditMasterList = () => {
                 title={modalTitle} // pass deity name as title
             />
 
-            
+
 
             <StatusChangeModal
                 open={showStatusChangeModal}

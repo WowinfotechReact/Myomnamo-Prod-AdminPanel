@@ -81,6 +81,8 @@ const routeTitles = {
   // newsletter
   '/webinar-users': 'Webinar Users List - Myomnamo',
 
+  '/DarshanBookingListView': 'Darshan Booking - Myomnamo',
+
   // newsletter
   '/coupon-code': 'Coupon Code List - Myomnamo',
 

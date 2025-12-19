@@ -78,6 +78,7 @@ const FAQList = Loadable(lazy(() => import('../views/Admin/FAQList/FAQList')));
 const FAQListLanguageWise = Loadable(lazy(() => import('../views/Admin/FAQList/FAQLanguageWise')));
 const NewsLetterList = Loadable(lazy(() => import('../views/Admin/NewsLetterList/NewsLetterList')));
 const WebinarUsersList = Loadable(lazy(() => import('../views/Admin/WebinarUsersList/WebinarUsersList')));
+const DarshanBookingListView = Loadable(lazy(() => import('../views/Admin/DarshanBookingListView/DarshanBookingListView')));
 const CouponCodeList = Loadable(lazy(() => import('../views/Admin/CouponCodeList/CouponCodeList')));
 const ImageList = Loadable(lazy(() => import('../views/Admin/ImageMaster/ImageList')));
 const ImageCatList = Loadable(lazy(() => import('../views/Admin/ImageMaster/ImageCategoryList')));
@@ -628,6 +629,14 @@ const MainRoutes = {
       element: (
         <Suspense fallback={<Loader />}>
           <NewsLetterList />
+        </Suspense>
+      )
+    },
+    {
+      path: '/DarshanBookingListView',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <DarshanBookingListView />
         </Suspense>
       )
     },

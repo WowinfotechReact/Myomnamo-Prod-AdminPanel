@@ -252,9 +252,9 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
         darshanBookingFormObj.darshanDetails === '' ||
         darshanBookingFormObj.darshanDetails === undefined ||
         darshanBookingFormObj.darshanDetails === null ||
-        darshanBookingFormObj.darshanShortdetails === '' ||
-        darshanBookingFormObj.darshanShortdetails === undefined ||
-        darshanBookingFormObj.darshanShortdetails === null
+        darshanBookingFormObj.darshanBookingShortDescription === '' ||
+        darshanBookingFormObj.darshanBookingShortDescription === undefined ||
+        darshanBookingFormObj.darshanBookingShortDescription === null
       ) {
         setError(true);
         isValid = true;
@@ -273,9 +273,9 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
         darshanBookingFormObj.darshanDetails === '' ||
         darshanBookingFormObj.darshanDetails === undefined ||
         darshanBookingFormObj.darshanDetails === null ||
-        darshanBookingFormObj.darshanShortdetails === '' ||
-        darshanBookingFormObj.darshanShortdetails === undefined ||
-        darshanBookingFormObj.darshanShortdetails === null
+        darshanBookingFormObj.darshanBookingShortDescription === '' ||
+        darshanBookingFormObj.darshanBookingShortDescription === undefined ||
+        darshanBookingFormObj.darshanBookingShortDescription === null
       ) {
         setError(true);
         isValid = true;
@@ -302,7 +302,7 @@ const AddUpdateDarshanbookModal = ({ show, onHide, modelRequestData, setIsAddUpd
       extraMetaTag: darshanBookingFormObj.darshanBookingExtraMetaTag,
       metaTitle: darshanBookingFormObj.darshanBookingMetaTitle,
       templeDarshanDetails: stripHtml(darshanBookingFormObj.darshanDetails),
-      shortDetails: stripHtml(darshanBookingFormObj.darshanShortdetails),
+      shortDetails: stripHtml(darshanBookingFormObj.darshanBookingShortDescription),
       shortDescription: stripHtml(darshanBookingFormObj.darshanBookingShortDescription),
       keyFeature: stripHtml(darshanBookingFormObj.darshanBookingKeyFeature),
       timeSlotID: darshanBookingFormObj.timeSlotID,

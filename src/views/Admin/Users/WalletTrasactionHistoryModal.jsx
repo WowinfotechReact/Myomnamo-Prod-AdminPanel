@@ -36,7 +36,7 @@ const WalletTransactionModal = ({ show, onHide, dialogData, moduleName }) => {
             centered
         >
             <Modal.Header>
-                <h4 className="text-center">{moduleName === "Referenced History" ? "Refference History" : "Wallet Transaction History"}</h4>
+                <h4 className="text-center">{moduleName === "Referenced History" ? "Reference History" : "Wallet Transaction History"}</h4>
             </Modal.Header>
 
             <Modal.Body style={{ maxHeight: "60vh", overflow: "auto" }}>

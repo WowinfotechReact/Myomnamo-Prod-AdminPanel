@@ -123,7 +123,7 @@ export default {
           children: [
             { id: 'temple', title: 'Temples', type: 'item', icon: icons.TempleHindu, url: '/temples', allowedRoles: [1] },
             { id: 'estore-prasad', title: 'Prasad Master', type: 'item', icon: icons.LocalMallIcon, url: '/prasad-master', allowedRoles: [1] },
-            { id: 'darshan', title: 'Darshan Bookings', type: 'item', icon: icons.EventIcon, url: '/darshan-booking', allowedRoles: [1] },
+            { id: 'darshan', title: 'Darshan master ', type: 'item', icon: icons.EventIcon, url: '/darshan-booking', allowedRoles: [1] },
             // { id: 'templePuja', title: 'Puja At Temple', type: 'item', icon: icons.AccountBalanceIcon, url: '/', allowedRoles: [1] }
           ]
         },
@@ -238,6 +238,7 @@ export default {
                 { id: 'pujaKitOrders', title: 'Puja Kit Orders', type: 'item', icon: icons.InventoryIcon, url: '/puja-kit-bookings', allowedRoles: [1] }
               ]
             },
+            { id: 'DarshanBookingListView', title: 'Darshan Booking', type: 'item', icon: icons.TempleHindu, url: '/DarshanBookingListView', allowedRoles: [1] },
             { id: 'webinar-users', title: 'Webinar Bookings', type: 'item', icon: icons.EventIcon, url: '/webinar-users', allowedRoles: [1] }
           ]
         },
@@ -250,7 +251,7 @@ export default {
         { id: 'spiritual-thought-master', title: 'Spiritual Thought', type: 'item', icon: icons.FavoriteIcon, url: '/thought-master', allowedRoles: [1] },
         { id: 'faq', title: 'FAQ', type: 'item', icon: icons.QuestionAnswerIcon, url: '/faq', allowedRoles: [1] },
         { id: 'image', title: 'Image Master', type: 'item', icon: icons.ImageIcon, url: '/image', allowedRoles: [1] },
-        // { id: 'festival-idol-services', title: 'Festival Idol Services', type: 'item', icon: icons.CampaignIcon, url: '/festival-idol-services', allowedRoles: [1] },
+        { id: 'festival-idol-services', title: 'Festival Idol Services', type: 'item', icon: icons.CampaignIcon, url: '/festival-idol-services', allowedRoles: [1] },
 
         {
           id: 'notification',
@@ -274,7 +275,7 @@ export default {
           children: [
             { id: 'stall-business', title: 'Stall Business', type: 'item', icon: icons.StorefrontIcon, url: '/stall-business', allowedRoles: [1] },
             { id: 'mandal-business', title: 'Mandal Business', type: 'item', icon: icons.StoreIcon, url: '/mandal-business', allowedRoles: [1] },
-            // { id: 'festival-ido-booking-list', title: 'Festival Idol Booking List', type: 'item', icon: icons.BookmarkIcon, url: '/festival-idol-booking-list', allowedRoles: [1] }
+            { id: 'festival-ido-booking-list', title: 'Festival Idol Booking List', type: 'item', icon: icons.BookmarkIcon, url: '/festival-idol-booking-list', allowedRoles: [1] }
           ]
         },
 
