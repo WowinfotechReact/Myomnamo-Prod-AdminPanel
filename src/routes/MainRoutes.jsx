@@ -78,7 +78,6 @@ const FAQList = Loadable(lazy(() => import('../views/Admin/FAQList/FAQList')));
 const FAQListLanguageWise = Loadable(lazy(() => import('../views/Admin/FAQList/FAQLanguageWise')));
 const NewsLetterList = Loadable(lazy(() => import('../views/Admin/NewsLetterList/NewsLetterList')));
 const WebinarUsersList = Loadable(lazy(() => import('../views/Admin/WebinarUsersList/WebinarUsersList')));
-const DarshanBookingListView = Loadable(lazy(() => import('../views/Admin/DarshanBookingListView/DarshanBookingListView')));
 const CouponCodeList = Loadable(lazy(() => import('../views/Admin/CouponCodeList/CouponCodeList')));
 const ImageList = Loadable(lazy(() => import('../views/Admin/ImageMaster/ImageList')));
 const ImageCatList = Loadable(lazy(() => import('../views/Admin/ImageMaster/ImageCategoryList')));
@@ -86,6 +85,7 @@ const ProductImageList = Loadable(lazy(() => import('../views/Admin/Estore/Produ
 const BannerLanguageWiseList = Loadable(lazy(() => import('../views/Admin/BannerList/BannerLanguageWiseList')));
 const UsersList = Loadable(lazy(() => import('../views/Admin/Users/UsersList')));
 const PujaKitSubscriptionOrderList = Loadable(lazy(() => import('../views/Admin/PujaBooking/PujaKitSubscriptionOrder/PujaKitSubscriptionOrderList')));
+const FestivalIdolServicesPage = Loadable(lazy(() => import('../views/Admin/FestivalIdol/FestivalIdolServicesPage')));
 
 const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
@@ -633,14 +633,6 @@ const MainRoutes = {
       )
     },
     {
-      path: '/DarshanBookingListView',
-      element: (
-        <Suspense fallback={<Loader />}>
-          <DarshanBookingListView />
-        </Suspense>
-      )
-    },
-    {
       path: '/webinar-users',
       element: (
         <Suspense fallback={<Loader />}>
@@ -805,6 +797,14 @@ const MainRoutes = {
       element: (
         <Suspense fallback={<Loader />}>
           <LanguageWisePackageList />
+        </Suspense>
+      )
+    },
+    {
+      path: '/festival-idol-services',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <FestivalIdolServicesPage />
         </Suspense>
       )
     },

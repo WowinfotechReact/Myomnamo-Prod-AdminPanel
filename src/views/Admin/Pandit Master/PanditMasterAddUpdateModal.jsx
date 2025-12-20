@@ -14,7 +14,6 @@ import { UploadImage } from 'services/Upload Cloud-flare Image/UploadCloudflareI
 import { AddUpdatePandit, GetPanditModel, PanditLookupList } from 'services/Admin/Pandit Master/PanditMasterApi'
 import { GetAppLanguageLookupList } from 'services/Admin/AppLangauge/AppLanguageApi';
 import { PanditTypeLookupList } from 'Middleware/Enum';
-import { googleMapKey } from 'component/Base-Url/BaseUrl';
 
 
 const PanditMasterAddUpdateModal = ({ show, onHide, modelRequestData,setModelRequestData, setIsAddUpdateDone,setShowSuccessModal }) => {
@@ -22,7 +21,6 @@ const PanditMasterAddUpdateModal = ({ show, onHide, modelRequestData,setModelReq
     const debounceTimer = useRef(null);
     const [modelAction, setModelAction] = useState(false);
     const [error, setError] = useState(false);
-    const [ errorPsw, seterrorPsw ] = useState(false);
     const [customError, setCustomError] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
  
@@ -51,7 +49,7 @@ const PanditMasterAddUpdateModal = ({ show, onHide, modelRequestData,setModelReq
         addedFrom: null,
         isWilingToTravel: null,
         specialisedArea: null,
-        appLangID: []   
+        language: []   
     }) 
     
     //Upload image state
@@ -146,18 +144,18 @@ const PanditMasterAddUpdateModal = ({ show, onHide, modelRequestData,setModelReq
                     {
                         params: {
                             address: state?.address,
-                            key: googleMapKey,
+                            key: apiKey,
                         },
                     }
                 );
-              
+                alert(params)
                 if (response.data.status === "OK") {
                     const location = response.data.results[0].geometry.location;
                     // setCoords(location); // { lat: ..., lng: ... }
                     setState((prev) => ({
                         ...prev, latitude: location?.lat, longitude: location?.lng
                     }))
-                    
+                    alert("Location", location)
                 } else {
                     alert("Address not found!");
                 }
@@ -168,7 +166,7 @@ const PanditMasterAddUpdateModal = ({ show, onHide, modelRequestData,setModelReq
 
     const handleCheckboxChange = (value) => {
         setState((prev) => {
-            const currentLanguages = prev.appLangID || [];
+            const currentLanguages = prev.language || [];
 
             let updatedLanguages;
 
@@ -183,7 +181,7 @@ const PanditMasterAddUpdateModal = ({ show, onHide, modelRequestData,setModelReq
 
             return {
                 ...prev,
-                appLangID: updatedLanguages
+                language: updatedLanguages
             };
         });
     };
@@ -336,15 +334,8 @@ const PanditMasterAddUpdateModal = ({ show, onHide, modelRequestData,setModelReq
             isValid = false;
         }
 
-        if (!state.password  || state.password.trim() === '') {
+        if (!state.password || state.password.trim() === '') {
             isValid = false;
-        }
-        if(state.password.length !== 8)
-        {
-            isValid = false;
-            seterrorPsw(true)
-        }else { 
-            seterrorPsw(false) 
         }
 
         if (!state.email || state.email.trim() === '' || !emailRegex.test(state.email)) {
@@ -661,27 +652,13 @@ const PanditMasterAddUpdateModal = ({ show, onHide, modelRequestData,setModelReq
                                 <input
                                     type="text"
                                     value={state.password}
-                                    maxLength={8}
+                                    maxLength={10}
                                     className="form-control"
                                     placeholder="Enter Password"
-                                    onChange={(e) =>{
-                                        const value = e.target.value
-                                        setState({ ...state, password: e.target.value })
-                                        if(value.length !== 8)
-                                        {
-                                            seterrorPsw(true)
-
-                                        }else
-                                        {
-                                            seterrorPsw(false)
-                                        }
-                                         }}
+                                    onChange={(e) => setState({ ...state, password: e.target.value })}
                                 />
                                 {error && (!state.password || state.password.trim() === '') && (
                                     <div className="text-danger">{ERROR_MESSAGES}</div>
-                                )}
-                                {errorPsw && state.password.length !== 8 && (
-                                    <div className="text-danger">Password must be 8 characters</div>
                                 )}
                             </div>
 
@@ -804,7 +781,7 @@ const PanditMasterAddUpdateModal = ({ show, onHide, modelRequestData,setModelReq
                                                     type="checkbox"
                                                     value={lang.value}
                                                     id={`lang-${lang.value}`}
-                                                    checked={(state.appLangID || []).includes(lang.value)}
+                                                    checked={(state.language || []).includes(lang.value)}
                                                     onChange={() => handleCheckboxChange(lang.value)}
                                                 />
                                                 <label className="form-check-label" htmlFor={`lang-${lang.value}`}>
@@ -813,7 +790,7 @@ const PanditMasterAddUpdateModal = ({ show, onHide, modelRequestData,setModelReq
                                             </div>
                                         </div>
                                     ))}
-                                    {/* {error && (state?.appLangID?.length === 0) ? <span className='text-danger'>{ERROR_MESSAGES}</span> : ''} */}
+                                    {/* {error && (state?.language?.length === 0) ? <span className='text-danger'>{ERROR_MESSAGES}</span> : ''} */}
                                 </div>
 
                             </div>
@@ -874,9 +851,7 @@ const PanditMasterAddUpdateModal = ({ show, onHide, modelRequestData,setModelReq
                                         {filePreview ? (
                                             <>
                                                 {/* Remove Button */}
-                                                <tooltip title="Remove Image">
                                                 <button
-                                                
                                                     onClick={handleRemoveImage}
                                                     style={{
                                                         padding: "3px 10px",
@@ -892,17 +867,14 @@ const PanditMasterAddUpdateModal = ({ show, onHide, modelRequestData,setModelReq
                                                         color: "black",
                                                     }}
                                                 >
-                                                    
                                                     <i className="fas fa-times"></i>
                                                 </button>
-                                                  </tooltip>      
 
                                                 {/* Preview Image */}
                                                 <img
                                                     style={{ objectFit: "contain" }}
                                                     src={filePreview}
                                                     alt="Preview"
-                                                    
                                                     className="position-absolute top-0 start-0 w-100 h-100 border border-secondary rounded"
                                                 />
                                             </>

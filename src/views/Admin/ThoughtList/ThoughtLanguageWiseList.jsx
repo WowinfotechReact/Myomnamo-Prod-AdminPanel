@@ -17,6 +17,7 @@ import { GetProductCatList } from 'services/Admin/EStoreAPI/ProductCatAPI';
 import { ChangeStatus } from 'services/Admin/DarshanBookingAPI/DarshanBookingAPI';
 import AddUpdateThoughtModal from './AddUpdateThoughtModal';
 import { GetThoughtList, ThoughtChangeStatusByLang } from 'services/Admin/ThoughtMasterAPI/ThoughtMasterAPI';
+import ErrorModal from 'component/ErrorModal';
 
 const ThoughtLanguageWiseList = () => {
   const location = useLocation();
@@ -100,6 +101,7 @@ const ThoughtLanguageWiseList = () => {
   };
 
   const confirmStatusChange = async (item) => {
+    debugger
     try {
       const { thoughtKeyID, appLangID } = item; // Destructure to access only what's needed
       const response = await ThoughtChangeStatusByLang(thoughtKeyID, appLangID);
@@ -322,8 +324,8 @@ const ThoughtLanguageWiseList = () => {
         onClose={() => setShowStatusChangeModal(false)}
         onConfirm={() => confirmStatusChange(stateChangeStatus)} // Pass the required arguments
       />
-      <SuccessPopupModal show={showSuccessModal} onHide={() => HandleCloseAll()} successMassage={ChangeStatusMassage} />
-      <ErrorModal show={showErrorModal} onHide={() => setShowErrorModal(false)} Massage={modelAction} /> */}
+      <SuccessPopupModal show={showSuccessModal} onHide={() => HandleCloseAll()} successMassage={ChangeStatusMassage} /> */}
+      <ErrorModal show={showErrorModal} onHide={() => setShowErrorModal(false)} Massage={modelAction} /> 
     </>
   );
 };

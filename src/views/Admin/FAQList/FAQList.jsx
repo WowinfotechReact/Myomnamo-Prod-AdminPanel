@@ -14,6 +14,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { ChangeStatus, GetProductCatList } from 'services/Admin/EStoreAPI/ProductCatAPI';
 import AddUpdateFAQModal from './AddUpdateFAQ';
 import { FAQChangeStatus, GetFAQList } from 'services/Admin/FAQAPI/FAQAPI';
+import StatusChangeModal from 'component/StatusChangeModal';
 // import AddUpdatePujaModal from './AddUpdatePujaModal';
 
 const FAQList = () => {
@@ -48,6 +49,9 @@ const FAQList = () => {
   const [toDate, setToDate] = useState(null);
   const [fromDate, setFromDate] = useState(null);
   const [selectedBookings, setSelectedBookings] = useState([]);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showStatusChangeModal, setShowStatusChangeModal] = useState(false);
+  const [modelAction, setModelAction] = useState(null);
 
   // ✅ Check if all rows are selected
   const selectableRows = faqList.filter((item) => item.panditName === null);
@@ -127,6 +131,7 @@ const FAQList = () => {
   };
 
   const ChangeStatusData = async (value) => {
+    setShowStatusChangeModal(false)
     setLoader(true);
     try {
       const response = await FAQChangeStatus(value?.faqKeyID, value?.appLangID);
@@ -236,39 +241,7 @@ const FAQList = () => {
     setShowSuccessModal(false);
     setIsAddUpdateDone(true);
   };
-  //   const ViewOrderDetails = (value) => {
-  //     setModelRequestData((prev) => ({
-  //       ...prev,
-  //       Action: null,
-  //       vendorID: null,
-  //       moduleName: 'PujaList',
-  //       pujaBookingKeyID: value.pujaBookingKeyID
-  //     }));
-  //     setShowBookingOrderDetailsModal(true);
-  //   };
-  //   console.log('data', modelRequestData);
 
-  //   const handleAssignPandit = (value) => {
-  //     setModelRequestData((prev) => ({
-  //       ...prev,
-  //       selectedPujas: [value.pujaBookingID]
-  //     }));
-  //     setShowAssignPanditModal(true);
-  //   };
-
-  //   console.log('modelRequestData.selectedPujas', modelRequestData.selectedPujas);
-
-  //   const handleMultiAssignPandit = () => {
-  //     if (selectedBookings.length === 0) {
-  //       alert('Please select atleast one puja');
-  //       return;
-  //     }
-  //     setModelRequestData((prev) => ({
-  //       ...prev,
-  //       selectedPujas: selectedBookings
-  //     }));
-  //     setShowAssignPanditModal(true);
-  //   };
 
   const AddLangBtnClicked = (value) => {
     navigate('/faq-language-wise', {
@@ -278,6 +251,10 @@ const FAQList = () => {
     });
   };
 
+  const handleStatusChange = (item) => {
+    setModelRequestData((prev) => ({ ...prev, changeStatusData: item })); // You can set only relevant data if needed
+    setShowStatusChangeModal(true);
+  };
   return (
     <>
       <div className="card">
@@ -415,7 +392,7 @@ const FAQList = () => {
                         <td style={{ whiteSpace: 'nowrap' }}>{item?.offlinePujaPrice === null ? '-' : item?.offlinePujaPrice}</td>
                       )} */}
 
-                      <td className="text-center text-nowrap" onClick={() => ChangeStatusData(item)}>
+                      <td className="text-center text-nowrap" onClick={() => handleStatusChange(item)}>
                         <Tooltip title={item.status === true ? 'Enable' : 'Disable'}>
                           {item.status === true ? 'Enable' : 'Disable'}
                           <Android12Switch style={{ padding: '8px' }} checked={item.status === true} />
@@ -455,7 +432,11 @@ const FAQList = () => {
         setIsAddUpdateDone={setIsAddUpdateDone}
       />
       <SuccessPopupModal show={showSuccessModal} onHide={() => onSuccessClose()} successMassage={ChangeStatusMassage} />
-
+      <StatusChangeModal
+        open={showStatusChangeModal}
+        onClose={() => setShowStatusChangeModal(false)}
+        onConfirm={() => ChangeStatusData(modelRequestData?.changeStatusData)} // Pass the required arguments
+      />
       {/* <SuccessPopupModal
         show={showAssignPanditSuccessModal}
         onHide={() => setShowAssignPanditSuccessModal(false)}

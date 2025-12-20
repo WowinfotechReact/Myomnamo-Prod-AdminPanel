@@ -169,7 +169,8 @@ const TimeSlotAddUpdateModal = ({ show, onHide, modelRequestData, setIsAddUpdate
                                         }
 
                                         // Remove unwanted characters (allow letters, numbers, spaces)
-                                        const cleanedValue = inputValue.replace(/[^a-zA-Z0-9\s]/g, '');
+                                        // const cleanedValue = inputValue.replace(/[^a-zA-Z0-9\s]/g, '');
+                                        const cleanedValue = inputValue;
 
                                         // Trim only leading spaces
                                         const trimmedValue = cleanedValue.trimStart();

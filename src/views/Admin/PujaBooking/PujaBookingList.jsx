@@ -91,18 +91,18 @@ const PujaBookingList = () => {
       setModelRequestData((prev) => ({ ...prev, pujaServiceID: pujaServiceID?.Puja, pujaSubServiceID: pujaSubServiceID?.HomamPuja }));
     } else if (location?.pathname === '/subscription-puja-booking') {
       setPageHeading('Subscription Puja Booking List');
-      GetPujaBookingListData(1, null, pujaServiceID?.Puja, pujaSubServiceID?.SubscriptionRemedyPuja);
+      GetPujaBookingListData(1, null, pujaServiceID?.SankalpPuja, pujaSubServiceID?.SubscriptionRemedyPuja);
       setModelRequestData((prev) => ({
         ...prev,
-        pujaServiceID: pujaServiceID?.Puja,
+        pujaServiceID: pujaServiceID?.SankalpPuja,
         pujaSubServiceID: pujaSubServiceID?.SubscriptionRemedyPuja
       }));
     } else if (location?.pathname === '/subscription-homam-booking') {
       setPageHeading('Subscription Homam Booking List');
-      GetPujaBookingListData(1, null, pujaServiceID?.Puja, pujaSubServiceID?.SubscriptionHomamPuja);
+      GetPujaBookingListData(1, null, pujaServiceID?.SankalpPuja, pujaSubServiceID?.SubscriptionHomamPuja);
       setModelRequestData((prev) => ({
         ...prev,
-        pujaServiceID: pujaServiceID?.Puja,
+        pujaServiceID: pujaServiceID?.SankalpPuja,
         pujaSubServiceID: pujaSubServiceID?.SubscriptionHomamPuja
       }));
     } else if (location?.pathname === '/puja-at-temple-booking') {
@@ -393,6 +393,8 @@ const PujaBookingList = () => {
             </div>
 
             {/* Action Buttons */}
+            {(location?.pathname === '/pandit-puja-booking' || location?.pathname === '/daily-pandit-puja-booking') && (
+
             <div className="d-flex gap-2 align-items-center">
               <Tooltip title="Assign Pandit">
                 <button onClick={handleMultiAssignPandit} className="btn btn-primary btn-sm" style={{ cursor: 'pointer' }}>
@@ -401,6 +403,7 @@ const PujaBookingList = () => {
                 </button>
               </Tooltip>
             </div>
+            )}
           </div>
           <div>
             <div className="table-responsive" style={{ maxHeight: '65vh' }}>
@@ -417,9 +420,12 @@ const PujaBookingList = () => {
                     className="text-nowrap"
                   >
                     {/* ✅ Master checkbox */}
+                    {(location?.pathname === '/pandit-puja-booking' || location?.pathname === '/daily-pandit-puja-booking') && (
+
                     <th className="text-center">
                       <input type="checkbox" checked={allSelected} onChange={handleSelectAll} />
                     </th>
+                    )}
                     <th className="text-center">Sr No.</th>
                     <th className="text-center">Booking ID</th>
                     <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
@@ -464,6 +470,8 @@ const PujaBookingList = () => {
                   {pujaList?.map((item, idx) => (
                     <tr className="text-nowrap text-center" key={item.pujaBookingID}>
                       {/* ✅ Row checkbox */}
+                      {(location?.pathname === '/pandit-puja-booking' || location?.pathname === '/daily-pandit-puja-booking') && (
+
                       <td className="text-center">
                         <input
                           type="checkbox"
@@ -472,6 +480,7 @@ const PujaBookingList = () => {
                           disabled={item.panditName !== null}
                         />
                       </td>
+                      )}
 
                       <td style={{ whiteSpace: 'nowrap' }} className="text-center">
                         {(currentPage - 1) * pageSize + idx + 1}

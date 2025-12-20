@@ -13,6 +13,9 @@ import { ConfigContext } from 'context/ConfigContext';
 import { debounce } from 'Middleware/Utils';
 import { FAQChangeStatus, GetFAQList } from 'services/Admin/FAQAPI/FAQAPI';
 import AddUpdateFAQModal from './AddUpdateFAQ';
+import StatusChangeModal from 'component/StatusChangeModal';
+import SuccessPopupModal from 'component/SuccessPopupModal';
+import { ChangeStatusMassage } from 'component/GlobalMassage';
 
 const FAQLanguageWiseList = () => {
   const location = useLocation();
@@ -176,7 +179,7 @@ const FAQLanguageWiseList = () => {
     }));
     setShowAddUpdateModal(true);
   };
-  console.log("location?.state?.data?.quetion=>>", truncateText(location.state.data.question, 3))
+
   return (
     <>
       <div className="card">
@@ -272,7 +275,7 @@ const FAQLanguageWiseList = () => {
                       {/* <td style={{ whiteSpace: 'nowrap' }}>{item.pujaServiceName === null ? '-' : item.pujaSubServiceName}</td> */}
                       {/* <td style={{ whiteSpace: 'nowrap' }}>{item.pujaSubServiceName === null ? '-' : item.pujaSubServiceName}</td> */}
 
-                      <td className="text-center text-nowrap" onClick={() => confirmStatusChange(item)}>
+                      <td className="text-center text-nowrap" onClick={() => handleStatusChange(item)}>
                         <Tooltip title={item.status === true ? 'Enable' : 'Disable'}>
                           {item.status === true ? 'Enable' : 'Disable'}
                           <Android12Switch
@@ -311,6 +314,14 @@ const FAQLanguageWiseList = () => {
         modelRequestData={modelRequestData}
         setIsAddUpdateDone={setIsAddUpdateDone}
       />
+      <StatusChangeModal
+        open={showStatusChangeModal}
+        onClose={() => setShowStatusChangeModal(false)}
+        onConfirm={() => confirmStatusChange(stateChangeStatus)} // Pass the required arguments
+      />
+
+       <SuccessPopupModal show={showSuccessModal} onHide={() => HandleCloseAll()} successMassage={ChangeStatusMassage} />
+
       {/* <ImagePreviewModal
         show={showModal}
         onHide={() => setShowModal(false)}

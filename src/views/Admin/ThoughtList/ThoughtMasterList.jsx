@@ -14,6 +14,8 @@ import { useLocation, useNavigate } from 'react-router';
 import { ChangeStatus, GetProductCatList } from 'services/Admin/EStoreAPI/ProductCatAPI';
 import { GetThoughtList, ThoughtChangeStatusByLang } from 'services/Admin/ThoughtMasterAPI/ThoughtMasterAPI';
 import AddUpdateThoughtModal from './AddUpdateThoughtModal';
+import ErrorModal from 'component/ErrorModal';
+import StatusChangeModal from 'component/StatusChangeModal';
 // import ProductCategoryLanguageWiseList from './ProductCategoryLanguageWiseList';
 // import AddUpdatePujaModal from './AddUpdatePujaModal';
 
@@ -49,6 +51,9 @@ const ThoughtMasterList = () => {
   const [toDate, setToDate] = useState(null);
   const [fromDate, setFromDate] = useState(null);
   const [selectedBookings, setSelectedBookings] = useState([]);
+const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showStatusChangeModal, setShowStatusChangeModal] = useState(false);
+  const [modelAction, setModelAction] = useState(null);
 
   // ✅ Check if all rows are selected
   const selectableRows = thoughtList.filter((item) => item.panditName === null);
@@ -128,6 +133,7 @@ const ThoughtMasterList = () => {
   };
 
   const ChangeStatusData = async (value) => {
+    setShowStatusChangeModal(false);
     setLoader(true);
     try {
       const response = await ThoughtChangeStatusByLang(value?.thoughtKeyID);
@@ -141,10 +147,16 @@ const ThoughtMasterList = () => {
           }
         } else {
           console.error(response?.data?.errorMessage);
+           setShowErrorModal(true);
+        setShowStatusChangeModal(false);
+        setModelAction(response?.response?.data?.errorMessage);
           setLoader(false);
         }
       }
     } catch (error) {
+       setShowErrorModal(true);
+      setShowStatusChangeModal(false);
+      setModelAction('An error occurred while changing the employee status.');
       setLoader(false);
       console.log(error);
     }
@@ -279,6 +291,11 @@ const ThoughtMasterList = () => {
     });
   };
 
+   const handleStatusChange = (item) => {
+        setModelRequestData((prev) => ({ ...prev, changeStatusData: item })); // You can set only relevant data if needed
+        setShowStatusChangeModal(true);
+    };
+
   return (
     <>
       <div className="card">
@@ -377,7 +394,7 @@ const ThoughtMasterList = () => {
 
                       <td style={{ whiteSpace: 'nowrap' }}>{item.createdOnDate}</td>
 
-                      <td className="text-center text-nowrap" onClick={() => ChangeStatusData(item)}>
+                      <td className="text-center text-nowrap" onClick={() => handleStatusChange(item)}>
                         <Tooltip title={item.status === true ? 'Enable' : 'Disable'}>
                           {item.status === true ? 'Enable' : 'Disable'}
                           <Android12Switch style={{ padding: '8px' }} checked={item.status === true} />
@@ -417,12 +434,18 @@ const ThoughtMasterList = () => {
         setIsAddUpdateDone={setIsAddUpdateDone}
       />
       <SuccessPopupModal show={showSuccessModal} onHide={() => onSuccessClose()} successMassage={ChangeStatusMassage} />
-
+ <StatusChangeModal
+                open={showStatusChangeModal}
+                onClose={() => setShowStatusChangeModal(false)}
+                onConfirm={() => ChangeStatusData(modelRequestData?.changeStatusData)} // Pass the required arguments
+            />
       {/* <SuccessPopupModal
         show={showAssignPanditSuccessModal}
         onHide={() => setShowAssignPanditSuccessModal(false)}
         successMassage="Pandit assigned successfully "
       /> */}
+
+      <ErrorModal show={showErrorModal} onHide={() => setShowErrorModal(false)} Massage={modelAction} /> 
     </>
   );
 };
