@@ -88,9 +88,10 @@ const LanguageWiseTempleList = () => {
     }
 
     const ChangeStatusData = async (value) => {
+        
         setLoader(true);
         try {
-            const response = await ChangeTempleStatus(value?.templeID);
+            const response = await ChangeTempleStatus(value?.templeKeyID, value?.appLangID);
 
             if (response) {
                 if (response?.data?.statusCode === 200) {

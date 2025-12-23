@@ -44,8 +44,11 @@ export const GetTempleLookupList = async (AppLangID) => {
     const res = await getListWithAuthenticated(url);
     return res;
 };
-export const ChangeTempleStatus = async (id) => {
+export const ChangeTempleStatus = async (id,AppLangID) => {
     let url = `${BaseURL}/ChangeTempleStatus?TempleKeyID=${id}`;
+    if (AppLangID !== null && AppLangID !== undefined && AppLangID !== "") {
+        url += `&AppLangID=${AppLangID}`;
+    }
 
     const res = await getListWithAuthenticated(url);
     return res;

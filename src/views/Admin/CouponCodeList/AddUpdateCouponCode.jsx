@@ -85,7 +85,7 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
 
 
   const convertToDate = (dateString) => {
-    const [day, month, year] = dateString.split('/');
+    const [day, month, year] = dateString?.split('/');
     return new Date(year, month - 1, day); // JS months start from 0
   };
 
@@ -103,8 +103,8 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
             setFormObj((prev) => ({
               ...prev,
               couponCode: List.couponCode,
-              startDate: convertToDate(List.startDate),
-              endDate: convertToDate(List.endDate),
+              startDate: parseDDMMYYYY(List.startDate),
+              endDate: parseDDMMYYYY(List.endDate),
               countUsage: List.maxUsageCount,
               couponTypeID: List.couponTypeID,
               couponAmount: String(List.coupenAmount),
@@ -116,8 +116,13 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
               appLangID: List.appLangID,
               moduleID: List?.moduleID
             }));
-            GetSubServiceLookupListData(List.serviceID)
-            GetModuleTypeLookupListData(List.serviceID, List.subServiceID)
+            if(List?.serviceID!==null && List?.serviceID!==undefined){
+              GetSubServiceLookupListData(List?.serviceID)
+            } 
+            if(List?.serviceID!==null && List?.serviceID!==undefined && List?.subServiceID!==null && List?.subServiceID!==undefined){ 
+
+              GetModuleTypeLookupListData(List.serviceID, List.subServiceID)
+            }
           }
         } else {
           console.error(response?.data?.errorMessage);
@@ -548,7 +553,12 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
     }
   };
 
-  console.log('Error ==>>', dateError);
+const parseDDMMYYYY = (dateStr) => {
+  if (!dateStr) return null;
+  const [day, month, year] = dateStr.split('/');
+  return new Date(year, month - 1, day);
+};
+
 
   return (
     <>

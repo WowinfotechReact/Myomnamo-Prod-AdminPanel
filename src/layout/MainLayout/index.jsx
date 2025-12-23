@@ -81,8 +81,6 @@ const routeTitles = {
   // newsletter
   '/webinar-users': 'Webinar Users List - Myomnamo',
 
-  '/DarshanBookingListView': 'Darshan Booking - Myomnamo',
-
   // newsletter
   '/coupon-code': 'Coupon Code List - Myomnamo',
 
@@ -146,6 +144,7 @@ const routeTitles = {
   '/product-subscription-package': 'Product Subscription  - Myomnamo',
   '/product-subscription-language': 'Product Subscription Langauge - Myomnamo',
   '/puja-kit-bookings': 'Puja Kit Subscription Orders - Myomnamo',
+  '/festival-idol-services': 'Festival Idol Services - Myomnamo',
 };
 
 const MainLayout = () => {

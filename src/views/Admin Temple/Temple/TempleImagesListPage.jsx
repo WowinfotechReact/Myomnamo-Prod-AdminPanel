@@ -174,7 +174,7 @@ const TempleImagesListPage = () => {
                         </button>
 
                         {/* Title – centered */}
-                        <h5 className="m-0 text-center flex-grow-1">  {location?.state?.templeData?.templeName} Temple Images List</h5>
+                        <h5 className="m-0 text-center flex-grow-1">  {location?.state?.templeData?.templeName}  Images List</h5>
 
                         {/* Add Button – visible only on mobile (<576px) */}
                         <button

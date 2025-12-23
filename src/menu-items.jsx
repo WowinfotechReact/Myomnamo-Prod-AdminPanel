@@ -238,7 +238,6 @@ export default {
                 { id: 'pujaKitOrders', title: 'Puja Kit Orders', type: 'item', icon: icons.InventoryIcon, url: '/puja-kit-bookings', allowedRoles: [1] }
               ]
             },
-            { id: 'DarshanBookingListView', title: 'Darshan Booking', type: 'item', icon: icons.TempleHindu, url: '/DarshanBookingListView', allowedRoles: [1] },
             { id: 'webinar-users', title: 'Webinar Bookings', type: 'item', icon: icons.EventIcon, url: '/webinar-users', allowedRoles: [1] }
           ]
         },
