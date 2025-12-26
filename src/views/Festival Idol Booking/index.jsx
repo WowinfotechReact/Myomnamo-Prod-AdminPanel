@@ -11,10 +11,11 @@ import { ConfigContext } from 'context/ConfigContext'
 import { debounce } from 'Middleware/Utils'
 import { ChangeBlogStatus, GetBlogList } from 'services/Blog/BlogApi'
 import ViewStallDetails from './ViewMandalDetails'
+import { GetFestivalIdolBookingList } from 'services/Admin/FestivalIdolServices/FestivalIdolServicesApi'
 
 const FestivalIdlBookings = () => {
     const [modelAction, setModelAction] = useState();
-    const { setLoader } = useContext(ConfigContext);
+    const { setLoader,formatToIndianCurrency } = useContext(ConfigContext);
     const [showModal, setShowModal] = useState(false);
     const [stateChangeStatus, setStateChangeStatus] = useState('');
     const [selectedImage, setSelectedImage] = useState(null);
@@ -41,24 +42,24 @@ const FestivalIdlBookings = () => {
     const [openDetails, setOpenDetails] = useState(false)
 
 
-    // useEffect(() => {
-    //     GetWareHouseListData(1, null)
-    // }, [])
+    useEffect(() => {
+        GetFestivalIdolBookingListData(1, null)
+    }, [])
 
     useEffect(() => {
         if (isAddUpdateDone) {
             setSearchKeyword("")
-            GetWareHouseListData(currentPage, null)
+            GetFestivalIdolBookingListData(currentPage, null)
             setIsAddUpdateDone(false)
         }
 
     }, [isAddUpdateDone])
 
-    const GetWareHouseListData = async (pageNumber, searchKeywordValue) => {
+    const GetFestivalIdolBookingListData = async (pageNumber, searchKeywordValue) => {
         setLoader(true);
         try {
-            // const response = await GetWareHouseList({
-            const response = await GetBlogList({
+            
+            const response = await GetFestivalIdolBookingList({
                 pageSize: pageSize,
                 pageNo: pageNumber - 1,
                 sortingDirection: sortingType ? sortingType : null,
@@ -66,7 +67,6 @@ const FestivalIdlBookings = () => {
                 searchKeyword: searchKeywordValue,
                 fromDate: fromDate ? dayjs(fromDate).format('YYYY-MM-DD') : null,
                 toDate: toDate ? dayjs(toDate).format('YYYY-MM-DD') : null,
-
             });
 
             if (response) {
@@ -78,7 +78,7 @@ const FestivalIdlBookings = () => {
 
                         setTotalCount(totalCount);
                         setTotalPages(Math.ceil(totalCount / pageSize));
-                        // setShopList(List);
+                        setShopList(List);
                         setTotalRecords(List?.length);
                     }
                 } else {
@@ -118,7 +118,7 @@ const FestivalIdlBookings = () => {
             if (response && response.data.statusCode === 200) {
                 setShowStatusChangeModal(false);
                 setStateChangeStatus(null);
-                GetWareHouseListData(currentPage, null)
+                GetFestivalIdolBookingListData(currentPage, null)
                 // GetMasterStateListData(currentPage, null, toDate, fromDate);
                 setShowSuccessModal(true);
                 setModelAction('State status changed successfully.');
@@ -135,7 +135,7 @@ const FestivalIdlBookings = () => {
     };
 
     const fetchSearchResults = (searchValue) => {
-        GetWareHouseListData(1, searchValue);
+        GetFestivalIdolBookingListData(1, searchValue);
     };
     const debouncedSearch = useCallback(debounce(fetchSearchResults, 500), []);
 
@@ -149,7 +149,7 @@ const FestivalIdlBookings = () => {
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
-        GetWareHouseListData(pageNumber, null);
+        GetFestivalIdolBookingListData(pageNumber, null);
     };
 
 
@@ -257,43 +257,52 @@ const FestivalIdlBookings = () => {
                                             <td style={{ whiteSpace: 'nowrap' }} className="text-center">
                                                 {(currentPage - 1) * pageSize + idx + 1}
                                             </td>
+                                            <td style={{ whiteSpace: 'nowrap' }} className="text-center">
+                                                {item.bookingID}
+                                            </td>
 
                                             <td className="text-center">
-                                                {item.blogTitle?.length > 30 ? (
-                                                    <Tooltip title={item.blogTitle}>{`${item.blogTitle?.substring(0, 30)}...`}</Tooltip>
+                                                {item.customerName?.length > 30 ? (
+                                                    <Tooltip title={item.customerName}>{`${item.customerName?.substring(0, 30)}...`}</Tooltip>
                                                 ) : (
-                                                    <>{item.blogTitle}</>
+                                                    <>{item.customerName}</>
                                                 )}
                                             </td>
                                             <td style={{ whiteSpace: "nowrap", cursor: "pointer" }}>
-                                                {item.blogImage ? (
-                                                    <img
-                                                        src={item.blogImage}
-                                                        alt={item.blogTitle}
-                                                        style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "5px" }}
-                                                        onClick={() => handleImageClick(item.blogImage, item.blogTitle)}
-                                                    />
-                                                ) : (
-                                                    "No Image"
-                                                )}
+                                                {item?.mobileNo===null ?"-": item?.mobileNo}
                                             </td>
                                             <td style={{ whiteSpace: 'nowrap' }} >
-                                                mobile
+                                                {item.address}
                                             </td>
                                             <td style={{ whiteSpace: 'nowrap' }} >
-                                                {item.blogDate.split(" ")[0]}
+                                                {dayjs(item?.bookingDate).format('DD/MM/YYYY')}
                                             </td>
                                             <td style={{ whiteSpace: 'nowrap' }} >
-                                                {item.autherName}
+                                                {item.time}
                                             </td>
-                                            <td className="text-center text-nowrap" onClick={() => ChangeStatusData(item)}>
+                                            <td style={{ whiteSpace: 'nowrap' }} >
+                                                {formatToIndianCurrency(item.price)}
+                                            </td>
+                                            <td style={{ whiteSpace: 'nowrap' }} >
+                                                {formatToIndianCurrency(item.paidAmount)}
+                                            </td>
+                                            <td style={{ whiteSpace: 'nowrap' }} >
+                                                {formatToIndianCurrency(item.remainingAmount)}
+                                            </td>
+                                            <td style={{ whiteSpace: 'nowrap' }} >
+                                                {item.acceptStatus}
+                                            </td>
+                                            <td style={{ whiteSpace: 'nowrap' }} >
+                                                {item.completionStatus}
+                                            </td>
+                                            {/* <td className="text-center text-nowrap" onClick={() => ChangeStatusData(item)}>
                                                 <Tooltip title={item.status === true ? 'Enable' : 'Disable'}>
                                                     {item.status === true ? 'Enable' : 'Disable'}
                                                     <Android12Switch style={{ padding: '8px' }} onClick={() => handleStatusChange(item)} checked={item.status === true} />
                                                 </Tooltip>
-                                            </td>
+                                            </td> */}
                                             <td className="text-center text-nowrap" onClick={() => ChangeStatusData(item)}>
-                                                30/10/2000
+                                              {dayjs(item.regDate).format('DD/MM/YYYY') }
                                             </td>
                                             <td className="text-center actionColSticky " style={{ zIndex: 4 }}>
                                                 <div className="d-flex gap-2">

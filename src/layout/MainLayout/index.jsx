@@ -145,6 +145,9 @@ const routeTitles = {
   '/product-subscription-language': 'Product Subscription Langauge - Myomnamo',
   '/puja-kit-bookings': 'Puja Kit Subscription Orders - Myomnamo',
   '/festival-idol-services': 'Festival Idol Services - Myomnamo',
+  '/stall-business': 'Stall Business - Myomnamo',
+  '/mandal-business': 'Mandal Business - Myomnamo',
+  '/festival-idol-booking-list': 'Festival Idol Booking List - Myomnamo',
 };
 
 const MainLayout = () => {

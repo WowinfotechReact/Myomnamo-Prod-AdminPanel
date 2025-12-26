@@ -1,21 +1,43 @@
 import 'react-calendar/dist/Calendar.css';
 import 'react-date-picker/dist/DatePicker.css';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import { GetMurtiBookingList } from 'services/Admin/MurtiBooking/MurtiBookingApi';
+import { ConfigContext } from 'context/ConfigContext';
 
 const ViewStallDetails = ({ show, onHide, modelRequestData }) => {
-    const stallDetails = modelRequestData || {
-        ownerName: 'Gaurav Nimse',
-        businessName: 'महारुद्रा गणेश मूर्ती केंद्र',
-        mobileNumber: '8010361951',
-        address: 'Nandur Naka',
-        email: 'nimsegaurav615@gmail.com',
-        contactPerson: 'Omkar Jojare',
-        altMobile: '9096566358',
-        password: 'gaurav12',
-        businessType: 'Stall',
-    };
+    const { setLoader } = useContext(ConfigContext);
+    const [stallDetails, setStallDetails] = useState([]);
 
+    useEffect(() => {
+        if (show) {
+            GetBusinessMasterListData();
+        }
+    }, [show])
+
+    const GetBusinessMasterListData = async () => {
+        setLoader(true);
+        try {
+
+            const response = await GetMurtiBookingList(modelRequestData.businessKeyID);
+
+            if (response) {
+                if (response?.data?.statusCode === 200) {
+                    setLoader(false);
+                    if (response?.data?.responseData?.data) {
+                        const List = response.data.responseData.data;
+                        setStallDetails(List);
+                    }
+                } else {
+                    console.error(response?.data?.errorMessage);
+                    setLoader(false);
+                }
+            }
+        } catch (error) {
+            setLoader(false);
+            console.log(error);
+        }
+    }
 
     const renderField = (label, value, highlight = false) => (
         <div className="flex flex-wrap items-start py-2 border-b border-gray-200">
@@ -33,9 +55,6 @@ const ViewStallDetails = ({ show, onHide, modelRequestData }) => {
         </div>
     );
 
-    const SubmitBtnClicked = () => {
-        alert('Submit clicked!');
-    };
 
     return (
         <Modal
@@ -61,10 +80,14 @@ const ViewStallDetails = ({ show, onHide, modelRequestData }) => {
                 }}
             >
                 <div className="p-2">
-                    {renderField('Owner Name', stallDetails.ownerName, true)}
+                    {renderField('Customer Name', stallDetails.customerName, true)}
                     {renderField('Business Name', stallDetails.businessName, true)}
-                    {renderField('Mobile Number', stallDetails.mobileNumber)}
-                    {renderField('Alternate Mobile', stallDetails.altMobile)}
+                    {renderField('Mobile Number', stallDetails.mobileNo)}
+                    {renderField('Total Amount', stallDetails.totalAmount)}
+                    {renderField('Paid Amount', stallDetails.paidAmount)}
+                    {renderField('Payment Type', stallDetails.paymentType)}
+                    {renderField('Is Delivered', stallDetails.isDelivered)}
+                    {renderField('Murti Code', stallDetails.murtiCode)}
                     {renderField('Email', stallDetails.email)}
                     {renderField('Address', stallDetails.address)}
                     {renderField('Contact Person', stallDetails.contactPerson)}
@@ -85,4 +108,3 @@ const ViewStallDetails = ({ show, onHide, modelRequestData }) => {
 };
 
 export default ViewStallDetails;
-

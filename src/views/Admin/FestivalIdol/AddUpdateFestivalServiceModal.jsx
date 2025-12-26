@@ -10,11 +10,12 @@ import { Modal, Button } from 'react-bootstrap';
 import SuccessPopupModal from 'component/SuccessPopupModal';
 import ErrorModal from 'component/ErrorModal';
 import { GetAppLanguageLookupList } from 'services/Admin/AppLangauge/AppLanguageApi';
-import { GetNotificationTemplateLookupList} from 'services/Admin/NotificationAPI/NotificationTemplateAPI';
+import { GetNotificationTemplateLookupList } from 'services/Admin/NotificationAPI/NotificationTemplateAPI';
+import { AddUpdateFestivalPackage, GetFestivalPackageModel } from 'services/Admin/FestivalIdolServices/FestivalIdolServicesApi';
 
 
 const AddUpdateFestivalServiceModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) => {
-    const { setLoader, user } = useContext(ConfigContext);
+    const { setLoader, user, formatToIndianCurrency } = useContext(ConfigContext);
     const [error, setError] = useState(false);
     const [customError, setCustomError] = useState(null);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -30,29 +31,61 @@ const AddUpdateFestivalServiceModal = ({ show, onHide, modelRequestData, setIsAd
     const [formObj, setFormObj] = useState({
         serviceName: null,
         price: null,
-
+        isDefaultService: false,
+        appLangID: null
     });
 
     useEffect(() => {
+        
         if (show) {
             //   isPageRender();
             //   GetPujaCategoryLookupListData();
             GetAppLanguageLookupListData();
             GetNotificationTemplateLookupListData();
             if (
-                modelRequestData?.Action === 'update' &&
-                modelRequestData?.festNotiTemplateKeyID !== null &&
-                modelRequestData?.festNotiTemplateKeyID !== ''
+                modelRequestData?.Action === 'Update' &&
+                modelRequestData?.fiB_ServiceKeyID !== null &&
+                modelRequestData?.fiB_ServiceKeyID !== ''
             ) {
-                GetModelData();
+                GetFestivalPackageModelData();
             }
         }
     }, [show]);
 
-    const GetModelData = async () => {
-        // debugger;
+    const GetFestivalPackageModelData = async () => {
         setLoader(true);
-       
+        try {
+            const response = await GetFestivalPackageModel(modelRequestData?.fiB_ServiceKeyID, modelRequestData?.appLangID);
+
+            if (response) {
+                if (response?.data?.statusCode === 200) {
+                    setLoader(false);
+                    if (response?.data?.responseData?.data) {
+                        const List = response.data.responseData.data;
+                        setFormObj((prev) => ({
+                            ...prev,
+                            serviceName: List?.serviceName,
+                            price: List?.price,
+                            isDefaultService: List?.isDefaultService,
+                            appLangID: List?.appLangID
+
+                        }))
+                        // ✅ if image exists from DB, set preview
+                        if (List?.deityImageUrl) {
+                            setFilePreview(List.deityImageUrl);  // show preview
+                            setUploadedImageUrl(List.deityImageUrl); // keep in upload state
+                            setSelectedFile(List.deityImageUrl)
+                        }
+                    }
+                } else {
+                    console.error(response?.data?.errorMessage);
+                    setLoader(false);
+                }
+            }
+        } catch (error) {
+            setLoader(false);
+            console.log(error);
+        }
     };
 
     const GetAppLanguageLookupListData = async () => {
@@ -104,9 +137,9 @@ const AddUpdateFestivalServiceModal = ({ show, onHide, modelRequestData, setIsAd
         setFormObj((prev) => ({
             ...prev,
             serviceName: null,
-            templateID: null,
-            date: null,
-            timeID: null
+            price: null,
+            isDefaultService: false,
+            appLangID: null
         }));
     };
 
@@ -127,8 +160,11 @@ const AddUpdateFestivalServiceModal = ({ show, onHide, modelRequestData, setIsAd
             formObj.serviceName === '' ||
             formObj.price === null ||
             formObj.price === undefined ||
-            formObj.price === '' 
-            
+            formObj.price === '' ||
+            formObj.isDefaultService === null ||
+            formObj.isDefaultService === undefined ||
+            formObj.isDefaultService === ''
+
         ) {
             setError(true);
             isValid = false;
@@ -136,32 +172,80 @@ const AddUpdateFestivalServiceModal = ({ show, onHide, modelRequestData, setIsAd
 
         const apiParam = {
             adminID: user?.adminID,
-            festNotiTemplateKeyID: modelRequestData.festNotiTemplateKeyID,
-            notiTemplateID: formObj.templateID,
+            fiB_ServiceKeyID: modelRequestData?.fiB_ServiceKeyID,
+            fiB_ServiceByLangKeyID: modelRequestData?.fiB_ServiceByLangKeyID,
             serviceName: formObj.serviceName,
-            image: uploadedImageUrl,
-            notiTimeID: formObj.timeID,
-            date: formObj.date
+            price: formObj.price,
+            isDefaultService: formObj.isDefaultService,
+            festIdolBookTypeID: 2,
+            appLangID: formObj.appLangID
         };
 
         if (isValid) {
-
+            AddUpdateFestivalPackageData(apiParam);
         }
     };
 
-  const handleChange = (e) => {
-    let { value } = e.target;
+    const handleChange = (e) => {
+        let { id, value } = e.target;
+        if (id === "price" || id === "convenienceFee" || id === "offlinePujaPrice" || id === "drySamagriPrice" || id === "wetSamagriPrice") {
+            const sanitizedInput = value
+                .replace(/[^0-9.]/g, "") // Allow only numeric and dot characters
+                .slice(0, 16); // Limit to 6 characters (5 digits + 1 dot or 4 digits + 2 decimals)
 
-    // Regex: numbers with max 2 decimal places
-    const regex = /^(\d+(\.\d{0,2})?|\.\d{0,2})$/;
+            // Split the input into integer and decimal parts
+            const [integerPart, decimalPart] =
+                sanitizedInput.split(".");
 
-    if (value === '' || regex.test(value)) {
+            // Format the integer part with commas as thousand separators
+            const formattedIntegerPart = integerPart;
+
+            // Combine integer and decimal parts with appropriate precision
+            value =
+                decimalPart !== undefined
+                    ? `${formattedIntegerPart.slice(
+                        0,
+                        12
+                    )}.${decimalPart.slice(0, 2)}`
+                    : formattedIntegerPart.slice(0, 12);
+        }
+
+
+
         setFormObj((prev) => ({
             ...prev,
             price: value
         }));
+
+    };
+
+    const AddUpdateFestivalPackageData = async (ApiParam) => {
+
+        setLoader(true);
+        try {
+            const response = await AddUpdateFestivalPackage(ApiParam);
+            if (response?.data?.statusCode === 200) {
+                setLoader(false);
+                
+                if (modelRequestData?.Action === null && modelRequestData?.moduleName === "List") {
+                    setActionMassage(`Idol Service has been added successfully.`)
+                } else if (modelRequestData?.Action === 'Update' && modelRequestData?.moduleName === "List") {
+                    setActionMassage(`Idol Service has been updated successfully.`)
+                }
+                setShowSuccessModal(true)
+                setIsAddUpdateDone(true)
+                onHide()
+            } else {
+                console.error(response?.response?.data?.errorMessage);
+                setCustomError(response?.response?.data?.errorMessage)
+                setShowErrorModal(true)
+                setLoader(false);
+            }
+        } catch (error) {
+            setLoader(false);
+            console.log(error);
+        }
     }
-};
 
     return (
         <>
@@ -207,25 +291,74 @@ const AddUpdateFestivalServiceModal = ({ show, onHide, modelRequestData, setIsAd
                             </div>
 
                             <div className="col-md-12 mb-3">
-                                <label htmlFor="onlinePujaPrice" className="form-label">
+                                <label htmlFor="price" className="form-label">
                                     Price <span className="text-danger">*</span>
                                 </label>
-
                                 <input
                                     type="text"
                                     className="form-control"
-                                    id="onlinePujaPrice"
+                                    id="price"
                                     placeholder="Enter Price"
-                                    value={(formObj.price)}
+                                    value={formatToIndianCurrency(formObj.price)}
                                     onChange={handleChange}
-                                    MaxLength={13}
                                 />
+
                                 {error && (formObj.price === null || formObj.price === undefined || formObj.price === '') ? (
                                     <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
                                 ) : (
                                     ''
                                 )}
 
+                            </div>
+                            <div className="col-md-12 mb-3">
+                                <label className="form-label">
+                                    Is Default Service? <span className="text-danger">*</span>
+                                </label>
+
+                                <div className="d-flex gap-4 mt-1">
+                                    <div className="form-check">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="isDefaultService"
+                                            id="defaultYes"
+                                            value="true"
+                                            checked={formObj.isDefaultService === true}
+                                            onChange={() =>
+                                                setFormObj((prev) => ({
+                                                    ...prev,
+                                                    isDefaultService: true,
+                                                }))
+                                            }
+                                        />
+                                        <label className="form-check-label" htmlFor="defaultYes">
+                                            Yes
+                                        </label>
+                                    </div>
+
+                                    <div className="form-check">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="isDefaultService"
+                                            id="defaultNo"
+                                            value="false"
+                                            checked={formObj.isDefaultService === false}
+                                            onChange={() =>
+                                                setFormObj((prev) => ({
+                                                    ...prev,
+                                                    isDefaultService: false,
+                                                }))
+                                            }
+                                        />
+                                        <label className="form-check-label" htmlFor="defaultNo">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                                {error &&
+                                    (formObj.isDefaultService === null ||
+                                        formObj.isDefaultService === undefined || formObj.isDefaultService === "") ? <span className='text-danger'>{ERROR_MESSAGES}</span> : ""}
                             </div>
 
 

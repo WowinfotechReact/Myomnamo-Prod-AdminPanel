@@ -194,14 +194,14 @@ const AddUpdateFAQModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone 
   };
   const GetServiceLookupListData = async () => {
     try {
-      const response = await GetServiceTypeLookupList(); // Ensure it's correctly imported
+      const response = await GetPujaServiceTypeLookupList(); // Ensure it's correctly imported
 
       if (response?.data?.statusCode === 200) {
         const list = response?.data?.responseData?.data || [];
 
         const formattedLangList = list.map((Lang) => ({
-          value: Lang.serviceTypeID,
-          label: Lang.serviceTypeName
+          value: Lang.pujaServiceID,
+          label: Lang.pujaServiceName
         }));
 
         setServiceTypeList(formattedLangList);

@@ -11,6 +11,7 @@ import { ConfigContext } from 'context/ConfigContext'
 import { debounce } from 'Middleware/Utils'
 import { ChangeBlogStatus, GetBlogList } from 'services/Blog/BlogApi'
 import ViewStallDetails from './ViewMandalDetails'
+import { GetBusinessMasterList } from 'services/Admin/BusinessMaster/BusinessMasterApi'
 
 const MandalBusinessList = () => {
     const [modelAction, setModelAction] = useState();
@@ -41,56 +42,56 @@ const MandalBusinessList = () => {
     const [openDetails, setOpenDetails] = useState(false)
 
 
-    // useEffect(() => {
-    //     GetWareHouseListData(1, null)
-    // }, [])
+    useEffect(() => {
+        GetBusinessMasterListData(1, null)
+    }, [])
 
     useEffect(() => {
         if (isAddUpdateDone) {
             setSearchKeyword("")
-            GetWareHouseListData(currentPage, null)
+            GetBusinessMasterListData(currentPage, null)
             setIsAddUpdateDone(false)
         }
 
     }, [isAddUpdateDone])
 
-    const GetWareHouseListData = async (pageNumber, searchKeywordValue) => {
-        setLoader(true);
-        try {
-            // const response = await GetWareHouseList({
-            const response = await GetBlogList({
-                pageSize: pageSize,
-                pageNo: pageNumber - 1,
-                sortingDirection: sortingType ? sortingType : null,
-                sortingColumnName: sortValueName ? sortValueName : null,
-                searchKeyword: searchKeywordValue,
-                fromDate: fromDate ? dayjs(fromDate).format('YYYY-MM-DD') : null,
-                toDate: toDate ? dayjs(toDate).format('YYYY-MM-DD') : null,
-
-            });
-
-            if (response) {
-                if (response?.data?.statusCode === 200) {
-                    setLoader(false);
-                    if (response?.data?.responseData?.data) {
-                        const List = response.data.responseData.data;
-                        const totalCount = response.data.totalCount;
-
-                        setTotalCount(totalCount);
-                        setTotalPages(Math.ceil(totalCount / pageSize));
-                        // setShopList(List);
-                        setTotalRecords(List?.length);
-                    }
-                } else {
-                    console.error(response?.data?.errorMessage);
-                    setLoader(false);
-                }
-            }
-        } catch (error) {
-            setLoader(false);
-            console.log(error);
-        }
-    }
+  const GetBusinessMasterListData = async (pageNumber, searchKeywordValue) => {
+         setLoader(true);
+         try {
+             
+             const response = await GetBusinessMasterList({
+                 pageSize: pageSize,
+                 pageNo: pageNumber - 1,
+                 sortingDirection: sortingType ? sortingType : null,
+                 sortingColumnName: sortValueName ? sortValueName : null,
+                 searchKeyword: searchKeywordValue,
+                 fromDate: fromDate ? dayjs(fromDate).format('YYYY-MM-DD') : null,
+                 toDate: toDate ? dayjs(toDate).format('YYYY-MM-DD') : null,
+ 
+             },2);
+ 
+             if (response) {
+                 if (response?.data?.statusCode === 200) {
+                     setLoader(false);
+                     if (response?.data?.responseData?.data) {
+                         const List = response.data.responseData.data;
+                         const totalCount = response.data.totalCount;
+ 
+                         setTotalCount(totalCount);
+                         setTotalPages(Math.ceil(totalCount / pageSize));
+                         setStallList(List);
+                         setTotalRecords(List?.length);
+                     }
+                 } else {
+                     console.error(response?.data?.errorMessage);
+                     setLoader(false);
+                 }
+             }
+         } catch (error) {
+             setLoader(false);
+             console.log(error);
+         }
+     }
     const AddShopBtnClicked = () => {
         setModelRequestData((prev) => ({ ...prev, Action: null, shopID: null }))
         setShowAddUpdateModal(true)
@@ -118,7 +119,7 @@ const MandalBusinessList = () => {
             if (response && response.data.statusCode === 200) {
                 setShowStatusChangeModal(false);
                 setStateChangeStatus(null);
-                GetWareHouseListData(currentPage, null)
+                GetBusinessMasterListData(currentPage, null)
                 // GetMasterStateListData(currentPage, null, toDate, fromDate);
                 setShowSuccessModal(true);
                 setModelAction('State status changed successfully.');
@@ -135,7 +136,7 @@ const MandalBusinessList = () => {
     };
 
     const fetchSearchResults = (searchValue) => {
-        GetWareHouseListData(1, searchValue);
+        GetBusinessMasterListData(1, searchValue);
     };
     const debouncedSearch = useCallback(debounce(fetchSearchResults, 500), []);
 
@@ -149,7 +150,7 @@ const MandalBusinessList = () => {
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
-        GetWareHouseListData(pageNumber, null);
+        GetBusinessMasterListData(pageNumber, null);
     };
 
 

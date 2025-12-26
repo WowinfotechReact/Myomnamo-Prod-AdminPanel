@@ -11,6 +11,8 @@ import { ConfigContext } from 'context/ConfigContext'
 import { debounce } from 'Middleware/Utils'
 import { ChangeBlogStatus, GetBlogList } from 'services/Blog/BlogApi'
 import ViewStallDetails from './ViewStallDetails'
+import { GetBusinessMasterList } from 'services/Admin/BusinessMaster/BusinessMasterApi'
+import ViewMurtiDetails from './ViewMurtiDetails'
 
 const StallBusinessList = () => {
     const [modelAction, setModelAction] = useState();
@@ -30,7 +32,7 @@ const StallBusinessList = () => {
     const [sortingType, setSortingType] = useState(null)
     const [sortValueName, setSortValueName] = useState(null)
     const [modalTitle, setModalTitle] = useState(false)
-    const [ShopList, setShopList] = useState([]);
+    const [stallList, setStallList] = useState([]);
     const [modelRequestData, setModelRequestData] = useState({ Action: null, shopID: null })
     const [showAddUpdateModal, setShowAddUpdateModal] = useState(false)
     const [isAddUpdateDone, setIsAddUpdateDone] = useState(false)
@@ -40,25 +42,23 @@ const StallBusinessList = () => {
     const [detailsData, setDetailsData] = useState(null)
     const [openDetails, setOpenDetails] = useState(false)
 
-
-    // useEffect(() => {
-    //     GetWareHouseListData(1, null)
-    // }, [])
+useEffect(()=>{
+GetBusinessMasterListData(1,null)
+},[])
 
     useEffect(() => {
         if (isAddUpdateDone) {
             setSearchKeyword("")
-            GetWareHouseListData(currentPage, null)
+            GetBusinessMasterListData(currentPage, null)
             setIsAddUpdateDone(false)
         }
-
     }, [isAddUpdateDone])
 
-    const GetWareHouseListData = async (pageNumber, searchKeywordValue) => {
+    const GetBusinessMasterListData = async (pageNumber, searchKeywordValue) => {
         setLoader(true);
         try {
-            // const response = await GetWareHouseList({
-            const response = await GetBlogList({
+            
+            const response = await GetBusinessMasterList({
                 pageSize: pageSize,
                 pageNo: pageNumber - 1,
                 sortingDirection: sortingType ? sortingType : null,
@@ -67,7 +67,7 @@ const StallBusinessList = () => {
                 fromDate: fromDate ? dayjs(fromDate).format('YYYY-MM-DD') : null,
                 toDate: toDate ? dayjs(toDate).format('YYYY-MM-DD') : null,
 
-            });
+            },1);
 
             if (response) {
                 if (response?.data?.statusCode === 200) {
@@ -78,7 +78,7 @@ const StallBusinessList = () => {
 
                         setTotalCount(totalCount);
                         setTotalPages(Math.ceil(totalCount / pageSize));
-                        // setShopList(List);
+                        setStallList(List);
                         setTotalRecords(List?.length);
                     }
                 } else {
@@ -91,20 +91,7 @@ const StallBusinessList = () => {
             console.log(error);
         }
     }
-    const AddShopBtnClicked = () => {
-        setModelRequestData((prev) => ({ ...prev, Action: null, shopID: null }))
-        setShowAddUpdateModal(true)
-    }
-    const updateBtnClickPujaCat = (item) => {
-        setModelRequestData((prev) => ({
-            ...prev, Action: 'Update',
-            blogKeyID: item?.blogKeyID
-        }))
-        setShowAddUpdateModal(true)
-    }
-
-
-
+  
     const handleStatusChange = (item) => {
         setStateChangeStatus(item); // You can set only relevant data if needed
         setShowStatusChangeModal(true);
@@ -118,7 +105,7 @@ const StallBusinessList = () => {
             if (response && response.data.statusCode === 200) {
                 setShowStatusChangeModal(false);
                 setStateChangeStatus(null);
-                GetWareHouseListData(currentPage, null)
+                GetBusinessMasterListData(currentPage, null)
                 // GetMasterStateListData(currentPage, null, toDate, fromDate);
                 setShowSuccessModal(true);
                 setModelAction('State status changed successfully.');
@@ -135,7 +122,7 @@ const StallBusinessList = () => {
     };
 
     const fetchSearchResults = (searchValue) => {
-        GetWareHouseListData(1, searchValue);
+        GetBusinessMasterListData(1, searchValue);
     };
     const debouncedSearch = useCallback(debounce(fetchSearchResults, 500), []);
 
@@ -149,7 +136,7 @@ const StallBusinessList = () => {
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
-        GetWareHouseListData(pageNumber, null);
+        GetBusinessMasterListData(pageNumber, null);
     };
 
 
@@ -169,6 +156,10 @@ const StallBusinessList = () => {
         });
     };
 
+    const viewMurtiDetails=(item)=>{
+        setShowDetailsModal(true)
+        setModelRequestData((prev)=>({...prev,businessKeyID:item.businessKeyID}))
+    }
 
     return (
         <>
@@ -226,49 +217,38 @@ const StallBusinessList = () => {
 
                                         <th className="text-center " style={{ whiteSpace: 'nowrap' }}>
                                             Status
-                                        </th>   <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
-                                            Reg Date
-                                        </th>
+                                        </th>  
                                         <th className="text-center actionSticky" style={{ whiteSpace: 'nowrap' }}>
                                             Action
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {ShopList?.map((item, idx) => (
+                                    {stallList?.map((item, idx) => (
                                         <tr className='text-nowrap text-center' key={item.idx}>
 
                                             <td style={{ whiteSpace: 'nowrap' }} className="text-center">
                                                 {(currentPage - 1) * pageSize + idx + 1}
                                             </td>
 
-                                            <td className="text-center">
-                                                {item.blogTitle?.length > 30 ? (
-                                                    <Tooltip title={item.blogTitle}>{`${item.blogTitle?.substring(0, 30)}...`}</Tooltip>
+                                            <td className="text-center" onClick={()=>viewMurtiDetails(item)}>
+                                                {item.ownerName?.length > 30 ? (
+                                                    <Tooltip title={item.ownerName}>{`${item.ownerName?.substring(0, 30)}...`}</Tooltip>
                                                 ) : (
-                                                    <>{item.blogTitle}</>
+                                                    <>{item.ownerName}</>
                                                 )}
                                             </td>
                                             <td style={{ whiteSpace: "nowrap", cursor: "pointer" }}>
-                                                {item.blogImage ? (
-                                                    <img
-                                                        src={item.blogImage}
-                                                        alt={item.blogTitle}
-                                                        style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "5px" }}
-                                                        onClick={() => handleImageClick(item.blogImage, item.blogTitle)}
-                                                    />
-                                                ) : (
-                                                    "No Image"
-                                                )}
+                                                {item?.businessName}
                                             </td>
                                             <td style={{ whiteSpace: 'nowrap' }} >
-                                                mobile
+                                                {item.mobileNo}
                                             </td>
                                             <td style={{ whiteSpace: 'nowrap' }} >
-                                                {item.blogDate.split(" ")[0]}
+                                                {item.email}
                                             </td>
                                             <td style={{ whiteSpace: 'nowrap' }} >
-                                                {item.autherName}
+                                                {item.contactPersonName}
                                             </td>
                                             <td className="text-center text-nowrap" onClick={() => ChangeStatusData(item)}>
                                                 <Tooltip title={item.status === true ? 'Enable' : 'Disable'}>
@@ -276,15 +256,14 @@ const StallBusinessList = () => {
                                                     <Android12Switch style={{ padding: '8px' }} onClick={() => handleStatusChange(item)} checked={item.status === true} />
                                                 </Tooltip>
                                             </td>
-                                            <td className="text-center text-nowrap" onClick={() => ChangeStatusData(item)}>
-                                                30/10/2000
-                                            </td>
+                                           
                                             <td className="text-center actionColSticky " style={{ zIndex: 4 }}>
                                                 <div className="d-flex gap-2">
                                                     <Tooltip title="View Details">
                                                         <Button style={{ marginRight: '5px' }} className="btn-sm"
                                                             onClick={() => {
                                                                 setDetailsData(item)
+                                                                setModelRequestData((prev)=>({...prev,businessKeyID:item.businessKeyID}))
                                                                 setOpenDetails(true)
                                                             }}>
                                                             <i class="fas fa-eye"></i>
@@ -310,7 +289,8 @@ const StallBusinessList = () => {
                 onConfirm={() => confirmStatusChange(stateChangeStatus)} // Pass the required arguments
             />
             <SuccessPopupModal show={showSuccessModal} onHide={(() => setShowSuccessModal(false))} successMassage={ChangeStatusMassage} /> */}
-            <ViewStallDetails show={openDetails} onHide={() => setOpenDetails(false)} data={detailsData} />
+            <ViewStallDetails show={openDetails} onHide={() => setOpenDetails(false)} modelRequestData ={modelRequestData } />
+            <ViewMurtiDetails show={showDetailsModal} onHide={() => setShowDetailsModal(false)} modelRequestData ={modelRequestData } />
         </>
     )
 }

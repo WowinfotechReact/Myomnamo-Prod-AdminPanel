@@ -305,7 +305,9 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
         let { id, value } = e.target;
         if (id === "templeName") {
             // value = value.replace(/[^a-zA-Z\s]/g, '');
+            value = value.replace(/^\s+/, ''); // remove starting spaces
             value = value.charAt(0).toUpperCase() + value.slice(1);
+          
             formatSlug(value)
         }
         if (id === "seatingCapacity") {
@@ -511,7 +513,7 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
         let apiParam = {}
         if (modelRequestData?.moduleName === "TempleList") {
             apiParam = {
-                adminID: user?.adminID, templeKeyID: modelRequestData?.templeKeyID, appLangID: null, templeName: templeData?.templeName, templeRules: templeData?.templeRules, stateID: templeData?.stateID, districtID: templeData?.districtID,
+                adminID: user?.adminID, templeKeyID: modelRequestData?.templeKeyID, appLangID: null, templeName: templeData?.templeName?.trim(), templeRules: templeData?.templeRules, stateID: templeData?.stateID, districtID: templeData?.districtID,
                 templeAddress: templeData?.templeAddress, seatingCapacity: (templeData?.seatingCapacity === "" || templeData?.seatingCapacity === undefined || templeData?.seatingCapacity === null) ? null : templeData?.seatingCapacity, latitude: templeData?.latitude, longitude: templeData?.longitude,
                 bestSeason: templeData?.bestSeason, templeTimings: templeData?.templeTimings, trend: templeData?.trend === 1 ? true : false, dayID: templeData?.dayID,
                 liveDarshanURL: templeData?.liveDarshanURL, isWhitePageLable: templeData?.isWhitePageLabel === 1 ? true : false, templeDetails: templeData?.templeDetails,
@@ -526,7 +528,7 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                 appLangID: templeData?.appLangID,
                 templeLanKeyID: modelRequestData?.templeLanKeyID,
                 templeLanID: modelRequestData?.templeLanID,
-                templeName: templeData?.templeName,
+                templeName: templeData?.templeName?.trim(),
                 templeRules: templeData?.templeRules,
                 templeAddress: templeData?.templeAddress,
                 seatingCapacity: (templeData?.seatingCapacity === "" || templeData?.seatingCapacity === undefined || templeData?.seatingCapacity === null) ? null : templeData?.seatingCapacity,
@@ -690,15 +692,7 @@ const AddUpdateTempleModal = ({ show, onHide, modelRequestData, setIsAddUpdateDo
                                                 value={templeData?.templeName || ''}
                                                 placeholder="Enter Temple Name"
                                                 maxLength={150}
-                                                onChange={(e) => {
-                                                    const value = e.target.value;
-                                                    // Prevent leading space
-                                                    if (value.startsWith(" ")) return;
-                                                    setTempleData({
-                                                        ...templeData,
-                                                        templeName: value,
-                                                    });
-                                                }}
+                                                onChange={handleChange}
 
                                                 onBlur={(e) => {
                                                     const slugValue = generateSlug(e.target.value);

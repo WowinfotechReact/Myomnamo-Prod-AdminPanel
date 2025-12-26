@@ -21,7 +21,7 @@ import { AddUpdateFAQAPI, GetFAQModalAPI, GetServiceTypeLookupList, GetSubServic
 import { GetUserLookupList } from 'services/Admin/UserWalletAPI/UserWalletAPI';
 import { AddUpdateCouponCodeAPI, GetCouponCodeModalAPI } from 'services/Admin/CouponCodeAPI/CouponCodeAPI';
 import DateErrorMessage from 'component/DateErrorMessage';
-import { GetModuleTypeLookupList, GetPujaSubServiceTypeLookupList } from 'services/Admin/MasterAPI/MasterAPI';
+import { GetModuleTypeLookupList, GetPujaServiceTypeLookupList, GetPujaSubServiceTypeLookupList } from 'services/Admin/MasterAPI/MasterAPI';
 
 const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpdateDone }) => {
   const { setLoader, user } = useContext(ConfigContext);
@@ -84,10 +84,6 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
 
 
 
-  const convertToDate = (dateString) => {
-    const [day, month, year] = dateString?.split('/');
-    return new Date(year, month - 1, day); // JS months start from 0
-  };
 
   const GetModelData = async () => {
     // debugger;
@@ -103,8 +99,8 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
             setFormObj((prev) => ({
               ...prev,
               couponCode: List.couponCode,
-              startDate: parseDDMMYYYY(List.startDate),
-              endDate: parseDDMMYYYY(List.endDate),
+              startDate: List.startDate,
+              endDate: List.endDate,
               countUsage: List.maxUsageCount,
               couponTypeID: List.couponTypeID,
               couponAmount: String(List.coupenAmount),
@@ -116,10 +112,10 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
               appLangID: List.appLangID,
               moduleID: List?.moduleID
             }));
-            if(List?.serviceID!==null && List?.serviceID!==undefined){
+            if (List?.serviceID !== null && List?.serviceID !== undefined) {
               GetSubServiceLookupListData(List?.serviceID)
-            } 
-            if(List?.serviceID!==null && List?.serviceID!==undefined && List?.subServiceID!==null && List?.subServiceID!==undefined){ 
+            }
+            if (List?.serviceID !== null && List?.serviceID !== undefined && List?.subServiceID !== null && List?.subServiceID !== undefined) {
 
               GetModuleTypeLookupListData(List.serviceID, List.subServiceID)
             }
@@ -160,14 +156,14 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
   };
   const GetServiceLookupListData = async () => {
     try {
-      const response = await GetServiceTypeLookupList(); // Ensure it's correctly imported
+      const response = await GetPujaServiceTypeLookupList(); // Ensure it's correctly imported
 
       if (response?.data?.statusCode === 200) {
         const list = response?.data?.responseData?.data || [];
 
         const formattedLangList = list.map((Lang) => ({
-          value: Lang.serviceTypeID,
-          label: Lang.serviceTypeName
+          value: Lang.pujaServiceID,
+          label: Lang.pujaServiceName
         }));
 
         setServiceTypeList(formattedLangList);
@@ -553,13 +549,9 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
     }
   };
 
-const parseDDMMYYYY = (dateStr) => {
-  if (!dateStr) return null;
-  const [day, month, year] = dateStr.split('/');
-  return new Date(year, month - 1, day);
-};
 
 
+  console.log('formObj', formObj);
   return (
     <>
       <Modal style={{ zIndex: 1300 }} size="lg" show={show} backdrop="static" keyboard={false} centered>
@@ -614,14 +606,14 @@ const parseDDMMYYYY = (dateStr) => {
                   onChange={handleStartDateChange}
                   format="dd/MM/yyyy"
                   className="custom-date-picker"
-                  minDate={new Date()}
-                  onBlur={() => {
-                    if (formObj.startDate > formObj.endDate) {
-                      setDateError(true)
-                    } else {
-                      setDateError(false)
-                    }
-                  }}
+                // minDate={new Date()}
+                // onBlur={() => {
+                //   if (formObj.startDate > formObj.endDate) {
+                //     setDateError(true)
+                //   } else {
+                //     setDateError(false)
+                //   }
+                // }}
                 />
 
                 {error && !formObj?.startDate && (
@@ -651,7 +643,7 @@ const parseDDMMYYYY = (dateStr) => {
                   }}
                   format="dd/MM/yyyy"
                   className="custom-date-picker"
-                  minDate={new Date()}
+                // minDate={new Date()}
                 />
                 <DateErrorMessage errorMessage="Please enter valid end date" dateError={dateError} />
 
@@ -715,36 +707,81 @@ const parseDDMMYYYY = (dateStr) => {
               </div>
 
               {/* Coupon Amount */}
-              <div className="col-md-6 mb-3">
-                <label htmlFor="pujaName" className="form-label">
-                  Coupon Amount <span className="text-danger">*</span>
-                </label>
-                <input
-                  maxLength={90}
-                  type="text"
-                  className="form-control"
-                  id="catName"
-                  placeholder="Enter Coupon Amount"
-                  aria-describedby="Employee"
-                  value={formObj.couponAmount}
-                  onChange={(e) => {
-                    let input = e.target.value;
-                    if (input.startsWith(' ')) {
-                      input = input.trimStart();
-                    }
+              {formObj?.couponTypeID === 1 ? (
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="pujaName" className="form-label">
+                    Coupon Percentage <span className="text-danger">*</span>
+                  </label>
 
-                    setFormObj((prev) => ({
-                      ...prev,
-                      couponAmount: input
-                    }));
-                  }}
-                />
-                {error && (formObj.couponAmount === null || formObj.couponAmount === undefined || formObj.couponAmount === '') ? (
-                  <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
-                ) : (
-                  ''
-                )}
-              </div>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="catName"
+                    placeholder="Enter Coupon Percentage"
+                    value={formObj.couponAmount}
+                    onChange={(e) => {
+                      let value = e.target.value.trimStart();
+
+                      // Allow empty value
+                      if (value === "") {
+                        setFormObj((prev) => ({
+                          ...prev,
+                          couponAmount: value
+                        }));
+                        return;
+                      }
+
+                      // Allow numbers with up to 2 decimal places
+                      const regex = /^(100(\.0{0,2})?|(\d{1,2})(\.\d{0,2})?)$/;
+
+                      if (regex.test(value) && Number(value) <= 100) {
+                        setFormObj((prev) => ({
+                          ...prev,
+                          couponAmount: value
+                        }));
+                      }
+                    }}
+                  />
+
+                  {error && (formObj.couponAmount === null || formObj.couponAmount === undefined || formObj.couponAmount === '') ? (
+                    <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
+                  ) : (
+                    ''
+                  )}
+                </div>
+              ) : (
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="pujaName" className="form-label">
+                    Coupon Amount <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    maxLength={90}
+                    type="text"
+                    className="form-control"
+                    id="catName"
+                    placeholder="Enter Coupon Amount"
+                    aria-describedby="Employee"
+                    value={formObj.couponAmount}
+                    onChange={(e) => {
+                      let input = e.target.value;
+                      if (input.startsWith(' ')) {
+                        input = input.trimStart();
+                      }
+
+                      setFormObj((prev) => ({
+                        ...prev,
+                        couponAmount: input
+                      }));
+                    }}
+                  />
+                  {error && (formObj.couponAmount === null || formObj.couponAmount === undefined || formObj.couponAmount === '') ? (
+                    <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
+                  ) : (
+                    ''
+                  )}
+                </div>
+              )}
+
 
               {/* Description */}
               <div className="col-md-6 mb-3">
