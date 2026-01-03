@@ -106,18 +106,18 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
               couponAmount: String(List.coupenAmount),
               description: List.description,
               applicableForID: List.applicableForID,
-              serviceID: List.serviceID,
-              subServiceID: List.subServiceID,
+              serviceID: List.pujaServiceID,
+              subServiceID: List.pujaSubServiceID,
               selectedUserListID: List.userID,
               appLangID: List.appLangID,
               moduleID: List?.moduleID
             }));
-            if (List?.serviceID !== null && List?.serviceID !== undefined) {
-              GetSubServiceLookupListData(List?.serviceID)
+            if (List?.pujaServiceID !== null && List?.pujaServiceID !== undefined) {
+              GetSubServiceLookupListData(List?.pujaServiceID)
             }
-            if (List?.serviceID !== null && List?.serviceID !== undefined && List?.subServiceID !== null && List?.subServiceID !== undefined) {
+            if (List?.pujaServiceID !== null && List?.pujaServiceID !== undefined && List?.subServiceID !== null && List?.subServiceID !== undefined) {
 
-              GetModuleTypeLookupListData(List.serviceID, List.subServiceID)
+              GetModuleTypeLookupListData(List.pujaServiceID, List.pujaSubServiceID)
             }
           }
         } else {
@@ -267,9 +267,9 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
       formObj.couponAmount === null ||
       formObj.couponAmount === undefined ||
       formObj.couponAmount === '' ||
-      formObj.description === null ||
-      formObj.description === undefined ||
-      formObj.description === '' ||
+      // formObj.description === null ||
+      // formObj.description === undefined ||
+      // formObj.description === '' ||
       formObj.applicableForID === null ||
       formObj.applicableForID === undefined ||
       formObj.applicableForID === ''
@@ -786,7 +786,8 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
               {/* Description */}
               <div className="col-md-6 mb-3">
                 <label htmlFor="pujaName" className="form-label">
-                  Description <span className="text-danger">*</span>
+                  Description 
+                  {/* <span className="text-danger">*</span> */}
                 </label>
                 <textarea
                   maxLength={90}
@@ -808,11 +809,11 @@ const AddUpdateCouponCodeModal = ({ show, onHide, modelRequestData, setIsAddUpda
                     }));
                   }}
                 />
-                {error && (formObj.description === null || formObj.description === undefined || formObj.description === '') ? (
+                {/* {error && (formObj.description === null || formObj.description === undefined || formObj.description === '') ? (
                   <span style={{ color: 'red' }}>{ERROR_MESSAGES}</span>
                 ) : (
                   ''
-                )}
+                )} */}
               </div>
 
               {/* Applicable For */}

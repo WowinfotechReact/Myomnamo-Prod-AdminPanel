@@ -338,7 +338,7 @@ const CouponCodeList = () => {
                       Applicable For
                     </th>
                     <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
-                      Coupon Amount
+                      Coupon Amount/Percentage
                     </th>
                     <th className="text-center" style={{ whiteSpace: 'nowrap' }}>
                       Description
@@ -385,11 +385,15 @@ const CouponCodeList = () => {
                       <td style={{ whiteSpace: 'nowrap' }}>{item.couponType}</td>
                       <td style={{ whiteSpace: 'nowrap' }}>{item.applicableFor}</td>
                       <td>
-                        {new Intl.NumberFormat('en-IN', {
+                        {item?.couponTypeID===1 ? (
+                          `${item.coupenAmount}%`
+                        ): (
+                        new Intl.NumberFormat('en-IN', {
                           style: 'currency',
                           currency: 'INR',
                           minimumFractionDigits: 2
-                        }).format(item.coupenAmount)}
+                        }).format(item.coupenAmount)
+                        )}
                       </td>
                       <td style={{ whiteSpace: 'nowrap' }}>
                         {item?.description ? (
